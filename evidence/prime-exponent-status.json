@@ -1,0 +1,25 @@
+{
+  "module_sha256": "77de63d231566d08dc3f35918dd8dd9a996173e7fe4aed20b0f3a584f741dc91",
+  "module_compiled": true,
+  "axiom_audit_passed": true,
+  "audited_theorems": [
+    "PrimeGPF.oddCofactor_cast",
+    "PrimeGPF.oddCofactor_ge_exp",
+    "PrimeGPF.oddCofactor_gt_exp",
+    "PrimeGPF.oddCofactor_odd_all",
+    "PrimeGPF.oddCofactor_step_ge_two",
+    "PrimeGPF.prime_divisor_cofactor",
+    "PrimeGPF.proof_8_3",
+    "PrimeGPF.proof_8_4",
+    "PrimeGPF.proof_8_5",
+    "PrimeGPF.proof_9_3",
+    "PrimeGPF.proof_zsigmondy_dependency"
+  ],
+  "new_unconditional_results": [
+    "8.3",
+    "8.4",
+    "8.5",
+    "9.3"
+  ],
+  "remaining_input": "PrimeAPInput"
+}

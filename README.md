@@ -1,3 +1,5 @@
+> Primitive-divisor update: results 8.3, 8.4, 8.5 and 9.3 are now unconditional. See [the current milestone](PRIME_EXPONENT_STATUS.md) and `coverage.json`; older status text below predates this update.
+
 # Prime GPF magma: Lean formalization
 
 **Status:** the project builds successfully under **Lean 4.19.0** with

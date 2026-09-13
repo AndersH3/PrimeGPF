@@ -13,3 +13,4 @@ import PrimeGPF.Unbounded
 import PrimeGPF.Progressions
 import PrimeGPF.Counting
 import PrimeGPF.Density
+import PrimeGPF.PrimeExponent

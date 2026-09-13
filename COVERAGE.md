@@ -32,25 +32,26 @@ The project builds successfully under **Lean 4.19.0**. Proofs marked **compiler-
 | 7.5 | Finite-state periodicity | Full proof, compiler-verified | `proof_7_5`; Complete target is compiler-verified under Lean 4.19.0. |
 | 8.1 | No output two | Full proof, compiler-verified | `proof_8_1`, `proof_8_1_from_8_3`; Direct odd-cofactor argument, independently of primitive divisors. Compiler-verified under Lean 4.19.0. |
 | 8.2 | Exponent-two congruence | Full proof, compiler-verified | `proof_8_2`, `proof_8_2_from_5_2`; Discharged using the new diagonal congruence. Compiler-verified under Lean 4.19.0. |
-| 8.3 | Zsigmondy lower bound | Conditional proof, compiler-verified | `proof_8_3_from_zsigmondy`, `proof_8_3_from_external`; Only ZsigmondyInput remains an explicit unproved input to this new wrapper. Positive-order divisibility and 8.1 have proof scripts. Wrapper compiler-verified under Lean 4.19.0. |
-| 8.4 | Near anti-projection | Conditional proof, compiler-verified | `proof_8_4_from_zsigmondy`, `proof_8_4_from_bounds`; Only ZsigmondyInput remains an explicit unproved input to this new wrapper. Positive-order divisibility and 8.1 have proof scripts. Wrapper compiler-verified under Lean 4.19.0. |
-| 8.5 | Exponential dynamics | Conditional proof, compiler-verified | `proof_8_5_from_zsigmondy`, `proof_8_5_from_bounds`; Only ZsigmondyInput remains an explicit unproved input to this new wrapper. Positive-order divisibility and 8.1 have proof scripts. Wrapper compiler-verified under Lean 4.19.0. |
+| 8.3 | Zsigmondy lower bound | Full proof, compiler-verified | `proof_8_3`; unconditional, using `proof_zsigmondy_dependency : ZsigmondyInput`. Compiled and axiom-audited under Lean 4.19.0. |
+| 8.4 | Near anti-projection | Full proof, compiler-verified | `proof_8_4`; unconditional, using `proof_zsigmondy_dependency : ZsigmondyInput`. Compiled and axiom-audited under Lean 4.19.0. |
+| 8.5 | Exponential dynamics | Full proof, compiler-verified | `proof_8_5`; unconditional, using `proof_zsigmondy_dependency : ZsigmondyInput`. Compiled and axiom-audited under Lean 4.19.0. |
 | 9.1 | Bridge identities | Full proof, compiler-verified | `proof_9_1`; Complete target is compiler-verified under Lean 4.19.0. |
 | 9.2 | Second-column rigidity | Full proof, compiler-verified | `proof_9_2`; Complete target is compiler-verified under Lean 4.19.0. |
-| 9.3 | Exponential dominance | Conditional proof, compiler-verified | `proof_9_3_from_zsigmondy`, `proof_9_3_from_8_3`; Only ZsigmondyInput remains an explicit unproved input to this new wrapper. Positive-order divisibility and 8.1 have proof scripts. Wrapper compiler-verified under Lean 4.19.0. |
+| 9.3 | Exponential dominance | Full proof, compiler-verified | `proof_9_3`; unconditional, using `proof_zsigmondy_dependency : ZsigmondyInput`. Compiled and axiom-audited under Lean 4.19.0. |
 | 9.4 | Collision compatibility | Full proof, compiler-verified | `proof_9_4`; Complete target is compiler-verified under Lean 4.19.0. |
 | 9.5 | Finite common outputs | Full proof, compiler-verified | `proof_9_5`; Complete target is compiler-verified under Lean 4.19.0. |
 | 9.6 | Quadratic-residue restriction | Full proof, compiler-verified | `proof_9_6`, `collision_two_polynomials`; Explicit discriminant square and quadratic reciprocity at five. Compiler-verified under Lean 4.19.0. |
 | 9.7 | Multiplicative-exponential obstruction | Full proof, compiler-verified | `proof_9_7`; Complete target is compiler-verified under Lean 4.19.0. |
 | 9.8 | Triple obstruction | Full proof, compiler-verified | `proof_9_8`, `proof_9_8_from_9_6_9_7`; Discharged using the new proof_9_6 and existing proof_9_7. Compiler-verified under Lean 4.19.0. |
 
-Counts: **33 complete compiler-verified proofs, 6 compiler-verified conditional proofs, 0 statement-only results, 0 false numbered statements.**
+Counts: **37 complete compiler-verified proofs, 2 compiler-verified conditional proofs, 0 statement-only results, 0 false numbered statements.**
 
 
 ## Remaining mathematical obligations
 
 - **6.1:** `PrimeAPInput`, the stated PNT-in-arithmetic-progressions ratio limit.
-- **6.3:** all density estimates are now proved conditionally from the same `PrimeAPInput` used for 6.1; thus its only remaining external dependency is that PNT-in-arithmetic-progressions input.
-- **8.3:** `ZsigmondyInput`; consequently 8.4, 8.5, and 9.3 remain conditional.
+- **6.3:** the same `PrimeAPInput`; all required density estimates are already proved conditionally from it.
 
-Thus six of the 39 corrected numbered results remain conditional: 6.1 and 6.3 on `PrimeAPInput`, and 8.3, 8.4, 8.5, and 9.3 on `ZsigmondyInput`.
+`ZsigmondyInput` is now proved by `proof_zsigmondy_dependency`. Results 8.3, 8.4, 8.5 and 9.3 are unconditional.
+
+The uploaded terminal output confirms that the complete project builds. Every axiom dependency printed in the uploaded audit belongs to `propext`, `Classical.choice`, or `Quot.sound`. Conditional hypotheses remain theorem parameters and are not detected as axioms by `#print axioms`.

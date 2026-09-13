@@ -1,0 +1,8 @@
+{
+  "integration_preserves_unrelated_rows": true,
+  "integration_is_idempotent": true,
+  "shell_syntax": true,
+  "python_syntax": true,
+  "forbidden_proof_tokens_absent": true,
+  "note": "Package checks; not a new Lean compilation."
+}

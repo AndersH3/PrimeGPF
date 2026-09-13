@@ -164,3 +164,14 @@
 PrimeGPF.proof_8_3_from_zsigmondy (HZ : PrimeGPF.ZsigmondyInput) : PrimeGPF.Claims.t8_3
 PrimeGPF.proof_6_1_from_PNT_AP (H : PrimeGPF.PrimeAPInput) : PrimeGPF.Claims.t6_1
 PrimeGPF.proof_6_3_from_PNT_AP (H : PrimeGPF.PrimeAPInput) : PrimeGPF.Claims.t6_3
+'PrimeGPF.oddCofactor_cast' depends on axioms: [propext, Quot.sound]
+'PrimeGPF.oddCofactor_ge_exp' depends on axioms: [propext, Classical.choice, Quot.sound]
+'PrimeGPF.oddCofactor_gt_exp' depends on axioms: [propext, Classical.choice, Quot.sound]
+'PrimeGPF.oddCofactor_odd_all' depends on axioms: [propext, Classical.choice, Quot.sound]
+'PrimeGPF.oddCofactor_step_ge_two' depends on axioms: [propext, Classical.choice, Quot.sound]
+'PrimeGPF.prime_divisor_cofactor' depends on axioms: [propext, Classical.choice, Quot.sound]
+'PrimeGPF.proof_8_3' depends on axioms: [propext, Classical.choice, Quot.sound]
+'PrimeGPF.proof_8_4' depends on axioms: [propext, Classical.choice, Quot.sound]
+'PrimeGPF.proof_8_5' depends on axioms: [propext, Classical.choice, Quot.sound]
+'PrimeGPF.proof_9_3' depends on axioms: [propext, Classical.choice, Quot.sound]
+'PrimeGPF.proof_zsigmondy_dependency' depends on axioms: [propext, Classical.choice, Quot.sound]

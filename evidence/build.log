@@ -1,14 +1,17 @@
-⚠ [6653/6669] Replayed PrimeGPF.Core
+⚠ [6653/6670] Replayed PrimeGPF.Core
 warning: ././././PrimeGPF/Core.lean:133:19: try 'simp' instead of 'simpa'
 note: this linter can be disabled with `set_option linter.unnecessarySimpa false`
-⚠ [6658/6669] Replayed PrimeGPF.Dynamics
+⚠ [6658/6670] Replayed PrimeGPF.Dynamics
 warning: ././././PrimeGPF/Dynamics.lean:68:4: try 'simp at hh' instead of 'simpa using hh'
 note: this linter can be disabled with `set_option linter.unnecessarySimpa false`
-⚠ [6665/6669] Replayed PrimeGPF.Progressions
+⚠ [6665/6670] Replayed PrimeGPF.Progressions
 warning: ././././PrimeGPF/Progressions.lean:18:4: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
 note: this linter can be disabled with `set_option linter.unnecessarySeqFocus false`
 warning: ././././PrimeGPF/Progressions.lean:45:65: try 'simp' instead of 'simpa'
 note: this linter can be disabled with `set_option linter.unnecessarySimpa false`
 warning: ././././PrimeGPF/Progressions.lean:64:8: try 'simp' instead of 'simpa'
 note: this linter can be disabled with `set_option linter.unnecessarySimpa false`
+⚠ [6668/6670] Replayed PrimeGPF.PrimeExponent
+warning: ././././PrimeGPF/PrimeExponent.lean:70:4: 'push_cast' tactic does nothing
+note: this linter can be disabled with `set_option linter.unusedTactic false`
 Build completed successfully.

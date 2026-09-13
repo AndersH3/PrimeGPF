@@ -3,3 +3,14 @@
 *~
 
 *.lean.before-*
+
+# Agda generated/cache files
+_build/
+MAlonzo/
+*.agdai
+
+# Compiled test executable
+PrimeGPFRuntimeTestsMinimal
+
+# Temporary pre-integration backup snapshots
+*.before-prime-exponent

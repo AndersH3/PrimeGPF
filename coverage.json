@@ -180,7 +180,7 @@
       ],
       "compiler_verified": true,
       "status": "full_script_verified",
-      "note": "Corrected official theorem 5.5. The necessary hypothesis r \u2260 2, where r = mul p q, excludes the exceptional false case. The old printed statement is retained separately as t5_5_original with its verified counterexample and refutation."
+      "note": "Corrected official theorem 5.5. The necessary hypothesis r ≠ 2, where r = mul p q, excludes the exceptional false case. The old printed statement is retained separately as t5_5_original with its verified counterexample and refutation."
     },
     {
       "id": "5.6",
@@ -334,36 +334,39 @@
       "title": "Zsigmondy lower bound",
       "statement": "t8_3",
       "proofs": [
+        "proof_8_3",
         "proof_8_3_from_zsigmondy",
         "proof_8_3_from_external"
       ],
       "compiler_verified": true,
-      "status": "conditional_script_verified",
-      "note": "Only ZsigmondyInput remains an explicit unproved input to this new wrapper. Positive-order divisibility and 8.1 have proof scripts. Wrapper compiler-verified under Lean 4.19.0."
+      "status": "full_script_verified",
+      "note": "Unconditional: PrimeExponent.lean proves ZsigmondyInput using lifting the exponent and finite-field orders."
     },
     {
       "id": "8.4",
       "title": "Near anti-projection",
       "statement": "t8_4",
       "proofs": [
+        "proof_8_4",
         "proof_8_4_from_zsigmondy",
         "proof_8_4_from_bounds"
       ],
       "compiler_verified": true,
-      "status": "conditional_script_verified",
-      "note": "Only ZsigmondyInput remains an explicit unproved input to this new wrapper. Positive-order divisibility and 8.1 have proof scripts. Wrapper compiler-verified under Lean 4.19.0."
+      "status": "full_script_verified",
+      "note": "Unconditional: PrimeExponent.lean proves ZsigmondyInput using lifting the exponent and finite-field orders."
     },
     {
       "id": "8.5",
       "title": "Exponential dynamics",
       "statement": "t8_5",
       "proofs": [
+        "proof_8_5",
         "proof_8_5_from_zsigmondy",
         "proof_8_5_from_bounds"
       ],
       "compiler_verified": true,
-      "status": "conditional_script_verified",
-      "note": "Only ZsigmondyInput remains an explicit unproved input to this new wrapper. Positive-order divisibility and 8.1 have proof scripts. Wrapper compiler-verified under Lean 4.19.0."
+      "status": "full_script_verified",
+      "note": "Unconditional: PrimeExponent.lean proves ZsigmondyInput using lifting the exponent and finite-field orders."
     },
     {
       "id": "9.1",
@@ -392,12 +395,13 @@
       "title": "Exponential dominance",
       "statement": "t9_3",
       "proofs": [
+        "proof_9_3",
         "proof_9_3_from_zsigmondy",
         "proof_9_3_from_8_3"
       ],
       "compiler_verified": true,
-      "status": "conditional_script_verified",
-      "note": "Only ZsigmondyInput remains an explicit unproved input to this new wrapper. Positive-order divisibility and 8.1 have proof scripts. Wrapper compiler-verified under Lean 4.19.0."
+      "status": "full_script_verified",
+      "note": "Unconditional: PrimeExponent.lean proves ZsigmondyInput using lifting the exponent and finite-field orders."
     },
     {
       "id": "9.4",
@@ -468,9 +472,7 @@
     }
   ],
   "counts": {
-    "full_script_verified": 33,
-    "conditional_script_verified": 6,
-    "statement_only": 0,
-    "false_original": 0
+    "full_script_verified": 37,
+    "conditional_script_verified": 2
   }
 }

@@ -1,0 +1,10 @@
+⚠ [6653/6661] Replayed PrimeGPF.Core
+warning: ././././PrimeGPF/Core.lean:133:19: try 'simp' instead of 'simpa'
+note: this linter can be disabled with `set_option linter.unnecessarySimpa false`
+⚠ [6656/6661] Replayed PrimeGPF.Dynamics
+warning: ././././PrimeGPF/Dynamics.lean:68:4: try 'simp at hh' instead of 'simpa using hh'
+note: this linter can be disabled with `set_option linter.unnecessarySimpa false`
+⚠ [6661/6661] Built PrimeGPF.PrimeExponent
+warning: ././././PrimeGPF/PrimeExponent.lean:70:4: 'push_cast' tactic does nothing
+note: this linter can be disabled with `set_option linter.unusedTactic false`
+Build completed successfully.
