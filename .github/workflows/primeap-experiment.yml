@@ -35,8 +35,5 @@ jobs:
       - name: Build PrimeGPF
         run: lake build
 
-      - name: Build PNT+ Wiener module
-        run: lake build PrimeNumberTheoremAnd.Wiener
-
       - name: Check PrimeAP experiment
         run: lake env lean PrimeAPExperiment.lean
