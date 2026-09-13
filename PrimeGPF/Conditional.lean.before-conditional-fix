@@ -1,0 +1,193 @@
+import PrimeGPF.Dynamics
+import PrimeGPF.Arithmetic
+import PrimeGPF.Orders
+import PrimeGPF.DirectExponential
+
+/-!
+This module retains generic implications and explicit primitive-divisor inputs.
+A conditional theorem proves only the implication with its displayed hypotheses.
+proof_order_dependency has a full script; ZsigmondyInput remains unproved.
+All scripts, including the new wrappers, are uncompiled.
+-/
+namespace PrimeGPF
+open Claims
+
+/-- Precisely the external primitive-divisor input needed from Zsigmondy. -/
+def ZsigmondyInput : Prop := ∀ p q,
+  Nat.Prime p → Nat.Prime q → q ≠ 2 → (p, q) ≠ (2, 3) →
+  ∃ r, PrimitiveDivisor r p (2 * q) ∧ r ∣ p ^ q + 1
+
+/-- Original dependency was false at k=0; retained for an explicit refutation. -/
+def OrderDividesPrimePredOriginal : Prop := ∀ r p k,
+  PrimitiveDivisor r p k → k ∣ r - 1
+
+theorem refutation_order_dependency : ¬ OrderDividesPrimePredOriginal := by
+  intro h
+  have hp : PrimitiveDivisor 3 2 0 := by
+    refine ⟨by norm_num, by norm_num, ?_⟩
+    intro j hj hj0
+    omega
+  have hf := h 3 2 0 hp
+  norm_num at hf
+
+/-- Corrected dependency: only positive orders divide the field's unit-group order. -/
+def OrderDividesPrimePred : Prop := ∀ r p k,
+  0 < k → PrimitiveDivisor r p k → k ∣ r - 1
+
+theorem proof_order_dependency : OrderDividesPrimePred := by
+  intro r p k hk h
+  exact primitive_order_dvd hk h
+
+theorem proof_8_3_from_external (HZ : ZsigmondyInput)
+    (HO : OrderDividesPrimePred) : t8_3 := by
+  intro p q hp hq hq2 hex
+  obtain ⟨r, hr, hd⟩ := HZ p q hp hq hq2 hex
+  have horder := HO r p (2 * q) (by have := hq.two_le; omega) hr
+  have hmod0 := Nat.mod_eq_zero_of_dvd horder
+  have hr2 := hr.1.two_le
+  have hq2' := hq.two_le
+  have he : r - 1 + 1 = r := by omega
+  have hm : r % (2 * q) = 1 := by
+    calc
+      r % (2 * q) = (r - 1 + 1) % (2 * q) := by rw [he]
+      _ = 1 := by rw [Nat.add_mod, hmod0]; simp [Nat.mod_eq_of_lt (by omega : 1 < 2 * q)]
+  have hlarge : 2 * q + 1 ≤ r := by
+    by_cases hlt : r < 2 * q
+    · rw [Nat.mod_eq_of_lt hlt] at hm; omega
+    · by_cases heq : r = 2 * q
+      · simp [heq] at hm
+      · omega
+  refine ⟨⟨r, hr.1, hd, hm⟩, ?_⟩
+  exact le_trans hlarge ((output_spec .exp hp hq).2.2 r hr.1 hd)
+
+theorem proof_3_5_from_8_1 (H : t8_1) : t3_5 :=
+  ⟨odd_add_closed, fun p q hp hq _ _ => H.1 p q hp hq, odd_mul_not_closed⟩
+
+theorem proof_8_2_from_5_2 (H : t5_2) : t8_2 := by
+  intro p hp
+  rw [(proof_9_1 p hp).2]
+  exact (H p hp).1
+
+theorem proof_8_4_from_bounds (H1 : t8_1) (H3 : t8_3) : t8_4 := by
+  intro p q hp hq
+  refine ⟨exp_ne_left hp hq, ?_⟩
+  constructor
+  · intro he
+    by_contra hn
+    have hex : (p, q) ≠ (2, 3) := by simpa only [Prod.mk.injEq] using hn
+    by_cases hq2 : q = 2
+    · subst q; exact H1.1 p 2 hp Nat.prime_two he
+    · have hb := (H3 p q hp hq hq2 hex).2; omega
+  · rintro ⟨rfl, rfl⟩
+    norm_num [exp, output, kernel, gpf, scan]
+
+/-- The growth assertion needed in 8.5, with the exceptional pair retained. -/
+theorem exponential_growth (H1 : t8_1) (H3 : t8_3)
+    {p q : ℕ} (hp : Nat.Prime p) (hq : Nat.Prime q)
+    (hex : (p, q) ≠ (2, 3)) : q < exp p q := by
+  by_cases hq2 : q = 2
+  · subst q
+    have hprime := (output_spec .exp hp Nat.prime_two).1
+    have hge := hprime.two_le
+    have hne := H1.1 p 2 hp Nat.prime_two
+    omega
+  · have h := (H3 p q hp hq hq2 hex).2; have := hq.two_le; omega
+
+theorem proof_8_5_from_bounds (H1 : t8_1) (H3 : t8_3) : t8_5 := by
+  have growth := exponential_growth H1 H3
+  have h23 : exp 2 3 = 3 := by norm_num [exp, output, kernel, gpf, scan]
+  refine ⟨?_, h23, ?_, ?_⟩
+  · intro a ha
+    have hg : ∀ q : Prime, q.val < (operate .exp a q).val := by
+      intro q
+      exact growth a.property q.property (by intro h; have := congrArg Prod.fst h; exact ha this)
+    refine ⟨hg, ?_, ?_, ?_⟩
+    · intro x; exact (increasing_orbit _ hg x).1
+    · intro x; exact (increasing_orbit _ hg x).2.1
+    · intro x; exact (increasing_orbit _ hg x).2.2
+  · intro q hq hq3
+    exact growth Nat.prime_two hq (by intro h; exact hq3 (congrArg Prod.snd h))
+  · intro x
+    let f := operate .exp (⟨2, Nat.prime_two⟩ : Prime)
+    have hweak : ∀ q : Prime, q.val ≤ (f q).val := by
+      intro q
+      by_cases hq3 : q.val = 3
+      · change q.val ≤ exp 2 q.val; rw [hq3, h23]
+      · exact le_of_lt (growth Nat.prime_two q.property
+          (by intro h; exact hq3 (congrArg Prod.snd h)))
+    have hm : Monotone (fun n => (orbit f x n).val) :=
+      monotone_nat_of_le_succ (fun n => hweak (orbit f x n))
+    constructor
+    · rintro ⟨d, hd, he⟩
+      by_contra hx3
+      have hs : x.val < (f x).val := growth Nat.prime_two x.property
+        (by intro h; exact hx3 (congrArg Prod.snd h))
+      have hh := hm (show 1 ≤ d by omega)
+      change (f x).val ≤ (orbit f x d).val at hh
+      rw [he] at hh
+      omega
+    · intro hx3
+      refine ⟨1, by decide, ?_⟩
+      apply Subtype.ext
+      change exp 2 x.val = x.val
+      rw [hx3, h23]
+
+theorem proof_9_3_from_8_3 (H : t8_3) : t9_3 := by
+  intro q hq hq3
+  have hex : (2, q) ≠ (2, 3) := by intro h; have := congrArg Prod.snd h; omega
+  have hb := (H 2 q Nat.prime_two hq (by omega) hex).2
+  have ha : add 2 q ≤ q + 3 := by
+    simpa [add, output, kernel, Nat.add_assoc, Nat.add_comm, Nat.add_left_comm]
+      using gpf_le (2 + q + 1)
+  have hm : mul 2 q ≤ 2 * q + 1 := gpf_le _
+  refine ⟨by omega, le_trans hm hb, ?_⟩
+  intro hcomp
+  have hn : 1 < 2 * q + 1 := by have := hq.two_le; omega
+  have hne : mul 2 q ≠ 2 * q + 1 := by
+    intro he; exact hcomp ((gpf_eq_self_iff hn).mp he)
+  omega
+
+/-- Theorem 9.8 is a composition of 9.6, 9.7, and closure certificates. -/
+theorem proof_9_8_from_9_6_9_7 (H6 : t9_6) (H7 : t9_7) : t9_8 := by
+  intro p q r hp hq ha hm he
+  have hr : Nat.Prime r := by simpa [ha] using (output_spec .add hp hq).1
+  have hda : r ∣ p + q + 1 := by simpa [ha] using (output_spec .add hp hq).2.1
+  have hdm : r ∣ p * q + 1 := by simpa [hm] using (output_spec .mul hp hq).2.1
+  have hh := H6 p q r hp hq hr hda hdm
+  exact ⟨hh.1, H7 p q r hp hq hm he, Nat.mod_eq_zero_of_dvd hda,
+    fun h2 h5 => (hh.2.2 h2 h5).2⟩
+
+/-- No-output-two, derived from the outstanding Zsigmondy-based bound. -/
+theorem proof_8_1_from_8_3 (H : t8_3) : t8_1 := by
+  have hn : ∀ p q, Nat.Prime p → Nat.Prime q → exp p q ≠ 2 := by
+    intro p q hp hq
+    by_cases hq2 : q = 2
+    · subst q; exact square_output_ne_two hp
+    · by_cases hex : (p, q) = (2, 3)
+      · have hp' := congrArg Prod.fst hex
+        have hq' := congrArg Prod.snd hex
+        simp only at hp' hq'
+        subst p; subst q
+        norm_num [exp, output, kernel, gpf, scan]
+      · have hb := (H p q hp hq hq2 hex).2
+        have := hq.two_le
+        omega
+  refine ⟨hn, ?_⟩
+  intro hs
+  obtain ⟨⟨p, q⟩, he⟩ := hs (⟨2, Nat.prime_two⟩ : Prime)
+  exact hn p.val q.val p.property q.property (congrArg Subtype.val he)
+
+/-- Only the specialized primitive-divisor existence input remains here. -/
+theorem proof_8_3_from_zsigmondy (HZ : ZsigmondyInput) : t8_3 :=
+  proof_8_3_from_external HZ proof_order_dependency
+
+theorem proof_8_4_from_zsigmondy (HZ : ZsigmondyInput) : t8_4 :=
+  proof_8_4_from_bounds proof_8_1 (proof_8_3_from_zsigmondy HZ)
+
+theorem proof_8_5_from_zsigmondy (HZ : ZsigmondyInput) : t8_5 :=
+  proof_8_5_from_bounds proof_8_1 (proof_8_3_from_zsigmondy HZ)
+
+theorem proof_9_3_from_zsigmondy (HZ : ZsigmondyInput) : t9_3 :=
+  proof_9_3_from_8_3 (proof_8_3_from_zsigmondy HZ)
+
+end PrimeGPF

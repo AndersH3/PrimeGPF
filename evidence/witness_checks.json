@@ -1,0 +1,231 @@
+{
+  "kind": "finite arithmetic checks, not formal verification",
+  "passed": 19,
+  "lean_checked": false,
+  "checks": [
+    {
+      "name": "3.2 exponential noncommutativity",
+      "actual": [
+        3,
+        5
+      ],
+      "expected": [
+        3,
+        5
+      ],
+      "passed": true
+    },
+    {
+      "name": "3.3 additive nonassociativity",
+      "actual": [
+        11,
+        5
+      ],
+      "expected": [
+        11,
+        5
+      ],
+      "passed": true
+    },
+    {
+      "name": "3.3 multiplicative nonassociativity",
+      "actual": [
+        2,
+        5
+      ],
+      "expected": [
+        2,
+        5
+      ],
+      "passed": true
+    },
+    {
+      "name": "3.3 exponential nonassociativity",
+      "actual": [
+        13,
+        11
+      ],
+      "expected": [
+        13,
+        11
+      ],
+      "passed": true
+    },
+    {
+      "name": "3.5 odd multiplicative closure failure",
+      "actual": [
+        2
+      ],
+      "expected": [
+        2
+      ],
+      "passed": true
+    },
+    {
+      "name": "3.6 additive cancellation failure",
+      "actual": [
+        5,
+        5
+      ],
+      "expected": [
+        5,
+        5
+      ],
+      "passed": true
+    },
+    {
+      "name": "3.6 multiplicative cancellation failure",
+      "actual": [
+        5,
+        5
+      ],
+      "expected": [
+        5,
+        5
+      ],
+      "passed": true
+    },
+    {
+      "name": "3.6 multiplicative distributivity failure",
+      "actual": [
+        7,
+        13
+      ],
+      "expected": [
+        7,
+        13
+      ],
+      "passed": true
+    },
+    {
+      "name": "3.6 additive distributivity failure",
+      "actual": [
+        2,
+        13
+      ],
+      "expected": [
+        2,
+        13
+      ],
+      "passed": true
+    },
+    {
+      "name": "3.7 mixed add/mul",
+      "actual": [
+        11,
+        2
+      ],
+      "expected": [
+        11,
+        2
+      ],
+      "passed": true
+    },
+    {
+      "name": "3.7 mixed add/exp",
+      "actual": [
+        13,
+        2
+      ],
+      "expected": [
+        13,
+        2
+      ],
+      "passed": true
+    },
+    {
+      "name": "3.7 mixed mul/exp",
+      "actual": [
+        13,
+        11
+      ],
+      "expected": [
+        13,
+        11
+      ],
+      "passed": true
+    },
+    {
+      "name": "3.8 additive monotonicity",
+      "actual": [
+        7,
+        3
+      ],
+      "expected": [
+        7,
+        3
+      ],
+      "passed": true
+    },
+    {
+      "name": "3.8 multiplicative monotonicity",
+      "actual": [
+        5,
+        2
+      ],
+      "expected": [
+        5,
+        2
+      ],
+      "passed": true
+    },
+    {
+      "name": "3.8 exponential base monotonicity",
+      "actual": [
+        13,
+        5
+      ],
+      "expected": [
+        13,
+        5
+      ],
+      "passed": true
+    },
+    {
+      "name": "3.8 exponential exponent monotonicity",
+      "actual": [
+        5,
+        3
+      ],
+      "expected": [
+        5,
+        3
+      ],
+      "passed": true
+    },
+    {
+      "name": "7.3 fixed point and two-cycle",
+      "actual": [
+        3,
+        5,
+        2
+      ],
+      "expected": [
+        3,
+        5,
+        2
+      ],
+      "passed": true
+    },
+    {
+      "name": "8.4 exceptional identity",
+      "actual": [
+        3
+      ],
+      "expected": [
+        3
+      ],
+      "passed": true
+    },
+    {
+      "name": "5.5 counterexample",
+      "p": 3,
+      "q": 5,
+      "m": 1,
+      "r": 2,
+      "hypothesis_satisfied": true,
+      "conclusion_false": true,
+      "passed": true
+    }
+  ]
+}

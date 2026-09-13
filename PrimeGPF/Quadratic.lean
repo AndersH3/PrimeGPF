@@ -1,0 +1,137 @@
+import PrimeGPF.Orders
+import PrimeGPF.Conditional
+
+/-! Quadratic-character and collision proofs. Scripts are not compiler-verified. -/
+namespace PrimeGPF
+open Claims
+
+/-- Connect the finite witness in the compendium to mathlib's IsSquare. -/
+theorem finite_square_iff {r a : ℕ} (hr : Nat.Prime r) :
+    (∃ x : Fin r, x.val ^ 2 % r = a % r) ↔ IsSquare (a : ZMod r) := by
+  letI : Fact (Nat.Prime r) := ⟨hr⟩
+  constructor
+  · rintro ⟨x, hx⟩
+    refine ⟨(x.val : ZMod r), ?_⟩
+    have h := (cast_eq_iff_mod (x.val ^ 2) a r).mpr hx
+    simpa only [pow_two, Nat.cast_mul] using h.symm
+  · rintro ⟨x, hx⟩
+    refine ⟨⟨x.val, ZMod.val_lt x⟩, ?_⟩
+    apply (cast_eq_iff_mod (x.val ^ 2) a r).mp
+    simpa only [pow_two, Nat.cast_mul, ZMod.natCast_zmod_val] using hx.symm
+
+/-- The custom quadraticCharacter is exactly the standard finite-field character. -/
+theorem quadraticCharacter_eq (r a : ℕ) [Fact (Nat.Prime r)] :
+    quadraticCharacter r a = quadraticChar (ZMod r) (a : ZMod r) := by
+  classical
+  have hr : Nat.Prime r := Fact.out
+  by_cases hz : a % r = 0
+  · have hz' : (a : ZMod r) = 0 := by
+      exact (cast_zero_iff_dvd a r).mpr
+        (Nat.dvd_of_mod_eq_zero hz)
+    simp [quadraticCharacter, hz, hz', quadraticChar_zero]
+  · have hz' : (a : ZMod r) ≠ 0 := by
+      intro he
+      exact hz (Nat.mod_eq_zero_of_dvd
+        ((cast_zero_iff_dvd a r).mp he))
+    by_cases hs : ∃ x : Fin r, x.val ^ 2 % r = a % r
+    · have hc := (quadraticChar_one_iff_isSquare hz').mpr ((finite_square_iff hr).mp hs)
+      simp [quadraticCharacter, hz, hs, hc]
+    · have hc : quadraticChar (ZMod r) (a : ZMod r) = -1 :=
+        quadraticChar_neg_one_iff_not_isSquare.mpr (fun h => hs ((finite_square_iff hr).mpr h))
+      simp [quadraticCharacter, hz, hs, hc]
+
+theorem proof_5_4 : t5_4 := by
+  intro p q hp hq
+  dsimp only
+  intro hr2
+  let r := mul p q
+  have hr : Nat.Prime r := (output_spec .mul hp hq).1
+  letI : Fact (Nat.Prime r) := ⟨hr⟩
+  have hd : r ∣ p * q + 1 := (output_spec .mul hp hq).2.1
+  have hzero : (p : ZMod r) * (q : ZMod r) + 1 = 0 := by
+    simpa only [Nat.cast_add, Nat.cast_mul, Nat.cast_one]
+      using (cast_zero_iff_dvd (p * q + 1) r).mpr hd
+  have hpq : (p : ZMod r) * (q : ZMod r) = -1 := eq_neg_of_add_eq_zero_left hzero
+  have hp0 : (p : ZMod r) ≠ 0 := by intro hz; simp [hz] at hzero
+  have hq0 : (q : ZMod r) ≠ 0 := by intro hz; simp [hz] at hzero
+  have hrpred : (r - 1 : ℕ) + 1 = r := by have := hr.two_le; omega
+  have hpred : ((r - 1 : ℕ) : ZMod r) = -1 := by
+    have hc := congrArg (fun n : ℕ => (n : ZMod r)) hrpred
+    simp only [Nat.cast_add, Nat.cast_one, ZMod.natCast_self] at hc
+    exact eq_neg_of_add_eq_zero_left hc
+  change quadraticCharacter r p * quadraticCharacter r q = quadraticCharacter r (r - 1) ∧ _
+  simp only [quadraticCharacter_eq, hpred]
+  have hmul : quadraticChar (ZMod r) (p : ZMod r) *
+      quadraticChar (ZMod r) (q : ZMod r) = quadraticChar (ZMod r) (-1) := by
+    rw [← map_mul, hpq]
+  have hpχ := quadraticChar_dichotomy hp0
+  have hqχ := quadraticChar_dichotomy hq0
+  refine ⟨hmul, ?_, ?_⟩
+  · intro hm
+    have hs : IsSquare (-1 : ZMod r) := ZMod.exists_sq_eq_neg_one_iff.mpr (by omega)
+    have hc : quadraticChar (ZMod r) (-1) = 1 :=
+      (quadraticChar_one_iff_isSquare (neg_ne_zero.mpr one_ne_zero)).mpr hs
+    rw [hc] at hmul
+    rcases hpχ with hpχ | hpχ <;> rcases hqχ with hqχ | hqχ <;>
+      simp_all [r]
+  · intro hm
+    have hs : ¬ IsSquare (-1 : ZMod r) := fun h => ZMod.exists_sq_eq_neg_one_iff.mp h hm
+    have hc : quadraticChar (ZMod r) (-1) = -1 :=
+      quadraticChar_neg_one_iff_not_isSquare.mpr hs
+    rw [hc] at hmul
+    rcases hpχ with hpχ | hpχ <;> rcases hqχ with hqχ | hqχ <;>
+      simp_all [r]
+
+/-- Explicit discriminant witness; primality of the modulus is unnecessary. -/
+theorem collision_discriminant {p q r : ℕ} (hp : 1 ≤ p)
+    (ha : r ∣ p + q + 1) (hm : r ∣ p * q + 1) :
+    (2 * p + 1) ^ 2 % r = 5 % r := by
+  have hd := collision_divisor ha hm
+  have hs : p ^ 2 + p - 1 + 1 = p ^ 2 + p := by
+    apply Nat.sub_add_cancel
+    omega
+  have he : (2 * p + 1) ^ 2 = 4 * (p ^ 2 + p - 1) + 5 := by nlinarith
+  rw [he]
+  simp [Nat.add_mod, Nat.mul_mod, Nat.mod_eq_zero_of_dvd hd]
+
+/-- Quadratic reciprocity specialized to five. -/
+theorem square_five_residues {r : ℕ} (hr : Nat.Prime r) (hr2 : r ≠ 2)
+    (hr5 : r ≠ 5) (hs : ∃ x : ℕ, x ^ 2 % r = 5 % r) :
+    r % 5 = 1 ∨ r % 5 = 4 := by
+  letI : Fact (Nat.Prime r) := ⟨hr⟩
+  letI : Fact (Nat.Prime 5) := ⟨Nat.prime_five⟩
+  obtain ⟨x, hx⟩ := hs
+  have hs' : IsSquare (5 : ZMod r) := by
+    refine ⟨(x : ZMod r), ?_⟩
+    have hc := (cast_eq_iff_mod (x ^ 2) 5 r).mpr hx
+    simpa only [pow_two, Nat.cast_mul, Nat.cast_ofNat] using hc.symm
+  have ht : IsSquare (r : ZMod 5) :=
+    (ZMod.exists_sq_eq_prime_iff_of_mod_four_eq_one
+      (p := 5) (q := r) (by decide) hr2).mpr hs'
+  obtain ⟨y, hy⟩ := ht
+  have hres : r % 5 = y.val ^ 2 % 5 := by
+    apply (cast_eq_iff_mod r (y.val ^ 2) 5).mp
+    simpa only [pow_two, Nat.cast_mul, ZMod.natCast_zmod_val] using hy
+  have hr0 : r % 5 ≠ 0 := by
+    intro hz
+    have hd : 5 ∣ r := Nat.dvd_of_mod_eq_zero hz
+    rcases (Nat.dvd_prime hr).mp hd with hf | hf
+    · norm_num at hf
+    · exact hr5 hf.symm
+  have hylt : y.val < 5 := ZMod.val_lt y
+  have hcases : y.val = 0 ∨ y.val = 1 ∨ y.val = 2 ∨ y.val = 3 ∨ y.val = 4 := by omega
+  rcases hcases with hval | hval | hval | hval | hval <;>
+    norm_num [hval] at hres <;> omega
+
+theorem proof_9_6 : t9_6 := by
+  intro p q r hp hq hr ha hm
+  have hh := collision_two_polynomials ha hm
+  refine ⟨hh.1, hh.2, ?_⟩
+  intro hr2 hr5
+  have hs : ∃ x : ℕ, x ^ 2 % r = 5 % r :=
+    ⟨2 * p + 1, collision_discriminant (by have := hp.two_le; omega) ha hm⟩
+  exact ⟨hs, square_five_residues hr hr2 hr5 hs⟩
+
+theorem proof_9_8 : t9_8 := proof_9_8_from_9_6_9_7 proof_9_6 proof_9_7
+
+end PrimeGPF

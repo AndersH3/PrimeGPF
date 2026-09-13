@@ -1,0 +1,11 @@
+{
+  "reported_user_build": "failed",
+  "lean_version": "4.19.0",
+  "mathlib_setup_succeeded": true,
+  "reported_failed_module": "PrimeGPF.Core",
+  "fixed_core_blocks": 3,
+  "same_pattern_fixed_elementary_blocks": 2,
+  "statements_unchanged": true,
+  "static_checks_passed": true,
+  "compiler_verified_after_fix": false
+}

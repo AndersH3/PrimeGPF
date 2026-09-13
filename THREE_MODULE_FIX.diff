@@ -1,0 +1,80 @@
+--- a/PrimeGPF/SmallFibers.lean
++++ b/PrimeGPF/SmallFibers.lean
+@@ -78,7 +78,8 @@
+   constructor
+   · intro he
+     obtain ⟨m, _, hm⟩ := (odd_gpf_three_iff hn hodd).mp he
+-    exact ⟨m, exponent_three_ge_two (by omega) hm, hm⟩
++    change p + q + 1 = 3 ^ m at hm
++    exact ⟨m, exponent_three_ge_two (n := p + q + 1) (by omega) hm, hm⟩
+   · rintro ⟨m, hm, he⟩
+     exact (odd_gpf_three_iff hn hodd).mpr ⟨m, by omega, he⟩
+ 
+@@ -97,8 +98,12 @@
+     have heq := (hq.dvd_iff_eq (by decide : 3 ≠ 1)).mp hd
+     omega
+   have hd : 3 ∣ p + q + 1 := by simpa [he] using (output_spec .add hp hq).2.1
+-  have hh := Nat.mod_eq_zero_of_dvd hd
+-  omega
++  have hh : (p + q + 1) % 3 = 0 := Nat.mod_eq_zero_of_dvd hd
++  rw [Nat.add_mod (p + q) 1 3, Nat.add_mod p q 3] at hh
++  have hp_cases : p % 3 = 1 ∨ p % 3 = 2 := by omega
++  have hq_cases : q % 3 = 1 ∨ q % 3 = 2 := by omega
++  rcases hp_cases with hp_one | hp_two <;>
++    rcases hq_cases with hq_one | hq_two <;> omega
+ 
+ theorem two_mul_three {q : ℕ} (hq : Nat.Prime q) :
+     mul 2 q = 3 ↔ ∃ m, 2 ≤ m ∧ 2 * q + 1 = 3 ^ m := by
+@@ -108,7 +113,8 @@
+   constructor
+   · intro he
+     obtain ⟨m, _, hm⟩ := (odd_gpf_three_iff hn hodd).mp he
+-    exact ⟨m, exponent_three_ge_two (by omega) hm, hm⟩
++    change 2 * q + 1 = 3 ^ m at hm
++    exact ⟨m, exponent_three_ge_two (n := 2 * q + 1) (by omega) hm, hm⟩
+   · rintro ⟨m, hm, he⟩
+     exact (odd_gpf_three_iff hn hodd).mpr ⟨m, by omega, he⟩
+ 
+--- a/PrimeGPF/Orders.lean
++++ b/PrimeGPF/Orders.lean
+@@ -118,8 +118,15 @@
+       p * p ^ (2 ^ m - 1) = p ^ (2 ^ m - 1 + 1) := by rw [pow_succ]; ring
+       _ = p ^ (2 ^ m) := by rw [hexp]
+   have he : (p * q + 1) % r = (p ^ (2 ^ m) + 1) % r := by
+-    rw [← hpw]
+-    simp only [Nat.add_mod, Nat.mul_mod, hqmod]
++    calc
++      (p * q + 1) % r = (p % r * (q % r) % r + 1 % r) % r := by
++        rw [Nat.add_mod (p * q) 1 r, Nat.mul_mod p q r]
++      _ = (p % r * (p ^ (2 ^ m - 1) % r) % r + 1 % r) % r :=
++        congrArg (fun t : ℕ => (p % r * t % r + 1 % r) % r) hqmod
++      _ = (p * p ^ (2 ^ m - 1) + 1) % r := by
++        rw [Nat.add_mod (p * p ^ (2 ^ m - 1)) 1 r,
++          Nat.mul_mod p (p ^ (2 ^ m - 1)) r]
++      _ = (p ^ (2 ^ m) + 1) % r := by rw [hpw]
+   have hd' : r ∣ p ^ (2 ^ m) + 1 := by
+     apply Nat.dvd_of_mod_eq_zero
+     rw [← he]
+--- a/PrimeGPF/DirectExponential.lean
++++ b/PrimeGPF/DirectExponential.lean
+@@ -18,9 +18,17 @@
+   | zero => simp [oddCofactor]
+   | succ n ih =>
+     have he : 2 * (n + 1) + 1 = (2 * n + 1) + 2 := by omega
+-    rw [oddCofactor, Nat.mul_add, ih, he, pow_add]
+-    nlinarith [congrArg (fun t : ℕ => t * p ^ (2 * n + 1)) hsub,
+-      congrArg (fun t : ℕ => t * (p * p ^ (2 * n + 1))) hsub]
++    have hcoef : 1 + (p + 1) * (p - 1) = p ^ 2 := by
++      nlinarith
++    calc
++      (p + 1) * oddCofactor p (n + 1) =
++          (p ^ (2 * n + 1) + 1) + (p + 1) * ((p - 1) * p ^ (2 * n + 1)) := by
++        rw [oddCofactor, Nat.mul_add, ih]
++      _ = p ^ (2 * n + 1) * (1 + (p + 1) * (p - 1)) + 1 := by ring
++      _ = p ^ (2 * n + 1) * p ^ 2 + 1 := by rw [hcoef]
++      _ = p ^ ((2 * n + 1) + 2) + 1 := by
++        rw [pow_add p (2 * n + 1) 2]
++      _ = p ^ (2 * (n + 1) + 1) + 1 := by rw [he]
+ 
+ theorem oddCofactor_odd {p : ℕ} (hp : 1 ≤ p) (ho : p % 2 = 1)
+     (n : ℕ) : oddCofactor p n % 2 = 1 := by

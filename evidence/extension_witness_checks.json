@@ -1,0 +1,15 @@
+{
+  "formal_verification": false,
+  "notice": "Finite arithmetic checks only; no Lean compiler run.",
+  "counts": {
+    "cofactor_identities": 507,
+    "diagonal_orders": 25,
+    "corrected_dyadic_instances": 85,
+    "collision_instances": 22
+  },
+  "order_dependency_zero_counterexample": [
+    3,
+    2,
+    0
+  ]
+}

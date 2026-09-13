@@ -1,0 +1,8 @@
+{
+  "compiler_verified": false,
+  "import_graph_acyclic": true,
+  "all_local_imports_present": true,
+  "theorem_names_unique": true,
+  "all_theorems_in_axiom_audit": true,
+  "theorem_count": 126
+}

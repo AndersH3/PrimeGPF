@@ -1,0 +1,28 @@
+{
+  "revision": "2026-09-11",
+  "compiler_available": false,
+  "compiler_verified": false,
+  "build_succeeded": false,
+  "reason": "Lean and Lake are absent; the toolchain network request was blocked/cancelled by the environment. No compiler was run.",
+  "pinned_mathlib_source_inspected": true,
+  "mathlib_commit": "c44e0c8ee63ca166450922a373c7409c5d26b00b",
+  "new_full_numbered_scripts": [
+    "3.5",
+    "5.2",
+    "5.3",
+    "5.4",
+    "6.4",
+    "8.1",
+    "8.2",
+    "9.6",
+    "9.8"
+  ],
+  "additional_corrected_full_script": "5.5",
+  "theorem_declarations_in_audit": 126,
+  "source_counts": {
+    "full_script_uncompiled": 31,
+    "false_original": 1,
+    "conditional_script_uncompiled": 5,
+    "statement_only": 2
+  }
+}

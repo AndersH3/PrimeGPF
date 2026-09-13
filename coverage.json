@@ -1,0 +1,469 @@
+{
+  "complete_formalization": false,
+  "compiler_available_during_authoring": false,
+  "lean_target": "4.19.0",
+  "mathlib_target": "v4.19.0",
+  "results": [
+    {
+      "id": "3.1",
+      "title": "Closure and divisibility",
+      "statement": "t3_1",
+      "proofs": [
+        "proof_3_1"
+      ],
+      "compiler_verified": false,
+      "status": "full_script_uncompiled",
+      "note": "Complete target has a proof script; no compiler acceptance claimed."
+    },
+    {
+      "id": "3.2",
+      "title": "Commutativity",
+      "statement": "t3_2",
+      "proofs": [
+        "proof_3_2"
+      ],
+      "compiler_verified": false,
+      "status": "full_script_uncompiled",
+      "note": "Complete target has a proof script; no compiler acceptance claimed."
+    },
+    {
+      "id": "3.3",
+      "title": "Nonassociativity",
+      "statement": "t3_3",
+      "proofs": [
+        "proof_3_3"
+      ],
+      "compiler_verified": false,
+      "status": "full_script_uncompiled",
+      "note": "Complete target has a proof script; no compiler acceptance claimed."
+    },
+    {
+      "id": "3.4",
+      "title": "Anti-projection, idempotents, identities",
+      "statement": "t3_4",
+      "proofs": [
+        "proof_3_4"
+      ],
+      "compiler_verified": false,
+      "status": "full_script_uncompiled",
+      "note": "Complete target has a proof script; no compiler acceptance claimed."
+    },
+    {
+      "id": "3.5",
+      "title": "Odd-prime closure",
+      "statement": "t3_5",
+      "proofs": [
+        "proof_3_5",
+        "proof_3_5_from_8_1"
+      ],
+      "compiler_verified": false,
+      "status": "full_script_uncompiled",
+      "note": "Direct exponential argument; no Zsigmondy input. New script; NOT compiler-verified."
+    },
+    {
+      "id": "3.6",
+      "title": "Cancellation and distributivity",
+      "statement": "t3_6",
+      "proofs": [
+        "proof_3_6"
+      ],
+      "compiler_verified": false,
+      "status": "full_script_uncompiled",
+      "note": "Complete target has a proof script; no compiler acceptance claimed."
+    },
+    {
+      "id": "3.7",
+      "title": "Mixed associativity",
+      "statement": "t3_7",
+      "proofs": [
+        "proof_3_7"
+      ],
+      "compiler_verified": false,
+      "status": "full_script_uncompiled",
+      "note": "Complete target has a proof script; no compiler acceptance claimed."
+    },
+    {
+      "id": "3.8",
+      "title": "Monotonicity",
+      "statement": "t3_8",
+      "proofs": [
+        "proof_3_8"
+      ],
+      "compiler_verified": false,
+      "status": "full_script_uncompiled",
+      "note": "Complete target has a proof script; no compiler acceptance claimed."
+    },
+    {
+      "id": "4.1",
+      "title": "Exact fibers",
+      "statement": "t4_1",
+      "proofs": [
+        "proof_4_1"
+      ],
+      "compiler_verified": false,
+      "status": "full_script_uncompiled",
+      "note": "Complete target has a proof script; no compiler acceptance claimed."
+    },
+    {
+      "id": "4.2",
+      "title": "Prime and two outputs",
+      "statement": "t4_2",
+      "proofs": [
+        "proof_4_2"
+      ],
+      "compiler_verified": false,
+      "status": "full_script_uncompiled",
+      "note": "Complete target has a proof script; no compiler acceptance claimed."
+    },
+    {
+      "id": "4.3",
+      "title": "Small fibers",
+      "statement": "t4_3",
+      "proofs": [
+        "proof_4_3"
+      ],
+      "compiler_verified": false,
+      "status": "full_script_uncompiled",
+      "note": "Complete target has a proof script; no compiler acceptance claimed."
+    },
+    {
+      "id": "5.1",
+      "title": "Modular inverses",
+      "statement": "t5_1",
+      "proofs": [
+        "proof_5_1"
+      ],
+      "compiler_verified": false,
+      "status": "full_script_uncompiled",
+      "note": "Complete target has a proof script; no compiler acceptance claimed."
+    },
+    {
+      "id": "5.2",
+      "title": "Diagonal order and congruence",
+      "statement": "t5_2",
+      "proofs": [
+        "proof_5_2"
+      ],
+      "compiler_verified": false,
+      "status": "full_script_uncompiled",
+      "note": "Finite-field dyadic order and positive-order divisibility. New script; NOT compiler-verified."
+    },
+    {
+      "id": "5.3",
+      "title": "Diagonal orbits",
+      "statement": "t5_3",
+      "proofs": [
+        "proof_5_3",
+        "proof_5_3_from_5_2"
+      ],
+      "compiler_verified": false,
+      "status": "full_script_uncompiled",
+      "note": "Discharged using the new proof_5_2. New script; NOT compiler-verified."
+    },
+    {
+      "id": "5.4",
+      "title": "Legendre-symbol constraint",
+      "statement": "t5_4",
+      "proofs": [
+        "proof_5_4"
+      ],
+      "compiler_verified": false,
+      "status": "full_script_uncompiled",
+      "note": "Custom quadratic character identified with mathlib quadraticChar. New script; NOT compiler-verified."
+    },
+    {
+      "id": "5.5",
+      "title": "Dyadic cyclotomic forcing",
+      "statement": "t5_5_original",
+      "proofs": [
+        "counterexample_5_5",
+        "refutation_5_5"
+      ],
+      "compiler_verified": false,
+      "status": "false_original",
+      "note": "Original remains false; separate proof_5_5_corrected supplies the complete corrected statement with r \u2260 2, uncompiled."
+    },
+    {
+      "id": "5.6",
+      "title": "Parity split",
+      "statement": "t5_6",
+      "proofs": [
+        "proof_5_6"
+      ],
+      "compiler_verified": false,
+      "status": "full_script_uncompiled",
+      "note": "Complete target has a proof script; no compiler acceptance claimed."
+    },
+    {
+      "id": "6.1",
+      "title": "Progressions and PNT-AP",
+      "statement": "t6_1",
+      "proofs": [
+        "proof_6_1_from_PNT_AP",
+        "multiplicative_progression",
+        "additive_progression",
+        "additive_degenerate_progression"
+      ],
+      "compiler_verified": false,
+      "status": "conditional_script_uncompiled",
+      "note": "All arithmetic and exact counting identities supplied; PrimeAPInput (PNT-AP limit) remains unproved."
+    },
+    {
+      "id": "6.2",
+      "title": "Polylogarithmic fibers",
+      "statement": "t6_2",
+      "proofs": [],
+      "compiler_verified": false,
+      "status": "statement_only",
+      "note": "Statement only; exponent-vector counting and uniform asymptotic bound remain."
+    },
+    {
+      "id": "6.3",
+      "title": "Zero density",
+      "statement": "t6_3",
+      "proofs": [],
+      "compiler_verified": false,
+      "status": "statement_only",
+      "note": "Statement only; limits and uniform pair bound remain."
+    },
+    {
+      "id": "6.4",
+      "title": "Unbounded sections",
+      "statement": "t6_4",
+      "proofs": [
+        "proof_6_4"
+      ],
+      "compiler_verified": false,
+      "status": "full_script_uncompiled",
+      "note": "All three clauses, using mathlib Dirichlet primes in residue classes. New script; NOT compiler-verified."
+    },
+    {
+      "id": "7.1",
+      "title": "Additive fixed points",
+      "statement": "t7_1",
+      "proofs": [
+        "proof_7_1"
+      ],
+      "compiler_verified": false,
+      "status": "full_script_uncompiled",
+      "note": "Complete target has a proof script; no compiler acceptance claimed."
+    },
+    {
+      "id": "7.2",
+      "title": "Multiplicative fixed points",
+      "statement": "t7_2",
+      "proofs": [
+        "proof_7_2"
+      ],
+      "compiler_verified": false,
+      "status": "full_script_uncompiled",
+      "note": "Complete target has a proof script; no compiler acceptance claimed."
+    },
+    {
+      "id": "7.3",
+      "title": "Anchor-two additive dynamics",
+      "statement": "t7_3",
+      "proofs": [
+        "proof_7_3"
+      ],
+      "compiler_verified": false,
+      "status": "full_script_uncompiled",
+      "note": "Complete target has a proof script; no compiler acceptance claimed."
+    },
+    {
+      "id": "7.4",
+      "title": "Dual self-output",
+      "statement": "t7_4",
+      "proofs": [
+        "proof_7_4"
+      ],
+      "compiler_verified": false,
+      "status": "full_script_uncompiled",
+      "note": "Complete target has a proof script; no compiler acceptance claimed."
+    },
+    {
+      "id": "7.5",
+      "title": "Finite-state periodicity",
+      "statement": "t7_5",
+      "proofs": [
+        "proof_7_5"
+      ],
+      "compiler_verified": false,
+      "status": "full_script_uncompiled",
+      "note": "Complete target has a proof script; no compiler acceptance claimed."
+    },
+    {
+      "id": "8.1",
+      "title": "No output two",
+      "statement": "t8_1",
+      "proofs": [
+        "proof_8_1",
+        "proof_8_1_from_8_3"
+      ],
+      "compiler_verified": false,
+      "status": "full_script_uncompiled",
+      "note": "Direct odd-cofactor argument, independently of primitive divisors. New script; NOT compiler-verified."
+    },
+    {
+      "id": "8.2",
+      "title": "Exponent-two congruence",
+      "statement": "t8_2",
+      "proofs": [
+        "proof_8_2",
+        "proof_8_2_from_5_2"
+      ],
+      "compiler_verified": false,
+      "status": "full_script_uncompiled",
+      "note": "Discharged using the new diagonal congruence. New script; NOT compiler-verified."
+    },
+    {
+      "id": "8.3",
+      "title": "Zsigmondy lower bound",
+      "statement": "t8_3",
+      "proofs": [
+        "proof_8_3_from_zsigmondy",
+        "proof_8_3_from_external"
+      ],
+      "compiler_verified": false,
+      "status": "conditional_script_uncompiled",
+      "note": "Only ZsigmondyInput remains an explicit unproved input to this new wrapper. Positive-order divisibility and 8.1 have proof scripts. NOT compiler-verified."
+    },
+    {
+      "id": "8.4",
+      "title": "Near anti-projection",
+      "statement": "t8_4",
+      "proofs": [
+        "proof_8_4_from_zsigmondy",
+        "proof_8_4_from_bounds"
+      ],
+      "compiler_verified": false,
+      "status": "conditional_script_uncompiled",
+      "note": "Only ZsigmondyInput remains an explicit unproved input to this new wrapper. Positive-order divisibility and 8.1 have proof scripts. NOT compiler-verified."
+    },
+    {
+      "id": "8.5",
+      "title": "Exponential dynamics",
+      "statement": "t8_5",
+      "proofs": [
+        "proof_8_5_from_zsigmondy",
+        "proof_8_5_from_bounds"
+      ],
+      "compiler_verified": false,
+      "status": "conditional_script_uncompiled",
+      "note": "Only ZsigmondyInput remains an explicit unproved input to this new wrapper. Positive-order divisibility and 8.1 have proof scripts. NOT compiler-verified."
+    },
+    {
+      "id": "9.1",
+      "title": "Bridge identities",
+      "statement": "t9_1",
+      "proofs": [
+        "proof_9_1"
+      ],
+      "compiler_verified": false,
+      "status": "full_script_uncompiled",
+      "note": "Complete target has a proof script; no compiler acceptance claimed."
+    },
+    {
+      "id": "9.2",
+      "title": "Second-column rigidity",
+      "statement": "t9_2",
+      "proofs": [
+        "proof_9_2"
+      ],
+      "compiler_verified": false,
+      "status": "full_script_uncompiled",
+      "note": "Complete target has a proof script; no compiler acceptance claimed."
+    },
+    {
+      "id": "9.3",
+      "title": "Exponential dominance",
+      "statement": "t9_3",
+      "proofs": [
+        "proof_9_3_from_zsigmondy",
+        "proof_9_3_from_8_3"
+      ],
+      "compiler_verified": false,
+      "status": "conditional_script_uncompiled",
+      "note": "Only ZsigmondyInput remains an explicit unproved input to this new wrapper. Positive-order divisibility and 8.1 have proof scripts. NOT compiler-verified."
+    },
+    {
+      "id": "9.4",
+      "title": "Collision compatibility",
+      "statement": "t9_4",
+      "proofs": [
+        "proof_9_4"
+      ],
+      "compiler_verified": false,
+      "status": "full_script_uncompiled",
+      "note": "Complete target has a proof script; no compiler acceptance claimed."
+    },
+    {
+      "id": "9.5",
+      "title": "Finite common outputs",
+      "statement": "t9_5",
+      "proofs": [
+        "proof_9_5"
+      ],
+      "compiler_verified": false,
+      "status": "full_script_uncompiled",
+      "note": "Complete target has a proof script; no compiler acceptance claimed."
+    },
+    {
+      "id": "9.6",
+      "title": "Quadratic-residue restriction",
+      "statement": "t9_6",
+      "proofs": [
+        "proof_9_6",
+        "collision_two_polynomials"
+      ],
+      "compiler_verified": false,
+      "status": "full_script_uncompiled",
+      "note": "Explicit discriminant square and quadratic reciprocity at five. New script; NOT compiler-verified."
+    },
+    {
+      "id": "9.7",
+      "title": "Multiplicative-exponential obstruction",
+      "statement": "t9_7",
+      "proofs": [
+        "proof_9_7"
+      ],
+      "compiler_verified": false,
+      "status": "full_script_uncompiled",
+      "note": "Complete target has a proof script; no compiler acceptance claimed."
+    },
+    {
+      "id": "9.8",
+      "title": "Triple obstruction",
+      "statement": "t9_8",
+      "proofs": [
+        "proof_9_8",
+        "proof_9_8_from_9_6_9_7"
+      ],
+      "compiler_verified": false,
+      "status": "full_script_uncompiled",
+      "note": "Discharged using the new proof_9_6 and existing proof_9_7. New script; NOT compiler-verified."
+    }
+  ],
+  "revision": "2026-09-11 proof extension",
+  "additional_obligations": [
+    {
+      "statement": "t5_5_corrected",
+      "proof": "proof_5_5_corrected",
+      "status": "full_script_uncompiled",
+      "compiler_verified": false
+    },
+    {
+      "statement": "OrderDividesPrimePred",
+      "proof": "proof_order_dependency",
+      "status": "full_script_uncompiled",
+      "note": "Corrected to require 0 < k. Original refuted at (r,p,k)=(3,2,0).",
+      "compiler_verified": false
+    }
+  ],
+  "counts": {
+    "full_script_uncompiled": 31,
+    "false_original": 1,
+    "conditional_script_uncompiled": 5,
+    "statement_only": 2
+  }
+}

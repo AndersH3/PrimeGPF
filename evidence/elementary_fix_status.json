@@ -1,0 +1,12 @@
+{
+  "user_reported_lean_version": "4.19.0",
+  "user_reported_compiled_modules": [
+    "PrimeGPF.Core",
+    "PrimeGPF.Statements"
+  ],
+  "user_reported_failed_module": "PrimeGPF.Elementary",
+  "reported_line": 190,
+  "change": "Replace omega with Nat.succ_pos _ for positivity of a natural successor.",
+  "compiler_verified_after_change": false,
+  "static_checks_passed": true
+}
