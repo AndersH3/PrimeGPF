@@ -36,8 +36,8 @@ jobs:
       - name: Build PrimeGPF
         run: lake build
 
-      - name: Check PrimeAP experiment
-        run: lake env lean PrimeAPExperiment.lean
+      - name: Compile PrimeAP experiment module
+        run: lake env lean -o .lake/build/lib/lean/PrimeAPExperiment.olean PrimeAPExperiment.lean
 
       - name: Check theta/Kronecker experiment
         run: lake env lean PrimeAPThetaExperiment.lean
