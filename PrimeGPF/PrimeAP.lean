@@ -15,7 +15,7 @@ theorem apCount_log_limit {r c : ℕ} (hr : Nat.Prime r) (hc0 : 0 < c) (hcr : c 
   have hc : IsUnit (c : ZMod r) := by
     apply isUnit_iff_ne_zero.mpr
     intro hz
-    have hd := (ZMod.natCast_zmod_eq_zero_iff_dvd c r).mp hz
+    have hd := (cast_zero_iff_dvd c r).mp hz
     have := Nat.mod_eq_zero_of_dvd hd
     rw [Nat.mod_eq_of_lt hcr] at this
     omega
@@ -47,7 +47,9 @@ theorem proof_primeAP_dependency : PrimeAPInput := by
   have hh := (apCount_log_limit hr hc0 hcr).const_mul ((r : ℝ) - 1)
   have ht : ((r.totient : ℕ) : ℝ) = (r : ℝ) - 1 := by
     rw [Nat.totient_prime hr, Nat.cast_sub hr.one_lt.le, Nat.cast_one]
-  have hd : (r : ℝ) - 1 ≠ 0 := by have := hr.two_le; norm_cast; omega
+  have hd : (r : ℝ) - 1 ≠ 0 := by
+    have hgt : (1 : ℝ) < r := by exact_mod_cast hr.one_lt
+    linarith
   have hlim : ((r : ℝ) - 1) * (r.totient : ℝ)⁻¹ = 1 := by
     rw [ht, mul_inv_cancel₀ hd]
   rw [hlim] at hh

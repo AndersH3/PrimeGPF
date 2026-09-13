@@ -29,7 +29,7 @@ theorem weighted_count_upper {S : Finset ℕ} {N : ℕ} (hN : 1 ≤ N)
   have hlog : 0 ≤ Real.log (N : ℝ) := Real.log_nonneg (by exact_mod_cast hN)
   have hcard : (S.card : ℝ) = low.card + high.card := by
     exact_mod_cast (Finset.filter_card_add_filter_neg_card_eq_card
-      (fun n : ℕ => (n : ℝ) ≤ (N : ℝ) ^ δ) S).symm
+      (s := S) (fun n : ℕ => (n : ℝ) ≤ (N : ℝ) ^ δ)).symm
   have hlow : (low.card : ℝ) ≤ (N : ℝ) ^ δ + 1 := by
     have hsub : low ⊆ Finset.range (⌊(N : ℝ) ^ δ⌋₊ + 1) := by
       intro n hn
@@ -71,8 +71,15 @@ theorem small_cutoff_limit {δ : ℝ} (hδ : δ < 1) :
     rw [← Real.rpow_add hn]
     simp
   dsimp
-  field_simp
-  nlinarith [hid]
+  have hquot : Real.log (N : ℝ) / (N : ℝ) ^ (1 - δ) =
+      (N : ℝ) ^ δ * Real.log (N : ℝ) / N := by
+    apply (div_eq_div_iff (ne_of_gt (Real.rpow_pos_of_pos hn _)) hn.ne').mpr
+    calc
+      Real.log (N : ℝ) * N =
+          Real.log (N : ℝ) * ((N : ℝ) ^ (1 - δ) * (N : ℝ) ^ δ) := by rw [hid]
+      _ = _ := by ring
+  rw [hquot]
+  ring
 
 /-- Convert a log-weighted asymptotic to an ordinary counting asymptotic. -/
 theorem counting_limit_of_weighted {S : ℕ → Finset ℕ} {A : ℝ} (hA : 0 < A)
@@ -102,9 +109,14 @@ theorem counting_limit_of_weighted {S : ℕ → Finset ℕ} {A : ℝ} (hA : 0 < 
     apply lt_of_le_of_lt _ hNu
     have hn : (0 : ℝ) < N := by exact_mod_cast (show 0 < N by omega)
     have hb := weighted_count_upper hN (fun n hn => (hS N n hn).1) hδ0
-    apply (le_div_iff₀ hn).mpr
-    have := (div_le_div_of_nonneg_right hb hδ0.le)
-    field_simp at this ⊢
-    nlinarith
+    calc
+      _ = ((S N).card : ℝ) * (δ * Real.log N) / ((N : ℝ) * δ) := by
+        field_simp [hn.ne', hδ0.ne']
+      _ ≤ (((N : ℝ) ^ δ + 1) * (δ * Real.log N) + ∑ n ∈ S N, Real.log n) /
+          ((N : ℝ) * δ) :=
+        div_le_div_of_nonneg_right hb (mul_nonneg hn.le hδ0.le)
+      _ = _ := by
+        field_simp [hn.ne', hδ0.ne']
+        <;> ring
 
 end PrimeGPF.Analytic
