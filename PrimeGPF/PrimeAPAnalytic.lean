@@ -4,6 +4,13 @@ namespace PrimeGPF.Analytic
 open ArithmeticFunction Filter Finset Real Asymptotics
 open scoped Topology
 
+local instance {E : Type*} : Coe (E → ℝ) (E → ℂ) := ⟨fun f n => f n⟩
+
+theorem nat_Iic_eq_range (N : ℕ) : Finset.Iic N = Finset.range (N + 1) := by
+  ext n
+  simp only [Finset.mem_Iic, Finset.mem_range]
+  omega
+
 noncomputable def psi (f : ℕ → ℝ) (N : ℕ) : ℝ := ∑ n ∈ Finset.Iic N, f n
 noncomputable def theta (f : ℕ → ℝ) (N : ℕ) : ℝ :=
   ∑ n ∈ (Finset.Iic N).filter Nat.Prime, f n
@@ -16,10 +23,10 @@ theorem mangoldt_AP_limit {q : ℕ} (hq : 0 < q) (a : ZMod q) (ha : IsUnit a) :
   let f := vonMangoldt.residueClass a
   have hpos : ∀ n, 0 ≤ f n := vonMangoldt.residueClass_nonneg a
   have hle : ∀ n, f n ≤ vonMangoldt n := vonMangoldt.residueClass_le a
-  have hs (σ : ℝ) (hσ : 1 < σ) : Summable (nterm f σ) := by
-    have hs0 : Summable (nterm (fun n => (vonMangoldt n : ℝ)) σ) := by
+  have hs (sigma : ℝ) (hsigma : 1 < sigma) : Summable (nterm f sigma) := by
+    have hs0 : Summable (nterm (fun n => (vonMangoldt n : ℝ)) sigma) := by
       simpa only [← nterm_eq_norm_term] using
-        (@ArithmeticFunction.LSeriesSummable_vonMangoldt σ hσ).norm
+        (@ArithmeticFunction.LSeriesSummable_vonMangoldt sigma hsigma).norm
     apply Summable.of_nonneg_of_le _ _ hs0
     · intro n
       unfold nterm
@@ -56,7 +63,7 @@ theorem psi_limit_of_cumsum {f : ℕ → ℝ} {A : ℝ}
     · exact Eventually.of_forall fun n => div_nonneg (hf n).1 (Nat.cast_nonneg n)
     · exact Eventually.of_forall fun n => div_le_div_of_nonneg_right (hf n).2 (Nat.cast_nonneg n)
   have he (N : ℕ) : psi f N / N = cumsum f N / N + f N / N := by
-    simp only [psi, Nat.Iic_eq_range, Finset.sum_range_succ, cumsum, add_div]
+    simp only [psi, nat_Iic_eq_range, Finset.sum_range_succ, cumsum, add_div]
   simpa only [he, add_zero] using h.add hsmall
 
 /-- The total contribution of nonprime prime powers is negligible. -/
@@ -68,9 +75,13 @@ theorem total_prime_power_error :
   have hθ : Tendsto (fun N : ℕ => theta (fun n => vonMangoldt n) N / N) atTop (𝓝 1) := by
     have he := (isEquivalent_iff_tendsto_one (eventually_ne_atTop (0 : ℝ))).mp chebyshev_asymptotic
     have hh := he.comp (tendsto_natCast_atTop_atTop : Tendsto (fun n : ℕ => (n : ℝ)) atTop atTop)
+    change Tendsto (fun N : ℕ =>
+      (∑ p ∈ (Finset.Iic ⌊(N : ℝ)⌋₊).filter Nat.Prime, Real.log p) / N)
+      atTop (𝓝 1) at hh
+    simp only [Nat.floor_natCast] at hh
     convert hh using 1
     ext N
-    simp only [Nat.floor_natCast, theta]
+    unfold theta
     congr 1
     apply Finset.sum_congr rfl
     intro n hn

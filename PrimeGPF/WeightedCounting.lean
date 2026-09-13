@@ -1,5 +1,6 @@
 import Mathlib.Analysis.SpecialFunctions.Pow.Asymptotics
 import Mathlib.Tactic
+import PrimeGPF.PNT.Mathlib.Analysis.SpecialFunctions.Log.Basic
 
 namespace PrimeGPF.Analytic
 open Filter Finset Real
@@ -22,13 +23,13 @@ theorem weighted_count_upper {S : Finset ℕ} {N : ℕ} (hN : 1 ≤ N)
     (S.card : ℝ) * (δ * Real.log N) ≤
       ((N : ℝ) ^ δ + 1) * (δ * Real.log N) + ∑ n ∈ S, Real.log n := by
   classical
-  let low := S.filter (fun n => (n : ℝ) ≤ (N : ℝ) ^ δ)
-  let high := S.filter (fun n => ¬ (n : ℝ) ≤ (N : ℝ) ^ δ)
+  let low := S.filter (fun n : ℕ => (n : ℝ) ≤ (N : ℝ) ^ δ)
+  let high := S.filter (fun n : ℕ => ¬ (n : ℝ) ≤ (N : ℝ) ^ δ)
   have hNpos : (0 : ℝ) < N := by exact_mod_cast (show 0 < N by omega)
   have hlog : 0 ≤ Real.log (N : ℝ) := Real.log_nonneg (by exact_mod_cast hN)
   have hcard : (S.card : ℝ) = low.card + high.card := by
     exact_mod_cast (Finset.filter_card_add_filter_neg_card_eq_card
-      (fun n => (n : ℝ) ≤ (N : ℝ) ^ δ) S).symm
+      (fun n : ℕ => (n : ℝ) ≤ (N : ℝ) ^ δ) S).symm
   have hlow : (low.card : ℝ) ≤ (N : ℝ) ^ δ + 1 := by
     have hsub : low ⊆ Finset.range (⌊(N : ℝ) ^ δ⌋₊ + 1) := by
       intro n hn
@@ -71,7 +72,7 @@ theorem small_cutoff_limit {δ : ℝ} (hδ : δ < 1) :
     simp
   dsimp
   field_simp
-  nlinarith [congrArg (fun x : ℝ => x * Real.log (N : ℝ)) hid]
+  nlinarith [hid]
 
 /-- Convert a log-weighted asymptotic to an ordinary counting asymptotic. -/
 theorem counting_limit_of_weighted {S : ℕ → Finset ℕ} {A : ℝ} (hA : 0 < A)
@@ -81,7 +82,7 @@ theorem counting_limit_of_weighted {S : ℕ → Finset ℕ} {A : ℝ} (hA : 0 < 
   apply tendsto_order.2
   constructor
   · intro l hl
-    filter_upwards [h.eventually (gt_mem_nhds hl)] with N hN
+    filter_upwards [h.eventually (lt_mem_nhds hl)] with N hN
     exact hN.trans_le (div_le_div_of_nonneg_right (weighted_count_lower (hS N))
       (Nat.cast_nonneg N))
   · intro u hu
@@ -97,17 +98,13 @@ theorem counting_limit_of_weighted {S : ℕ → Finset ℕ} {A : ℝ} (hA : 0 < 
         ((N : ℝ) ^ δ + 1) * Real.log N / N +
           ((∑ n ∈ S N, Real.log n) / N) / δ) atTop (𝓝 (A / δ)) := by
       simpa using (small_cutoff_limit hδhigh).add (h.div_const δ)
-    filter_upwards [hh.eventually (lt_mem_nhds hlim), eventually_ge_atTop (1 : ℕ)] with N hNu hN
+    filter_upwards [hh.eventually (gt_mem_nhds hlim), eventually_ge_atTop (1 : ℕ)] with N hNu hN
     apply lt_of_le_of_lt _ hNu
     have hn : (0 : ℝ) < N := by exact_mod_cast (show 0 < N by omega)
     have hb := weighted_count_upper hN (fun n hn => (hS N n hn).1) hδ0
-    calc
-      _ = ((S N).card : ℝ) * (δ * Real.log N) / ((N : ℝ) * δ) := by
-        field_simp
-      _ ≤ (((N : ℝ) ^ δ + 1) * (δ * Real.log N) + ∑ n ∈ S N, Real.log n) /
-          ((N : ℝ) * δ) := div_le_div_of_nonneg_right hb (mul_nonneg hn.le hδ0.le)
-      _ = _ := by
-        field_simp
-        ring
+    apply (le_div_iff₀ hn).mpr
+    have := (div_le_div_of_nonneg_right hb hδ0.le)
+    field_simp at this ⊢
+    nlinarith
 
 end PrimeGPF.Analytic

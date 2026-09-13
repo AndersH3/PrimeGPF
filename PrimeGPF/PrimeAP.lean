@@ -15,7 +15,7 @@ theorem apCount_log_limit {r c : ℕ} (hr : Nat.Prime r) (hc0 : 0 < c) (hcr : c 
   have hc : IsUnit (c : ZMod r) := by
     apply isUnit_iff_ne_zero.mpr
     intro hz
-    have hd := (cast_zero_iff_dvd c r).mp hz
+    have hd := (ZMod.natCast_zmod_eq_zero_iff_dvd c r).mp hz
     have := Nat.mod_eq_zero_of_dvd hd
     rw [Nat.mod_eq_of_lt hcr] at this
     omega
@@ -23,7 +23,7 @@ theorem apCount_log_limit {r c : ℕ} (hr : Nat.Prime r) (hc0 : 0 < c) (hcr : c 
     (fun n => Nat.Prime n ∧ n % r = c % r)
   have he (N : ℕ) : (∑ n ∈ S N, Real.log n) =
       Analytic.theta (vonMangoldt.residueClass (c : ZMod r)) N := by
-    simp only [S, Analytic.theta, Nat.Iic_eq_range, Finset.sum_filter]
+    simp only [S, Analytic.theta, Analytic.nat_Iic_eq_range, Finset.sum_filter]
     apply Finset.sum_congr rfl
     intro n hn
     by_cases hp : Nat.Prime n

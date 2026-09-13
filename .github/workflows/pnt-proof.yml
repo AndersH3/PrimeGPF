@@ -19,6 +19,7 @@ jobs:
           curl -sSf https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh | sh -s -- -y --default-toolchain none
           echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
       - uses: actions/cache@v4
+        id: cache
         with:
           path: .lake
           key: prime-gpf-lean419-pnt-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}
@@ -31,3 +32,8 @@ jobs:
         with:
           name: prime-ap-validation
           path: evidence/prime-ap-*
+      - uses: actions/cache/save@v4
+        if: always() && steps.cache.outputs.cache-hit != 'true'
+        with:
+          path: .lake
+          key: prime-gpf-lean419-pnt-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}
