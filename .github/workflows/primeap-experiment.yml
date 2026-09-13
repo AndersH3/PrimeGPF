@@ -6,6 +6,7 @@ on:
       - prove-prime-ap-input-20260913
     paths:
       - 'PrimeAPExperiment.lean'
+      - 'PrimeAPThetaExperiment.lean'
       - 'PrimeGPF/**'
       - 'lakefile.toml'
       - 'lake-manifest.json'
@@ -37,3 +38,6 @@ jobs:
 
       - name: Check PrimeAP experiment
         run: lake env lean PrimeAPExperiment.lean
+
+      - name: Check theta/Kronecker experiment
+        run: lake env lean PrimeAPThetaExperiment.lean
