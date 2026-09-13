@@ -128,6 +128,10 @@ import PrimeGPF
 #print axioms PrimeGPF.exponential_base_unbounded
 #print axioms PrimeGPF.proof_6_4
 
+#print axioms PrimeGPF.factorization_le_natLog
+#print axioms PrimeGPF.factorization_le_boxExponent
+#print axioms PrimeGPF.smoothCount_le_smoothBoxBound
+
 -- These types expose remaining hypotheses.
 #check PrimeGPF.proof_8_3_from_zsigmondy
 #check PrimeGPF.proof_6_1_from_PNT_AP

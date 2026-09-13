@@ -124,5 +124,8 @@
 'PrimeGPF.multiplicative_section_unbounded' depends on axioms: [propext, Classical.choice, Quot.sound]
 'PrimeGPF.exponential_base_unbounded' depends on axioms: [propext, Classical.choice, Quot.sound]
 'PrimeGPF.proof_6_4' depends on axioms: [propext, Classical.choice, Quot.sound]
+'PrimeGPF.factorization_le_natLog' depends on axioms: [propext, Classical.choice, Quot.sound]
+'PrimeGPF.factorization_le_boxExponent' depends on axioms: [propext, Classical.choice, Quot.sound]
+'PrimeGPF.smoothCount_le_smoothBoxBound' depends on axioms: [propext, Classical.choice, Quot.sound]
 PrimeGPF.proof_8_3_from_zsigmondy (HZ : PrimeGPF.ZsigmondyInput) : PrimeGPF.Claims.t8_3
 PrimeGPF.proof_6_1_from_PNT_AP (H : PrimeGPF.PrimeAPInput) : PrimeGPF.Claims.t6_1
