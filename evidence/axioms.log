@@ -127,5 +127,8 @@
 'PrimeGPF.factorization_le_natLog' depends on axioms: [propext, Classical.choice, Quot.sound]
 'PrimeGPF.factorization_le_boxExponent' depends on axioms: [propext, Classical.choice, Quot.sound]
 'PrimeGPF.smoothCount_le_smoothBoxBound' depends on axioms: [propext, Classical.choice, Quot.sound]
+'PrimeGPF.smoothBox_factor_real_le' depends on axioms: [propext, Classical.choice, Quot.sound]
+'PrimeGPF.smoothBoxBound_real_le' depends on axioms: [propext, Classical.choice, Quot.sound]
+'PrimeGPF.proof_smoothPolylog' depends on axioms: [propext, Classical.choice, Quot.sound]
 PrimeGPF.proof_8_3_from_zsigmondy (HZ : PrimeGPF.ZsigmondyInput) : PrimeGPF.Claims.t8_3
 PrimeGPF.proof_6_1_from_PNT_AP (H : PrimeGPF.PrimeAPInput) : PrimeGPF.Claims.t6_1

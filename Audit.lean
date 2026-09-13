@@ -132,6 +132,10 @@ import PrimeGPF
 #print axioms PrimeGPF.factorization_le_boxExponent
 #print axioms PrimeGPF.smoothCount_le_smoothBoxBound
 
+#print axioms PrimeGPF.smoothBox_factor_real_le
+#print axioms PrimeGPF.smoothBoxBound_real_le
+#print axioms PrimeGPF.proof_smoothPolylog
+
 -- These types expose remaining hypotheses.
 #check PrimeGPF.proof_8_3_from_zsigmondy
 #check PrimeGPF.proof_6_1_from_PNT_AP

@@ -151,4 +151,168 @@ theorem smoothCount_le_smoothBoxBound
     _ = Claims.smoothBoxBound r x := by
       simp [Claims.smoothBoxBound, S, E]
 
+
+/--
+Each individual exponent-box factor is at most
+`(2 / log 2) * log x` once `x ≥ 2`.
+-/
+theorem smoothBox_factor_real_le
+    {p x : ℕ}
+    (hp : Nat.Prime p)
+    (hx : 2 ≤ x) :
+    (((1 + ⌊Real.log (x : ℝ) / Real.log (p : ℝ)⌋₊ : ℕ) : ℝ))
+      ≤ (2 / Real.log 2) * Real.log (x : ℝ) := by
+
+  have hlog2 : 0 < Real.log (2 : ℝ) := by
+    exact Real.log_pos (by norm_num)
+
+  have hp2 : 2 ≤ p := hp.two_le
+  have hp1 : 1 < p := hp.one_lt
+  have hx1 : 1 < x := by omega
+
+  have hlogp : 0 < Real.log (p : ℝ) := by
+    exact Real.log_pos (by exact_mod_cast hp1)
+
+  have hlogx : 0 < Real.log (x : ℝ) := by
+    exact Real.log_pos (by exact_mod_cast hx1)
+
+  have h2p :
+      Real.log (2 : ℝ) ≤ Real.log (p : ℝ) := by
+    apply Real.log_le_log
+    · norm_num
+    · exact_mod_cast hp2
+
+  have h2x :
+      Real.log (2 : ℝ) ≤ Real.log (x : ℝ) := by
+    apply Real.log_le_log
+    · norm_num
+    · exact_mod_cast hx
+
+  let y : ℝ :=
+    Real.log (x : ℝ) / Real.log (p : ℝ)
+
+  have hy0 : 0 ≤ y := by
+    dsimp [y]
+    positivity
+
+  have hfloor :
+      ((⌊y⌋₊ : ℕ) : ℝ) ≤ y := by
+    exact (Nat.le_floor_iff hy0).1 le_rfl
+
+  have hy_le :
+      y ≤ Real.log (x : ℝ) / Real.log (2 : ℝ) := by
+    dsimp [y]
+    exact
+      (div_le_div_iff_of_pos_left hlogx hlogp hlog2).2 h2p
+
+  have hone :
+      (1 : ℝ) ≤ Real.log (x : ℝ) / Real.log (2 : ℝ) := by
+    rw [le_div_iff₀ hlog2]
+    simpa using h2x
+
+  change
+    ((1 + ⌊y⌋₊ : ℕ) : ℝ)
+      ≤ (2 / Real.log 2) * Real.log (x : ℝ)
+
+  calc
+    ((1 + ⌊y⌋₊ : ℕ) : ℝ)
+        = 1 + ((⌊y⌋₊ : ℕ) : ℝ) := by
+            norm_num
+    _ ≤ 1 + y := by
+          exact add_le_add_left hfloor 1
+    _ ≤ Real.log (x : ℝ) / Real.log 2
+          + Real.log (x : ℝ) / Real.log 2 := by
+          exact add_le_add hone hy_le
+    _ = (2 / Real.log 2) * Real.log (x : ℝ) := by
+          ring
+
+/--
+The explicit box bound is bounded by a fixed power of log x.
+The constant depends only on r.
+-/
+theorem smoothBoxBound_real_le
+    (r x : ℕ)
+    (hx : 2 ≤ x) :
+    (Claims.smoothBoxBound r x : ℝ)
+      ≤ (2 / Real.log 2) ^ Claims.primeCount r
+          * (Real.log (x : ℝ)) ^ Claims.primeCount r := by
+  classical
+
+  let S : Finset ℕ :=
+    (Finset.range (r + 1)).filter Nat.Prime
+
+  have hprod :
+      (∏ p ∈ S,
+          (((1 +
+            ⌊Real.log (x : ℝ) / Real.log (p : ℝ)⌋₊ : ℕ) : ℝ)))
+        ≤
+      ∏ p ∈ S,
+        ((2 / Real.log 2) * Real.log (x : ℝ)) := by
+    apply Finset.prod_le_prod
+    · intro p hpS
+      positivity
+    · intro p hpS
+      have hp : Nat.Prime p :=
+        (Finset.mem_filter.mp hpS).2
+      exact smoothBox_factor_real_le hp hx
+
+  calc
+    (Claims.smoothBoxBound r x : ℝ)
+        =
+      ∏ p ∈ S,
+        (((1 +
+          ⌊Real.log (x : ℝ) / Real.log (p : ℝ)⌋₊ : ℕ) : ℝ)) := by
+          simp [Claims.smoothBoxBound, S, Nat.cast_prod]
+
+    _ ≤
+      ∏ p ∈ S,
+        ((2 / Real.log 2) * Real.log (x : ℝ)) :=
+      hprod
+
+    _ =
+      (2 / Real.log 2) ^ Claims.primeCount r
+        * (Real.log (x : ℝ)) ^ Claims.primeCount r := by
+          simp [S, Claims.primeCount, mul_pow]
+
+/--
+Unconditional smooth-number polylogarithmic estimate.
+No primality assumption on r is needed.
+-/
+theorem proof_smoothPolylog (r : ℕ) :
+    Claims.SmoothPolylog r := by
+
+  let C : ℝ :=
+    (2 / Real.log 2) ^ Claims.primeCount r
+
+  refine ⟨C, ?_, 2, ?_⟩
+
+  · dsimp [C]
+    have hlog2 : 0 < Real.log (2 : ℝ) :=
+      Real.log_pos (by norm_num)
+    positivity
+
+  · intro x hx
+
+    have hcount :
+        (Claims.smoothCount r x : ℝ)
+          ≤ (Claims.smoothBoxBound r x : ℝ) := by
+      exact_mod_cast smoothCount_le_smoothBoxBound r x
+
+    have hbox :=
+      smoothBoxBound_real_le r x hx
+
+    calc
+      (Claims.smoothCount r x : ℝ)
+          ≤ (Claims.smoothBoxBound r x : ℝ) :=
+        hcount
+
+      _ ≤
+        (2 / Real.log 2) ^ Claims.primeCount r
+          * (Real.log (x : ℝ)) ^ Claims.primeCount r :=
+        hbox
+
+      _ =
+        C * (Real.log (x : ℝ)) ^ Claims.primeCount r := by
+        rfl
+
 end PrimeGPF
