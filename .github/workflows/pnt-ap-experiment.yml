@@ -35,12 +35,12 @@ jobs:
           export PATH="$HOME/.elan/bin:$PATH"
           lake exe cache get
 
-      - name: Check PNT-AP experimental module
+      - name: Build PrimeGPF including PNT-AP experiment
         shell: bash
         run: |
           set -euo pipefail
           export PATH="$HOME/.elan/bin:$PATH"
-          lake env lean PrimeGPF/PNTAP.lean 2>&1 | tee pnt-ap-check.log
+          lake build 2>&1 | tee pnt-ap-check.log
 
       - name: Upload diagnostic log
         if: always()
