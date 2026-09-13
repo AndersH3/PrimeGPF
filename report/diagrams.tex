@@ -1,0 +1,38 @@
+% TikZ figures used by prime_gpf_report.tex.
+\newcommand{\FormalDependencyDiagram}{%
+\begin{tikzpicture}[
+  node distance=7mm and 9mm,
+  every node/.style={font=\small,align=center},
+  base/.style={draw,rounded corners,fill=blue!5,minimum width=30mm,minimum height=8mm},
+  verified/.style={draw,rounded corners,fill=green!10,minimum width=32mm,minimum height=8mm},
+  input/.style={draw,rounded corners,fill=orange!14,minimum width=32mm,minimum height=8mm},
+  arr/.style={-{Latex[length=2mm]},thick}
+]
+\node[base] (core) {Core definitions\\\texttt{gpf}, kernels, output};
+\node[base, right=of core] (arith) {Arithmetic, orders,\\quadratic character};
+\node[verified, below=of core] (count) {Unconditional counting\\Theorem 6.2};
+\node[verified, below=of arith] (direct) {Unconditional algebraic\\and dynamical results};
+\node[input, below=of count] (pnt) {External input\\\texttt{PrimeAPInput}};
+\node[input, below=of direct] (zsig) {External input\\\texttt{ZsigmondyInput}};
+\node[verified, below=of pnt] (dens) {Conditional wrappers\\6.1 and 6.3};
+\node[verified, below=of zsig] (exp) {Conditional wrappers\\8.3, 8.4, 8.5, 9.3};
+\draw[arr] (core) -- (count);
+\draw[arr] (core) -- (arith);
+\draw[arr] (arith) -- (direct);
+\draw[arr] (count) -- (dens);
+\draw[arr] (pnt) -- (dens);
+\draw[arr] (direct) -- (exp);
+\draw[arr] (zsig) -- (exp);
+\end{tikzpicture}%
+}
+
+\newcommand{\AnchorTwoDiagram}{%
+\begin{tikzpicture}[>=Latex,node distance=22mm,every node/.style={circle,draw,minimum size=9mm,font=\small}]
+\node (two) {$2$};
+\node[right=of two] (five) {$5$};
+\node[below=16mm of $(two)!0.5!(five)$] (three) {$3$};
+\draw[->,thick,bend left=18] (two) to node[above,draw=none,fill=none,font=\scriptsize] {$G_2$} (five);
+\draw[->,thick,bend left=18] (five) to node[below,draw=none,fill=none,font=\scriptsize] {$G_2$} (two);
+\draw[->,thick,loop below] (three) to node[below,draw=none,fill=none,font=\scriptsize] {$G_2$} (three);
+\end{tikzpicture}%
+}
