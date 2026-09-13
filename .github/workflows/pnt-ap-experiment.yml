@@ -43,19 +43,21 @@ jobs:
         run: |
           set -euo pipefail
           # At d3cea the PNT project still carried a local copy of
-          # Nat.finMulAntidiagonal.  PrimeGPF already imports the upstream
-          # mathlib v4.19 module containing the same declarations.  Apply the
-          # later upstream cleanup (PrimeNumberTheoremAnd ddac5cea) locally to
-          # the dependency checkout so the two developments can coexist.
+          # Nat.finMulAntidiagonal. PrimeGPF's pinned mathlib v4.19 already
+          # contains the renamed Nat.finMulAntidiag API. Apply the substance of
+          # the later upstream cleanup locally to this version-compatible
+          # checkout, including the two theorem-name migrations used here.
           AUX=.lake/packages/PrimeNumberTheoremAnd/PrimeNumberTheoremAnd/Mathlib/NumberTheory/Sieve/AuxResults.lean
           SEL=.lake/packages/PrimeNumberTheoremAnd/PrimeNumberTheoremAnd/Mathlib/NumberTheory/Sieve/Selberg.lean
           sed -i \
-            's#import PrimeNumberTheoremAnd.Mathlib.Data.Nat.FinMulAntidiagonal#import Mathlib.Algebra.Order.Antidiag.Nat#' \
+            -e 's#import PrimeNumberTheoremAnd.Mathlib.Data.Nat.FinMulAntidiagonal#import Mathlib.Algebra.Order.Antidiag.Nat#' \
+            -e 's/finMulAntidiagonal_univ_eq/finMulAntidiag_eq_piFinset_divisors_filter/g' \
+            -e 's/card_finMulAntidiagonal/card_finMulAntidiag_of_squarefree/g' \
             "$AUX"
           sed -i \
             's#import Mathlib.NumberTheory.SelbergSieve#import Batteries.Tactic.Lemma#' \
             "$SEL"
-          grep -n 'Antidiag.Nat' "$AUX"
+          grep -n 'Antidiag.Nat\|finMulAntidiag_eq_piFinset_divisors_filter\|card_finMulAntidiag_of_squarefree' "$AUX"
           grep -n 'Batteries.Tactic.Lemma' "$SEL"
 
       - name: Fetch mathlib cache
