@@ -1,0 +1,18 @@
+import PrimeGPF.Progressions
+import PrimeNumberTheoremAnd.Wiener
+
+open Filter Topology
+open ArithmeticFunction
+open ArithmeticFunction.vonMangoldt
+
+#check WienerIkeharaTheorem'
+#check vonMangoldt_cheby
+#check ArithmeticFunction.vonMangoldt.continuousOn_LFunctionResidueClassAux
+#check ArithmeticFunction.vonMangoldt.eqOn_LFunctionResidueClassAux
+#check ArithmeticFunction.vonMangoldt.residueClass_nonneg
+#check ArithmeticFunction.vonMangoldt.residueClass_le
+#check ArithmeticFunction.vonMangoldt.abscissaOfAbsConv_residueClass_le_one
+#check PrimeGPF.PrimeAPInput
+
+#print axioms WienerIkeharaTheorem'
+#print axioms vonMangoldt_cheby
