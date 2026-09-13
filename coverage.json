@@ -174,14 +174,13 @@
     {
       "id": "5.5",
       "title": "Dyadic cyclotomic forcing",
-      "statement": "t5_5_original",
+      "statement": "t5_5",
       "proofs": [
-        "counterexample_5_5",
-        "refutation_5_5"
+        "proof_5_5"
       ],
       "compiler_verified": true,
-      "status": "false_original",
-      "note": "Original remains false; separate proof_5_5_corrected supplies the complete corrected statement with r \u2260 2, uncompiled."
+      "status": "full_script_verified",
+      "note": "Corrected official theorem 5.5. The necessary hypothesis r \u2260 2, where r = mul p q, excludes the exceptional false case. The old printed statement is retained separately as t5_5_original with its verified counterexample and refutation."
     },
     {
       "id": "5.6",
@@ -228,10 +227,17 @@
       "id": "6.3",
       "title": "Zero density",
       "statement": "t6_3",
-      "proofs": [],
-      "compiler_verified": false,
-      "status": "statement_only",
-      "note": "Statement only; limits and uniform pair bound remain."
+      "proofs": [
+        "proof_6_3_from_PNT_AP",
+        "relativeZero_of_polylog_AP",
+        "PrimeAPInput.pairZero_add",
+        "PrimeAPInput.pairZero_mul",
+        "pairCount_add_le",
+        "pairCount_mul_le"
+      ],
+      "compiler_verified": true,
+      "status": "conditional_script_verified",
+      "note": "Complete conditional proof from PrimeAPInput. Relative-density limits use the uniform polylogarithmic fiber bound and exact arithmetic-progression counts; pair-density limits use finite pair-count injections into bounded smooth cofactors. No additional external hypothesis beyond the PNT-AP input already used for 6.1."
     },
     {
       "id": "6.4",
@@ -454,12 +460,6 @@
   "revision": "2026-09-11 proof extension",
   "additional_obligations": [
     {
-      "statement": "t5_5_corrected",
-      "proof": "proof_5_5_corrected",
-      "status": "full_script_uncompiled",
-      "compiler_verified": false
-    },
-    {
       "statement": "OrderDividesPrimePred",
       "proof": "proof_order_dependency",
       "status": "full_script_uncompiled",
@@ -468,9 +468,9 @@
     }
   ],
   "counts": {
-    "full_script_uncompiled": 31,
-    "false_original": 1,
-    "conditional_script_uncompiled": 5,
-    "statement_only": 2
+    "full_script_verified": 33,
+    "conditional_script_verified": 6,
+    "statement_only": 0,
+    "false_original": 0
   }
 }

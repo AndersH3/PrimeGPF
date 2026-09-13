@@ -742,4 +742,361 @@ theorem proof_6_2 : Claims.t6_2 := by
   · intro r x _ _
     exact smoothCount_le_smoothBoxBound r x
 
+
+theorem add_kernel_le_succ_sq
+    {p q x : ℕ}
+    (hpx : p ≤ x)
+    (hqx : q ≤ x) :
+    kernel .add p q ≤ (x + 1) * (x + 1) := by
+  have hsum : p + q ≤ x + x :=
+    Nat.add_le_add hpx hqx
+  simp only [kernel]
+  nlinarith
+
+theorem mul_kernel_le_succ_sq
+    {p q x : ℕ}
+    (hpx : p ≤ x)
+    (hqx : q ≤ x) :
+    kernel .mul p q ≤ (x + 1) * (x + 1) := by
+  have hmul : p * q ≤ x * x :=
+    Nat.mul_le_mul hpx hqx
+  simp only [kernel]
+  nlinarith
+
+theorem fiberCofactor_add_le_succ_sq
+    {p q r x : ℕ}
+    (hp : Nat.Prime p)
+    (hq : Nat.Prime q)
+    (hr : Nat.Prime r)
+    (hout : output .add p q = r)
+    (hpx : p ≤ x)
+    (hqx : q ≤ x) :
+    fiberCofactor .add p r q ≤ (x + 1) * (x + 1) := by
+  have hs := fiberCofactor_spec hp hq hr hout
+  have hsk :
+      fiberCofactor .add p r q ≤ kernel .add p q := by
+    rw [hs.2.2]
+    exact Nat.le_mul_of_pos_left _ hr.pos
+  exact hsk.trans (add_kernel_le_succ_sq hpx hqx)
+
+theorem fiberCofactor_mul_le_succ_sq
+    {p q r x : ℕ}
+    (hp : Nat.Prime p)
+    (hq : Nat.Prime q)
+    (hr : Nat.Prime r)
+    (hout : output .mul p q = r)
+    (hpx : p ≤ x)
+    (hqx : q ≤ x) :
+    fiberCofactor .mul p r q ≤ (x + 1) * (x + 1) := by
+  have hs := fiberCofactor_spec hp hq hr hout
+  have hsk :
+      fiberCofactor .mul p r q ≤ kernel .mul p q := by
+    rw [hs.2.2]
+    exact Nat.le_mul_of_pos_left _ hr.pos
+  exact hsk.trans (mul_kernel_le_succ_sq hpx hqx)
+
+/--
+Additive output-r pairs up to x inject into
+(primes up to x) × (r-smooth numbers up to (x+1)^2).
+-/
+theorem pairCount_add_le
+    {r x : ℕ}
+    (hr : Nat.Prime r) :
+    Claims.pairCount .add r x
+      ≤ Claims.primeCount x *
+          Claims.smoothCount r ((x + 1) * (x + 1)) := by
+  classical
+
+  let A : Finset (ℕ × ℕ) :=
+    (((Finset.range (x + 1)) ×ˢ (Finset.range (x + 1))).filter
+      (fun pq =>
+        Nat.Prime pq.1 ∧
+        Nat.Prime pq.2 ∧
+        output .add pq.1 pq.2 = r))
+
+  let P : Finset ℕ :=
+    (Finset.range (x + 1)).filter Nat.Prime
+
+  let B : Finset ℕ :=
+    (Finset.range ((x + 1) * (x + 1) + 1)).filter (Smooth r)
+
+  let code : {pq // pq ∈ A} → ℕ × ℕ :=
+    fun pq =>
+      (pq.1.1, fiberCofactor .add pq.1.1 r pq.1.2)
+
+  have hcode_mem :
+      ∀ pq : {pq // pq ∈ A}, code pq ∈ P ×ˢ B := by
+    intro pq
+
+    have hpqA := Finset.mem_filter.mp pq.property
+    have hrange := Finset.mem_product.mp hpqA.1
+
+    have hp : Nat.Prime pq.1.1 := hpqA.2.1
+    have hq : Nat.Prime pq.1.2 := hpqA.2.2.1
+    have hout : output .add pq.1.1 pq.1.2 = r :=
+      hpqA.2.2.2
+
+    have hpx : pq.1.1 ≤ x := by
+      have := Finset.mem_range.mp hrange.1
+      omega
+
+    have hqx : pq.1.2 ≤ x := by
+      have := Finset.mem_range.mp hrange.2
+      omega
+
+    have hs :=
+      fiberCofactor_spec hp hq hr hout
+
+    have hle :
+        fiberCofactor .add pq.1.1 r pq.1.2
+          ≤ (x + 1) * (x + 1) :=
+      fiberCofactor_add_le_succ_sq hp hq hr hout hpx hqx
+
+    apply Finset.mem_product.mpr
+    constructor
+    · apply Finset.mem_filter.mpr
+      exact ⟨hrange.1, hp⟩
+    · apply Finset.mem_filter.mpr
+      refine ⟨?_, hs.2.1⟩
+      apply Finset.mem_range.mpr
+      exact Nat.lt_succ_iff.mpr hle
+
+  have hcode_inj : Function.Injective code := by
+    intro u v huv
+
+    have hpEq :
+        u.1.1 = v.1.1 := by
+      have h :=
+        congrArg (fun z : ℕ × ℕ => z.1) huv
+      simpa [code] using h
+
+    have hsEq :
+        fiberCofactor .add u.1.1 r u.1.2 =
+        fiberCofactor .add v.1.1 r v.1.2 := by
+      have h :=
+        congrArg (fun z : ℕ × ℕ => z.2) huv
+      simpa [code] using h
+
+    have huA := Finset.mem_filter.mp u.property
+    have hvA := Finset.mem_filter.mp v.property
+
+    have hup : Nat.Prime u.1.1 := huA.2.1
+    have huq : Nat.Prime u.1.2 := huA.2.2.1
+    have hvp : Nat.Prime v.1.1 := hvA.2.1
+    have hvq : Nat.Prime v.1.2 := hvA.2.2.1
+
+    have hsu :=
+      fiberCofactor_spec hup huq hr huA.2.2.2
+
+    have hsv :=
+      fiberCofactor_spec hvp hvq hr hvA.2.2.2
+
+    have hk :
+        kernel .add u.1.1 u.1.2 =
+        kernel .add v.1.1 v.1.2 := by
+      calc
+        kernel .add u.1.1 u.1.2
+            = r * fiberCofactor .add u.1.1 r u.1.2 :=
+          hsu.2.2
+        _ = r * fiberCofactor .add v.1.1 r v.1.2 := by
+          rw [hsEq]
+        _ = kernel .add v.1.1 v.1.2 :=
+          hsv.2.2.symm
+
+    apply Subtype.ext
+    apply Prod.ext
+    · exact hpEq
+    · simp only [kernel] at hk
+      omega
+
+  let I : Finset (ℕ × ℕ) :=
+    A.attach.image code
+
+  have hI_subset :
+      I ⊆ P ×ˢ B := by
+    intro y hy
+    rcases Finset.mem_image.mp hy with ⟨pq, hpq, rfl⟩
+    exact hcode_mem pq
+
+  have hIcard :
+      I.card = A.card := by
+    dsimp [I]
+    rw [Finset.card_image_of_injective _ hcode_inj]
+    simp
+
+  calc
+    Claims.pairCount .add r x
+        = A.card := by
+          simp [Claims.pairCount, A]
+
+    _ = I.card :=
+      hIcard.symm
+
+    _ ≤ (P ×ˢ B).card :=
+      Finset.card_le_card hI_subset
+
+    _ = P.card * B.card := by
+      simp
+
+    _ =
+      Claims.primeCount x *
+        Claims.smoothCount r ((x + 1) * (x + 1)) := by
+      simp [Claims.primeCount, Claims.smoothCount, P, B]
+
+
+/--
+Multiplicative output-r pairs up to x satisfy the same product bound.
+-/
+theorem pairCount_mul_le
+    {r x : ℕ}
+    (hr : Nat.Prime r) :
+    Claims.pairCount .mul r x
+      ≤ Claims.primeCount x *
+          Claims.smoothCount r ((x + 1) * (x + 1)) := by
+  classical
+
+  let A : Finset (ℕ × ℕ) :=
+    (((Finset.range (x + 1)) ×ˢ (Finset.range (x + 1))).filter
+      (fun pq =>
+        Nat.Prime pq.1 ∧
+        Nat.Prime pq.2 ∧
+        output .mul pq.1 pq.2 = r))
+
+  let P : Finset ℕ :=
+    (Finset.range (x + 1)).filter Nat.Prime
+
+  let B : Finset ℕ :=
+    (Finset.range ((x + 1) * (x + 1) + 1)).filter (Smooth r)
+
+  let code : {pq // pq ∈ A} → ℕ × ℕ :=
+    fun pq =>
+      (pq.1.1, fiberCofactor .mul pq.1.1 r pq.1.2)
+
+  have hcode_mem :
+      ∀ pq : {pq // pq ∈ A}, code pq ∈ P ×ˢ B := by
+    intro pq
+
+    have hpqA := Finset.mem_filter.mp pq.property
+    have hrange := Finset.mem_product.mp hpqA.1
+
+    have hp : Nat.Prime pq.1.1 := hpqA.2.1
+    have hq : Nat.Prime pq.1.2 := hpqA.2.2.1
+    have hout : output .mul pq.1.1 pq.1.2 = r :=
+      hpqA.2.2.2
+
+    have hpx : pq.1.1 ≤ x := by
+      have := Finset.mem_range.mp hrange.1
+      omega
+
+    have hqx : pq.1.2 ≤ x := by
+      have := Finset.mem_range.mp hrange.2
+      omega
+
+    have hs :=
+      fiberCofactor_spec hp hq hr hout
+
+    have hle :
+        fiberCofactor .mul pq.1.1 r pq.1.2
+          ≤ (x + 1) * (x + 1) :=
+      fiberCofactor_mul_le_succ_sq hp hq hr hout hpx hqx
+
+    apply Finset.mem_product.mpr
+    constructor
+    · apply Finset.mem_filter.mpr
+      exact ⟨hrange.1, hp⟩
+    · apply Finset.mem_filter.mpr
+      refine ⟨?_, hs.2.1⟩
+      apply Finset.mem_range.mpr
+      exact Nat.lt_succ_iff.mpr hle
+
+  have hcode_inj : Function.Injective code := by
+    intro u v huv
+
+    have hpEq :
+        u.1.1 = v.1.1 := by
+      have h :=
+        congrArg (fun z : ℕ × ℕ => z.1) huv
+      simpa [code] using h
+
+    have hsEq :
+        fiberCofactor .mul u.1.1 r u.1.2 =
+        fiberCofactor .mul v.1.1 r v.1.2 := by
+      have h :=
+        congrArg (fun z : ℕ × ℕ => z.2) huv
+      simpa [code] using h
+
+    have huA := Finset.mem_filter.mp u.property
+    have hvA := Finset.mem_filter.mp v.property
+
+    have hup : Nat.Prime u.1.1 := huA.2.1
+    have huq : Nat.Prime u.1.2 := huA.2.2.1
+    have hvp : Nat.Prime v.1.1 := hvA.2.1
+    have hvq : Nat.Prime v.1.2 := hvA.2.2.1
+
+    have hsu :=
+      fiberCofactor_spec hup huq hr huA.2.2.2
+
+    have hsv :=
+      fiberCofactor_spec hvp hvq hr hvA.2.2.2
+
+    have hk :
+        kernel .mul u.1.1 u.1.2 =
+        kernel .mul v.1.1 v.1.2 := by
+      calc
+        kernel .mul u.1.1 u.1.2
+            = r * fiberCofactor .mul u.1.1 r u.1.2 :=
+          hsu.2.2
+        _ = r * fiberCofactor .mul v.1.1 r v.1.2 := by
+          rw [hsEq]
+        _ = kernel .mul v.1.1 v.1.2 :=
+          hsv.2.2.symm
+
+    have hmul :
+        v.1.1 * u.1.2 =
+        v.1.1 * v.1.2 := by
+      simp only [kernel] at hk
+      rw [hpEq] at hk
+      omega
+
+    have hqEq :
+        u.1.2 = v.1.2 :=
+      Nat.eq_of_mul_eq_mul_left hvp.pos hmul
+
+    apply Subtype.ext
+    exact Prod.ext hpEq hqEq
+
+  let I : Finset (ℕ × ℕ) :=
+    A.attach.image code
+
+  have hI_subset :
+      I ⊆ P ×ˢ B := by
+    intro y hy
+    rcases Finset.mem_image.mp hy with ⟨pq, hpq, rfl⟩
+    exact hcode_mem pq
+
+  have hIcard :
+      I.card = A.card := by
+    dsimp [I]
+    rw [Finset.card_image_of_injective _ hcode_inj]
+    simp
+
+  calc
+    Claims.pairCount .mul r x
+        = A.card := by
+          simp [Claims.pairCount, A]
+
+    _ = I.card :=
+      hIcard.symm
+
+    _ ≤ (P ×ˢ B).card :=
+      Finset.card_le_card hI_subset
+
+    _ = P.card * B.card := by
+      simp
+
+    _ =
+      Claims.primeCount x *
+        Claims.smoothCount r ((x + 1) * (x + 1)) := by
+      simp [Claims.primeCount, Claims.smoothCount, P, B]
+
 end PrimeGPF

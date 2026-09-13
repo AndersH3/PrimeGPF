@@ -98,6 +98,7 @@
 'PrimeGPF.proof_5_3' depends on axioms: [propext, Classical.choice, Quot.sound]
 'PrimeGPF.proof_8_2' depends on axioms: [propext, Classical.choice, Quot.sound]
 'PrimeGPF.proof_5_5_corrected' depends on axioms: [propext, Classical.choice, Quot.sound]
+'PrimeGPF.proof_5_5' depends on axioms: [propext, Classical.choice, Quot.sound]
 'PrimeGPF.affine_residue' depends on axioms: [propext, Classical.choice, Quot.sound]
 'PrimeGPF.multiplicative_progression' depends on axioms: [propext, Classical.choice, Quot.sound]
 'PrimeGPF.additive_progression' depends on axioms: [propext, Classical.choice, Quot.sound]
@@ -139,5 +140,27 @@
 'PrimeGPF.fiberCount_mul_le_smoothCount_sq' depends on axioms: [propext, Classical.choice, Quot.sound]
 'PrimeGPF.proof_uniformPolylogFibers' depends on axioms: [propext, Classical.choice, Quot.sound]
 'PrimeGPF.proof_6_2' depends on axioms: [propext, Classical.choice, Quot.sound]
+'PrimeGPF.add_kernel_le_succ_sq' depends on axioms: [propext, Classical.choice, Quot.sound]
+'PrimeGPF.mul_kernel_le_succ_sq' depends on axioms: [propext, Classical.choice, Quot.sound]
+'PrimeGPF.pairCount_add_le' depends on axioms: [propext, Classical.choice, Quot.sound]
+'PrimeGPF.pairCount_mul_le' depends on axioms: [propext, Classical.choice, Quot.sound]
+'PrimeGPF.apCount_le_primeCount' depends on axioms: [propext, Classical.choice, Quot.sound]
+'PrimeGPF.primeCount_eq_primeCounting' depends on axioms: [propext, Classical.choice, Quot.sound]
+'PrimeGPF.APAsymptotic.eventually_half_mainTerm_le' depends on axioms: [propext, Classical.choice, Quot.sound]
+'PrimeGPF.PrimeAPInput.eventually_AP3_lower_le_primeCount' depends on axioms: [propext, Classical.choice, Quot.sound]
+'PrimeGPF.isLittleO_log_pow_id_atTop' depends on axioms: [propext, Classical.choice, Quot.sound]
+'PrimeGPF.tendsto_log_pow_div_natCast_atTop' depends on axioms: [propext, Classical.choice, Quot.sound]
+'PrimeGPF.PrimeAPInput.tendsto_log_pow_div_primeCount' depends on axioms: [propext, Classical.choice, Quot.sound]
+'PrimeGPF.smoothCount_succ_sq_polylog' depends on axioms: [propext, Classical.choice, Quot.sound]
+'PrimeGPF.PrimeAPInput.tendsto_smoothCount_succ_sq_div_primeCount' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'PrimeGPF.PrimeAPInput.pairZero_of_pairCount_le' depends on axioms: [propext, Classical.choice, Quot.sound]
+'PrimeGPF.PrimeAPInput.pairZero_add' depends on axioms: [propext, Classical.choice, Quot.sound]
+'PrimeGPF.PrimeAPInput.pairZero_mul' depends on axioms: [propext, Classical.choice, Quot.sound]
+'PrimeGPF.APAsymptotic.tendsto_log_pow_div_apCount' depends on axioms: [propext, Classical.choice, Quot.sound]
+'PrimeGPF.relativeZero_of_polylog_AP' depends on axioms: [propext, Classical.choice, Quot.sound]
+'PrimeGPF.proof_6_3_from_PNT_AP' depends on axioms: [propext, Classical.choice, Quot.sound]
 PrimeGPF.proof_8_3_from_zsigmondy (HZ : PrimeGPF.ZsigmondyInput) : PrimeGPF.Claims.t8_3
 PrimeGPF.proof_6_1_from_PNT_AP (H : PrimeGPF.PrimeAPInput) : PrimeGPF.Claims.t6_1
+PrimeGPF.proof_6_3_from_PNT_AP (H : PrimeGPF.PrimeAPInput) : PrimeGPF.Claims.t6_3

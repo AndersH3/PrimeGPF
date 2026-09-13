@@ -101,6 +101,7 @@ import PrimeGPF
 #print axioms PrimeGPF.proof_5_3
 #print axioms PrimeGPF.proof_8_2
 #print axioms PrimeGPF.proof_5_5_corrected
+#print axioms PrimeGPF.proof_5_5
 #print axioms PrimeGPF.affine_residue
 #print axioms PrimeGPF.multiplicative_progression
 #print axioms PrimeGPF.additive_progression
@@ -146,6 +147,29 @@ import PrimeGPF
 #print axioms PrimeGPF.proof_uniformPolylogFibers
 #print axioms PrimeGPF.proof_6_2
 
+
+-- Counting and asymptotic-density machinery for theorem 6.3.
+#print axioms PrimeGPF.add_kernel_le_succ_sq
+#print axioms PrimeGPF.mul_kernel_le_succ_sq
+#print axioms PrimeGPF.pairCount_add_le
+#print axioms PrimeGPF.pairCount_mul_le
+#print axioms PrimeGPF.apCount_le_primeCount
+#print axioms PrimeGPF.primeCount_eq_primeCounting
+#print axioms PrimeGPF.APAsymptotic.eventually_half_mainTerm_le
+#print axioms PrimeGPF.PrimeAPInput.eventually_AP3_lower_le_primeCount
+#print axioms PrimeGPF.isLittleO_log_pow_id_atTop
+#print axioms PrimeGPF.tendsto_log_pow_div_natCast_atTop
+#print axioms PrimeGPF.PrimeAPInput.tendsto_log_pow_div_primeCount
+#print axioms PrimeGPF.smoothCount_succ_sq_polylog
+#print axioms PrimeGPF.PrimeAPInput.tendsto_smoothCount_succ_sq_div_primeCount
+#print axioms PrimeGPF.PrimeAPInput.pairZero_of_pairCount_le
+#print axioms PrimeGPF.PrimeAPInput.pairZero_add
+#print axioms PrimeGPF.PrimeAPInput.pairZero_mul
+#print axioms PrimeGPF.APAsymptotic.tendsto_log_pow_div_apCount
+#print axioms PrimeGPF.relativeZero_of_polylog_AP
+#print axioms PrimeGPF.proof_6_3_from_PNT_AP
+
 -- These types expose remaining hypotheses.
 #check PrimeGPF.proof_8_3_from_zsigmondy
 #check PrimeGPF.proof_6_1_from_PNT_AP
+#check PrimeGPF.proof_6_3_from_PNT_AP

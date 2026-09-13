@@ -8,19 +8,26 @@ The source compendium contains 39 numbered results. Current status:
 
 | Status | Count |
 |---|---:|
-| Complete compiler-verified proofs | 32 |
-| Compiler-verified conditional proofs | 5 |
-| Statement only | 1 |
-| False original statement, formally refuted | 1 |
+| Complete compiler-verified proofs | 33 |
+| Compiler-verified conditional proofs | 6 |
+| Statement only | 0 |
+| False numbered statements | 0 |
 
-The corrected version of 5.5 is also compiler-verified, outside the original
-39-result count.
+The official numbered theorem 5.5 is the corrected version with the necessary
+`r ≠ 2` hypothesis. The old printed version is retained separately only for
+its verified counterexample and refutation.
 
 Result **6.2 (polylogarithmic fibers)** is now completely and unconditionally
 proved. The proof includes an exponent-vector bound for smooth numbers,
 a polylogarithmic smooth-number estimate, injections from additive and
 multiplicative fibers into bounded smooth cofactors, and the required common
 constant depending only on `r`.
+
+Result **6.3 (zero density)** now has a compiler-verified conditional proof.
+Both fixed-anchor relative-density limits and the two-variable pair-density
+limits are derived from `PrimeAPInput`, the same PNT-in-arithmetic-progressions
+input already isolated for 6.1. No additional external analytic hypothesis is
+introduced.
 
 ## What was added
 
@@ -32,7 +39,8 @@ constant depending only on `r`.
 | `PrimeGPF/Unbounded.lean` | All three clauses of 6.4 using mathlib's Dirichlet theorem |
 | `PrimeGPF/Progressions.lean` | General affine residue lemma; arithmetic and exact count identities in 6.1; remaining PNT-AP limit isolated |
 | `PrimeGPF/Conditional.lean` | Refutation and repair of the old order dependency; wrappers reducing 8.3, 8.4, 8.5 and 9.3 to ZsigmondyInput alone |
-| `PrimeGPF/Counting.lean` | Complete proof of 6.2: smooth-number box counting, polylogarithmic estimates, and uniform fiber bounds |
+| `PrimeGPF/Counting.lean` | Complete proof of 6.2 plus finite additive and multiplicative pair-count bounds via injections into bounded smooth cofactors |
+| `PrimeGPF/Density.lean` | Conditional proof of 6.3 from `PrimeAPInput`: AP and prime-count asymptotics, relative-zero estimates, and additive/multiplicative pair-density zero |
 
 The original operations and the 39 source proposition definitions are retained.
 The original Word source is included unchanged.
@@ -50,15 +58,14 @@ and supplies `refutation_order_dependency`. The corrected
 `proof_order_dependency`. The caller for exponent `2*q` now supplies positivity.
 No source claim was silently weakened to close this gap.
 
-Original 5.5 is still false at p=3, q=5, m=1. Its refutation is retained;
-`proof_5_5_corrected` targets the separately named statement with r ≠ 2.
+The originally printed 5.5 is false at p=3, q=5, m=1. Its refutation is
+retained as historical evidence. The official numbered 5.5 now includes
+`r ≠ 2` and is proved by `proof_5_5`.
 
 ## Remaining work
 
-- **6.1:** `PrimeAPInput`, the specified PNT-in-arithmetic-progressions ratio limit.
-- **6.3:** relative-density and pair-density limits.
+- **6.1 and 6.3:** `PrimeAPInput`, the specified PNT-in-arithmetic-progressions ratio limit. The entire density argument for 6.3 is now proved from this same input.
 - **8.3, 8.4, 8.5, 9.3:** `ZsigmondyInput`, the specialized primitive-divisor existence theorem.
-- **Original 5.5:** false as stated; its counterexample and refutation are formally verified.
 
 All currently supplied Lean proof scripts and conditional wrappers compile.
 
