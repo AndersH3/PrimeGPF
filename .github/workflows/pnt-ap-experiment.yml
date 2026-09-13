@@ -13,11 +13,21 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Cache Lean toolchain and Lake packages
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.elan
+            .lake/packages
+          key: pnt-ap-v419-d3cea-${{ runner.os }}
+
       - name: Install elan / Lean toolchain
         shell: bash
         run: |
           set -euo pipefail
-          curl -sSf https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh | sh -s -- -y --default-toolchain none
+          if [ ! -x "$HOME/.elan/bin/elan" ]; then
+            curl -sSf https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh | sh -s -- -y --default-toolchain none
+          fi
           echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
 
       - name: Resolve dependencies
@@ -27,6 +37,26 @@ jobs:
           export PATH="$HOME/.elan/bin:$PATH"
           lake update
           lake env lean --version
+
+      - name: Apply v4.19 compatibility patch to PNT dependency
+        shell: bash
+        run: |
+          set -euo pipefail
+          # At d3cea the PNT project still carried a local copy of
+          # Nat.finMulAntidiagonal.  PrimeGPF already imports the upstream
+          # mathlib v4.19 module containing the same declarations.  Apply the
+          # later upstream cleanup (PrimeNumberTheoremAnd ddac5cea) locally to
+          # the dependency checkout so the two developments can coexist.
+          AUX=.lake/packages/PrimeNumberTheoremAnd/PrimeNumberTheoremAnd/Mathlib/NumberTheory/Sieve/AuxResults.lean
+          SEL=.lake/packages/PrimeNumberTheoremAnd/PrimeNumberTheoremAnd/Mathlib/NumberTheory/Sieve/Selberg.lean
+          sed -i \
+            's#import PrimeNumberTheoremAnd.Mathlib.Data.Nat.FinMulAntidiagonal#import Mathlib.Algebra.Order.Antidiag.Nat#' \
+            "$AUX"
+          sed -i \
+            's#import Mathlib.NumberTheory.SelbergSieve#import Batteries.Tactic.Lemma#' \
+            "$SEL"
+          grep -n 'Antidiag.Nat' "$AUX"
+          grep -n 'Batteries.Tactic.Lemma' "$SEL"
 
       - name: Fetch mathlib cache
         shell: bash
