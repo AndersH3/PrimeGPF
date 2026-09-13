@@ -8,8 +8,14 @@ open Filter Topology
 open ArithmeticFunction
 open ArithmeticFunction.vonMangoldt
 
+#check nterm
+#check cheby
+#check chebyWith
+#check cumsum
 #check WienerIkeharaTheorem'
 #check vonMangoldt_cheby
+#print axioms WienerIkeharaTheorem'
+#print axioms vonMangoldt_cheby
 #check ArithmeticFunction.vonMangoldt.residueClass
 #check ArithmeticFunction.vonMangoldt.residueClass_nonneg
 #check ArithmeticFunction.vonMangoldt.residueClass_le
