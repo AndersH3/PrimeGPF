@@ -136,6 +136,16 @@ import PrimeGPF
 #print axioms PrimeGPF.smoothBoxBound_real_le
 #print axioms PrimeGPF.proof_smoothPolylog
 
+#print axioms PrimeGPF.fiberCofactor_spec
+#print axioms PrimeGPF.add_kernel_le_sq
+#print axioms PrimeGPF.mul_kernel_le_sq
+#print axioms PrimeGPF.fiberCofactor_add_le_sq
+#print axioms PrimeGPF.fiberCofactor_mul_le_sq
+#print axioms PrimeGPF.fiberCount_add_le_smoothCount_sq
+#print axioms PrimeGPF.fiberCount_mul_le_smoothCount_sq
+#print axioms PrimeGPF.proof_uniformPolylogFibers
+#print axioms PrimeGPF.proof_6_2
+
 -- These types expose remaining hypotheses.
 #check PrimeGPF.proof_8_3_from_zsigmondy
 #check PrimeGPF.proof_6_1_from_PNT_AP

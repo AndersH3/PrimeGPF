@@ -315,4 +315,431 @@ theorem proof_smoothPolylog (r : ℕ) :
         C * (Real.log (x : ℝ)) ^ Claims.primeCount r := by
         rfl
 
+
+def fiberCofactor (o : Op) (a r q : ℕ) : ℕ :=
+  kernel o a q / r
+
+theorem fiberCofactor_spec
+    {o : Op} {a r q : ℕ}
+    (ha : Nat.Prime a)
+    (hq : Nat.Prime q)
+    (hr : Nat.Prime r)
+    (h : output o a q = r) :
+    0 < fiberCofactor o a r q ∧
+    Smooth r (fiberCofactor o a r q) ∧
+    kernel o a q = r * fiberCofactor o a r q := by
+  have hn : 1 < kernel o a q :=
+    kernel_gt_one o ha hq
+
+  have hg : gpf (kernel o a q) = r := by
+    exact h
+
+  obtain ⟨s, hs, he, hsm⟩ :=
+    (gpf_fiber hn hr).mp hg
+
+  have hdiv :
+      kernel o a q / r = s := by
+    rw [he]
+    exact Nat.mul_div_cancel_left s hr.pos
+
+  unfold fiberCofactor
+  rw [hdiv]
+  exact ⟨hs, hsm, he⟩
+
+theorem add_kernel_le_sq
+    {a q x : ℕ}
+    (hx : a + 2 ≤ x)
+    (hqx : q ≤ x) :
+    kernel .add a q ≤ x * x := by
+  have hax : a < x := by omega
+  have hx2 : 2 ≤ x := by omega
+  have hsum : a + q + 1 ≤ 2 * x := by omega
+  have h2x : 2 * x ≤ x * x :=
+    Nat.mul_le_mul_right x hx2
+  simpa [kernel] using hsum.trans h2x
+
+theorem mul_kernel_le_sq
+    {a q x : ℕ}
+    (hq : Nat.Prime q)
+    (hx : a + 2 ≤ x)
+    (hqx : q ≤ x) :
+    kernel .mul a q ≤ x * x := by
+  have hax : a < x := by omega
+  have h1 : a * q < x * q :=
+    Nat.mul_lt_mul_of_pos_right hax hq.pos
+  have h2 : x * q ≤ x * x :=
+    Nat.mul_le_mul_left x hqx
+  have h3 : a * q < x * x :=
+    h1.trans_le h2
+  simp only [kernel]
+  omega
+
+theorem fiberCofactor_add_le_sq
+    {a r q x : ℕ}
+    (ha : Nat.Prime a)
+    (hq : Nat.Prime q)
+    (hr : Nat.Prime r)
+    (hout : output .add a q = r)
+    (hx : a + 2 ≤ x)
+    (hqx : q ≤ x) :
+    fiberCofactor .add a r q ≤ x * x := by
+  have hs := fiberCofactor_spec ha hq hr hout
+  have hsk :
+      fiberCofactor .add a r q ≤ kernel .add a q := by
+    rw [hs.2.2]
+    exact Nat.le_mul_of_pos_left _ hr.pos
+  exact hsk.trans (add_kernel_le_sq hx hqx)
+
+theorem fiberCofactor_mul_le_sq
+    {a r q x : ℕ}
+    (ha : Nat.Prime a)
+    (hq : Nat.Prime q)
+    (hr : Nat.Prime r)
+    (hout : output .mul a q = r)
+    (hx : a + 2 ≤ x)
+    (hqx : q ≤ x) :
+    fiberCofactor .mul a r q ≤ x * x := by
+  have hs := fiberCofactor_spec ha hq hr hout
+  have hsk :
+      fiberCofactor .mul a r q ≤ kernel .mul a q := by
+    rw [hs.2.2]
+    exact Nat.le_mul_of_pos_left _ hr.pos
+  exact hsk.trans (mul_kernel_le_sq hq hx hqx)
+
+
+/--
+For fixed a and r, an additive fiber injects into the r-smooth
+cofactors bounded by x².
+-/
+theorem fiberCount_add_le_smoothCount_sq
+    {a r x : ℕ}
+    (ha : Nat.Prime a)
+    (hr : Nat.Prime r)
+    (hx : a + 2 ≤ x) :
+    Claims.fiberCount .add a r x
+      ≤ Claims.smoothCount r (x * x) := by
+  classical
+
+  let A : Finset ℕ :=
+    (Finset.range (x + 1)).filter
+      (fun q => Nat.Prime q ∧ output .add a q = r)
+
+  let B : Finset ℕ :=
+    (Finset.range (x * x + 1)).filter (Smooth r)
+
+  let code : {q // q ∈ A} → ℕ :=
+    fun q => fiberCofactor .add a r q.1
+
+  have hcode_mem :
+      ∀ q : {q // q ∈ A}, code q ∈ B := by
+    intro q
+
+    have hqA := Finset.mem_filter.mp q.property
+    have hq : Nat.Prime q.1 := hqA.2.1
+    have hout : output .add a q.1 = r := hqA.2.2
+
+    have hqlt : q.1 < x + 1 :=
+      Finset.mem_range.mp hqA.1
+
+    have hqx : q.1 ≤ x := by
+      omega
+
+    have hs :=
+      fiberCofactor_spec ha hq hr hout
+
+    have hle :
+        fiberCofactor .add a r q.1 ≤ x * x :=
+      fiberCofactor_add_le_sq ha hq hr hout hx hqx
+
+    apply Finset.mem_filter.mpr
+    refine ⟨?_, hs.2.1⟩
+    apply Finset.mem_range.mpr
+    change fiberCofactor .add a r q.1 < x * x + 1
+    exact Nat.lt_succ_iff.mpr hle
+
+  have hcode_inj : Function.Injective code := by
+    intro q₁ q₂ hcode
+
+    apply Subtype.ext
+
+    have hq₁A := Finset.mem_filter.mp q₁.property
+    have hq₂A := Finset.mem_filter.mp q₂.property
+
+    have hq₁ : Nat.Prime q₁.1 := hq₁A.2.1
+    have hq₂ : Nat.Prime q₂.1 := hq₂A.2.1
+
+    have hs₁ :=
+      fiberCofactor_spec ha hq₁ hr hq₁A.2.2
+
+    have hs₂ :=
+      fiberCofactor_spec ha hq₂ hr hq₂A.2.2
+
+    have hk :
+        kernel .add a q₁.1 = kernel .add a q₂.1 := by
+      rw [hs₁.2.2, hs₂.2.2]
+      exact congrArg (fun t => r * t) hcode
+
+    simp only [kernel] at hk
+    omega
+
+  let I : Finset ℕ :=
+    A.attach.image code
+
+  have hI_subset : I ⊆ B := by
+    intro y hy
+    rcases Finset.mem_image.mp hy with ⟨q, hq, rfl⟩
+    exact hcode_mem q
+
+  have hIcard : I.card = A.card := by
+    dsimp [I]
+    rw [Finset.card_image_of_injective _ hcode_inj]
+    simp
+
+  calc
+    Claims.fiberCount .add a r x
+        = A.card := by
+            simp [Claims.fiberCount, A]
+
+    _ = I.card := hIcard.symm
+
+    _ ≤ B.card :=
+      Finset.card_le_card hI_subset
+
+    _ = Claims.smoothCount r (x * x) := by
+      simp [Claims.smoothCount, B]
+
+
+/--
+For fixed a and r, a multiplicative fiber injects into the r-smooth
+cofactors bounded by x².
+-/
+theorem fiberCount_mul_le_smoothCount_sq
+    {a r x : ℕ}
+    (ha : Nat.Prime a)
+    (hr : Nat.Prime r)
+    (hx : a + 2 ≤ x) :
+    Claims.fiberCount .mul a r x
+      ≤ Claims.smoothCount r (x * x) := by
+  classical
+
+  let A : Finset ℕ :=
+    (Finset.range (x + 1)).filter
+      (fun q => Nat.Prime q ∧ output .mul a q = r)
+
+  let B : Finset ℕ :=
+    (Finset.range (x * x + 1)).filter (Smooth r)
+
+  let code : {q // q ∈ A} → ℕ :=
+    fun q => fiberCofactor .mul a r q.1
+
+  have hcode_mem :
+      ∀ q : {q // q ∈ A}, code q ∈ B := by
+    intro q
+
+    have hqA := Finset.mem_filter.mp q.property
+    have hq : Nat.Prime q.1 := hqA.2.1
+    have hout : output .mul a q.1 = r := hqA.2.2
+
+    have hqlt : q.1 < x + 1 :=
+      Finset.mem_range.mp hqA.1
+
+    have hqx : q.1 ≤ x := by
+      omega
+
+    have hs :=
+      fiberCofactor_spec ha hq hr hout
+
+    have hle :
+        fiberCofactor .mul a r q.1 ≤ x * x :=
+      fiberCofactor_mul_le_sq ha hq hr hout hx hqx
+
+    apply Finset.mem_filter.mpr
+    refine ⟨?_, hs.2.1⟩
+    apply Finset.mem_range.mpr
+    change fiberCofactor .mul a r q.1 < x * x + 1
+    exact Nat.lt_succ_iff.mpr hle
+
+  have hcode_inj : Function.Injective code := by
+    intro q₁ q₂ hcode
+
+    apply Subtype.ext
+
+    have hq₁A := Finset.mem_filter.mp q₁.property
+    have hq₂A := Finset.mem_filter.mp q₂.property
+
+    have hq₁ : Nat.Prime q₁.1 := hq₁A.2.1
+    have hq₂ : Nat.Prime q₂.1 := hq₂A.2.1
+
+    have hs₁ :=
+      fiberCofactor_spec ha hq₁ hr hq₁A.2.2
+
+    have hs₂ :=
+      fiberCofactor_spec ha hq₂ hr hq₂A.2.2
+
+    have hk :
+        kernel .mul a q₁.1 = kernel .mul a q₂.1 := by
+      rw [hs₁.2.2, hs₂.2.2]
+      exact congrArg (fun t => r * t) hcode
+
+    simp only [kernel] at hk
+
+    have hmul :
+        a * q₁.1 = a * q₂.1 := by
+      omega
+
+    exact Nat.eq_of_mul_eq_mul_left ha.pos hmul
+
+  let I : Finset ℕ :=
+    A.attach.image code
+
+  have hI_subset : I ⊆ B := by
+    intro y hy
+    rcases Finset.mem_image.mp hy with ⟨q, hq, rfl⟩
+    exact hcode_mem q
+
+  have hIcard : I.card = A.card := by
+    dsimp [I]
+    rw [Finset.card_image_of_injective _ hcode_inj]
+    simp
+
+  calc
+    Claims.fiberCount .mul a r x
+        = A.card := by
+            simp [Claims.fiberCount, A]
+
+    _ = I.card := hIcard.symm
+
+    _ ≤ B.card :=
+      Finset.card_le_card hI_subset
+
+    _ = Claims.smoothCount r (x * x) := by
+      simp [Claims.smoothCount, B]
+
+
+
+/--
+The additive and multiplicative fibers have a common polylogarithmic
+constant depending only on r. The threshold may depend on the fixed anchor a.
+-/
+theorem proof_uniformPolylogFibers
+    (r : ℕ) (hr : Nat.Prime r) :
+    Claims.UniformPolylogFibers r := by
+
+  rcases proof_smoothPolylog r with
+    ⟨C₀, hC₀, N₀, hpoly⟩
+
+  let C : ℝ :=
+    C₀ * (2 : ℝ) ^ Claims.primeCount r
+
+  refine ⟨C, ?_, ?_⟩
+
+  · dsimp [C]
+    positivity
+
+  · intro a ha
+
+    let N : ℕ :=
+      max (a + 2) N₀
+
+    refine ⟨N, ?_⟩
+    intro x hx
+
+    have hxa : a + 2 ≤ x := by
+      exact (Nat.le_max_left (a + 2) N₀).trans hx
+
+    have hxN₀ : N₀ ≤ x := by
+      exact (Nat.le_max_right (a + 2) N₀).trans hx
+
+    have hxpos : 0 < x := by
+      have ha2 := ha.two_le
+      omega
+
+    have hx1 : 1 ≤ x := by
+      omega
+
+    have hxxN₀ : N₀ ≤ x * x := by
+      have hxx : x ≤ x * x := by
+        exact Nat.le_mul_of_pos_left x hxpos
+      exact hxN₀.trans hxx
+
+    have hsmooth :=
+      hpoly (x * x) hxxN₀
+
+    have hx0 : (x : ℝ) ≠ 0 := by
+      exact_mod_cast (Nat.ne_of_gt hxpos)
+
+    have hlog :
+        Real.log ((x * x : ℕ) : ℝ)
+          = 2 * Real.log (x : ℝ) := by
+      rw [Nat.cast_mul, Real.log_mul hx0 hx0]
+      ring
+
+    have hsmooth' :
+        (Claims.smoothCount r (x * x) : ℝ)
+          ≤ C *
+            (Real.log (x : ℝ)) ^ Claims.primeCount r := by
+      calc
+        (Claims.smoothCount r (x * x) : ℝ)
+            ≤ C₀ *
+              (Real.log ((x * x : ℕ) : ℝ)) ^
+                Claims.primeCount r :=
+          hsmooth
+
+        _ = C₀ *
+              (2 * Real.log (x : ℝ)) ^
+                Claims.primeCount r := by
+          rw [hlog]
+
+        _ = C *
+              (Real.log (x : ℝ)) ^
+                Claims.primeCount r := by
+          dsimp [C]
+          rw [mul_pow]
+          ring
+
+    have hadd_nat :
+        Claims.fiberCount .add a r x
+          ≤ Claims.smoothCount r (x * x) :=
+      fiberCount_add_le_smoothCount_sq ha hr hxa
+
+    have hmul_nat :
+        Claims.fiberCount .mul a r x
+          ≤ Claims.smoothCount r (x * x) :=
+      fiberCount_mul_le_smoothCount_sq ha hr hxa
+
+    constructor
+
+    · calc
+        (Claims.fiberCount .add a r x : ℝ)
+            ≤ (Claims.smoothCount r (x * x) : ℝ) := by
+              exact_mod_cast hadd_nat
+        _ ≤ C *
+              (Real.log (x : ℝ)) ^
+                Claims.primeCount r :=
+          hsmooth'
+
+    · calc
+        (Claims.fiberCount .mul a r x : ℝ)
+            ≤ (Claims.smoothCount r (x * x) : ℝ) := by
+              exact_mod_cast hmul_nat
+        _ ≤ C *
+              (Real.log (x : ℝ)) ^
+                Claims.primeCount r :=
+          hsmooth'
+
+
+/--
+Complete unconditional proof of theorem 6.2.
+-/
+theorem proof_6_2 : Claims.t6_2 := by
+  constructor
+
+  · intro r hr
+    exact
+      ⟨proof_uniformPolylogFibers r hr,
+       proof_smoothPolylog r⟩
+
+  · intro r x _ _
+    exact smoothCount_le_smoothBoxBound r x
+
 end PrimeGPF

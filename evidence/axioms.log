@@ -130,5 +130,14 @@
 'PrimeGPF.smoothBox_factor_real_le' depends on axioms: [propext, Classical.choice, Quot.sound]
 'PrimeGPF.smoothBoxBound_real_le' depends on axioms: [propext, Classical.choice, Quot.sound]
 'PrimeGPF.proof_smoothPolylog' depends on axioms: [propext, Classical.choice, Quot.sound]
+'PrimeGPF.fiberCofactor_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
+'PrimeGPF.add_kernel_le_sq' depends on axioms: [propext, Quot.sound]
+'PrimeGPF.mul_kernel_le_sq' depends on axioms: [propext, Quot.sound]
+'PrimeGPF.fiberCofactor_add_le_sq' depends on axioms: [propext, Classical.choice, Quot.sound]
+'PrimeGPF.fiberCofactor_mul_le_sq' depends on axioms: [propext, Classical.choice, Quot.sound]
+'PrimeGPF.fiberCount_add_le_smoothCount_sq' depends on axioms: [propext, Classical.choice, Quot.sound]
+'PrimeGPF.fiberCount_mul_le_smoothCount_sq' depends on axioms: [propext, Classical.choice, Quot.sound]
+'PrimeGPF.proof_uniformPolylogFibers' depends on axioms: [propext, Classical.choice, Quot.sound]
+'PrimeGPF.proof_6_2' depends on axioms: [propext, Classical.choice, Quot.sound]
 PrimeGPF.proof_8_3_from_zsigmondy (HZ : PrimeGPF.ZsigmondyInput) : PrimeGPF.Claims.t8_3
 PrimeGPF.proof_6_1_from_PNT_AP (H : PrimeGPF.PrimeAPInput) : PrimeGPF.Claims.t6_1
