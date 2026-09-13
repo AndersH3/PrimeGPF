@@ -1,0 +1,33 @@
+name: PNT proof validation
+on:
+  push:
+    branches: [codex/pnt-ap-lean419]
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: pnt-proof-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  lean:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install elan
+        run: |
+          curl -sSf https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh | sh -s -- -y --default-toolchain none
+          echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
+      - uses: actions/cache@v4
+        with:
+          path: .lake
+          key: prime-gpf-lean419-pnt-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}
+      - name: Obtain pinned mathlib cache
+        run: lake exe cache get
+      - name: Compile and audit PNT input
+        run: bash verify_prime_ap.sh
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: prime-ap-validation
+          path: evidence/prime-ap-*
