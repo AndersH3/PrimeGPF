@@ -10,7 +10,7 @@ rev = "v4.19.0"
 [[require]]
 name = "PrimeNumberTheoremAnd"
 git = "https://github.com/AlexKontorovich/PrimeNumberTheoremAnd.git"
-rev = "d3cea76119684a766d2cd195b05b137442205653"
+rev = "ddac5ceafd30932b0c7e81d710e429cf7d4df6d2"
 
 [[lean_lib]]
 name = "PrimeGPF"
