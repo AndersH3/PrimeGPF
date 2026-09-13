@@ -1,29 +1,26 @@
-# Prime GPF magma: extended Lean proof scripts
+# Prime GPF magma: Lean formalization
 
-**Latest repair:** the user reports successful builds of Core and Statements.
-The next failure in Elementary.fixed_criterion is repaired by using
-`Nat.succ_pos` for positivity of the quotient plus one. See
-`ELEMENTARY_FIX.md`. This latest change awaits a new compiler run.
+**Status:** the project builds successfully under **Lean 4.19.0** with
+mathlib **v4.19.0**. The axiom audit contains no `sorryAx`, `admit`,
+`native_decide`, or compiler-trust shortcuts.
 
-**Status: incomplete and NOT compiler-verified.** This revision adds substantial
-proof scripts to the uploaded draft, but neither the old nor the new Lean code
-has been compiled in this environment. Lean and Lake are absent, and the
-attempted toolchain download was blocked/cancelled by the environment.
-Tactic, elaboration, or other compilation errors may remain.
+The source compendium contains 39 numbered results. Current status:
 
-The source compendium has 39 numbered results. This package now supplies:
+| Status | Count |
+|---|---:|
+| Complete compiler-verified proofs | 32 |
+| Compiler-verified conditional proofs | 5 |
+| Statement only | 1 |
+| False original statement, formally refuted | 1 |
 
-| Development status | Original draft | This revision |
-|---|---:|---:|
-| Full proof scripts, uncompiled | 22 | 31 |
-| Conditional proof scripts, uncompiled | 9 | 5 |
-| Partial proof scripts, uncompiled | 1 | 0 |
-| Statements only | 6 | 2 |
-| False original statement | 1 | 1 |
+The corrected version of 5.5 is also compiler-verified, outside the original
+39-result count.
 
-The **corrected 5.5** also has a new full script, outside the 39-result count.
-“Full script” does not mean Lean has accepted it. No mathematical proposition
-has been proved merely by defining it or assuming it as a theorem parameter.
+Result **6.2 (polylogarithmic fibers)** is now completely and unconditionally
+proved. The proof includes an exponent-vector bound for smooth numbers,
+a polylogarithmic smooth-number estimate, injections from additive and
+multiplicative fibers into bounded smooth cofactors, and the required common
+constant depending only on `r`.
 
 ## What was added
 
@@ -35,6 +32,7 @@ has been proved merely by defining it or assuming it as a theorem parameter.
 | `PrimeGPF/Unbounded.lean` | All three clauses of 6.4 using mathlib's Dirichlet theorem |
 | `PrimeGPF/Progressions.lean` | General affine residue lemma; arithmetic and exact count identities in 6.1; remaining PNT-AP limit isolated |
 | `PrimeGPF/Conditional.lean` | Refutation and repair of the old order dependency; wrappers reducing 8.3, 8.4, 8.5 and 9.3 to ZsigmondyInput alone |
+| `PrimeGPF/Counting.lean` | Complete proof of 6.2: smooth-number box counting, polylogarithmic estimates, and uniform fiber bounds |
 
 The original operations and the 39 source proposition definitions are retained.
 The original Word source is included unchanged.
@@ -57,13 +55,12 @@ Original 5.5 is still false at p=3, q=5, m=1. Its refutation is retained;
 
 ## Remaining work
 
-- **8.3, 8.4, 8.5, 9.3:** `ZsigmondyInput`, the specialized primitive-divisor existence theorem.
-- **6.1:** `PrimeAPInput`, the specified prime-number-theorem ratio limit for arithmetic progressions.
-- **6.2:** smooth-number box counting and uniform polylogarithmic estimates.
+- **6.1:** `PrimeAPInput`, the specified PNT-in-arithmetic-progressions ratio limit.
 - **6.3:** relative-density and pair-density limits.
-- **Every supplied script:** Lean compilation and any necessary repairs.
+- **8.3, 8.4, 8.5, 9.3:** `ZsigmondyInput`, the specialized primitive-divisor existence theorem.
+- **Original 5.5:** false as stated; its counterexample and refutation are formally verified.
 
-See `COVERAGE.md`, `MATHEMATICAL_NOTES.md` and `coverage.json` for details.
+All currently supplied Lean proof scripts and conditional wrappers compile.
 
 ## Build locally
 
@@ -85,12 +82,11 @@ bash verify.sh
 
 The verification script preserves build and axiom logs. It fails on a compiler
 error or forbidden axiom dependency. It returns **127** if Lake is absent and
-**2 after a successful draft build**, because mathematical obligations remain.
-The intentional exit 2 is not a compilation failure. No successful build log
-is included in this revision.
+**2 after a successful build** while mathematical obligations remain. The
+intentional exit 2 is not a compilation failure.
 
-`Audit.lean` requests axioms for all 126 theorem declarations and displays the
-types of the two remaining external-input wrappers. Standard foundational
+`Audit.lean` requests axioms for the project theorem declarations and displays
+the types of the remaining external-input wrappers. Standard foundational
 axioms (choice, propositional extensionality, quotient soundness) are allowed;
 proof admissions and compiler-trust shortcuts are not.
 

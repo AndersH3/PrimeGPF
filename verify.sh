@@ -23,8 +23,8 @@ report={'draft_build_succeeded':True,'axiom_report_generated':True,
         'complete_formalization':False,
         'notice':'Statements and conditional proofs do not discharge missing proofs.'}
 Path('evidence/local_build_status.json').write_text(json.dumps(report,indent=2)+'\n')
-remaining=[r for r in s['results'] if r['status']!='full_script_uncompiled']
-print(f'Draft compiled; {len(remaining)} entries still require correction or further proof development.')
+remaining=[r for r in s['results'] if r['status']!='full_script_verified']
+print(f'Project compiled; {len(remaining)} original entries remain conditional, unproved, or refuted.')
 print('Review evidence/axioms.log and COVERAGE.md. This is not a completed formalization.')
 PY
 exit 2
