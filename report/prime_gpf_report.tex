@@ -1,0 +1,999 @@
+\documentclass[11pt,a4paper,oneside,open=any,headings=small]{scrbook}
+
+\usepackage{fontspec}
+\usepackage{mathtools}
+\usepackage{amsthm}
+\usepackage{unicode-math}
+\setmainfont{Noto Serif}
+\setsansfont{Noto Sans}
+\setmonofont{DejaVu Sans Mono}[Scale=MatchLowercase]
+\setmathfont{Asana Math}
+
+\usepackage[a4paper,left=16mm,right=16mm,top=17mm,bottom=18mm,headsep=5mm,footskip=8mm]{geometry}
+\usepackage{microtype}
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning,calc,fit}
+\usepackage[most]{tcolorbox}
+\usepackage{tabularray}
+\UseTblrLibrary{booktabs}
+\usepackage{booktabs}
+\usepackage{enumitem}
+\usepackage{float}
+\usepackage{scrhack}
+\usepackage{listings}
+\usepackage{xurl}
+\Urlmuskip=0mu plus 1mu\relax
+\setlength{\emergencystretch}{2em}
+\usepackage{csquotes}
+\usepackage[backend=biber,style=alphabetic,maxnames=4,giveninits=true,doi=true,url=true,isbn=false]{biblatex}
+\setcounter{biburllcpenalty}{100}
+\setcounter{biburlnumpenalty}{100}
+\setcounter{biburlucpenalty}{100}
+\addbibresource{prime_gpf_sources.bib}
+\usepackage{hyperref}
+\usepackage{bookmark}
+\usepackage[capitalise,nameinlink,noabbrev]{cleveref}
+\usepackage{scrlayer-scrpage}
+
+\definecolor{DeepBlue}{HTML}{1F4E79}
+\definecolor{DeepGreen}{HTML}{356B49}
+\definecolor{Warm}{HTML}{8A4B08}
+\definecolor{LightBlue}{HTML}{EAF2F8}
+\definecolor{LightGreen}{HTML}{EAF6EE}
+\definecolor{LightOrange}{HTML}{FFF3E0}
+\definecolor{LightGray}{HTML}{F4F4F4}
+\definecolor{AlertRed}{HTML}{9C1C1C}
+
+\hypersetup{
+  colorlinks=true,
+  linkcolor=DeepBlue,
+  citecolor=DeepGreen,
+  urlcolor=Warm,
+  pdftitle={Prime-GPF Magmas: Mathematics, Lean Verification, and Literature Context},
+  pdfauthor={Anders Hellström},
+  pdfsubject={Prime greatest-prime-factor magmas and Lean formalization},
+  pdfkeywords={greatest prime factor, magma, Lean, smooth numbers, Zsigmondy, arithmetic progressions}
+}
+
+\clearpairofpagestyles
+\ihead{Prime-GPF magmas}
+\ohead{Revised theorem compendium}
+\cfoot{\pagemark}
+\pagestyle{scrheadings}
+\KOMAoptions{parskip=half}
+\setkomafont{chapter}{\normalfont\sffamily\bfseries\LARGE\color{DeepBlue}}
+\RedeclareSectionCommand[tocnumwidth=2.6em]{chapter}
+\setkomafont{section}{\normalfont\sffamily\bfseries\Large\color{DeepBlue}}
+\setkomafont{subsection}{\normalfont\sffamily\bfseries\large\color{DeepGreen}}
+
+\newtheorem{theorem}{Theorem}[chapter]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}[chapter]
+\newtheorem{example}[definition]{Example}
+\newtheorem{remark}[definition]{Remark}
+
+\newtcolorbox{conceptbox}[1]{breakable,colback=LightBlue,colframe=DeepBlue,title={#1},fonttitle=\bfseries}
+\newtcolorbox{leanbox}[1]{breakable,colback=LightGreen,colframe=DeepGreen,title={#1},fonttitle=\bfseries}
+\newtcolorbox{statusbox}[1]{breakable,colback=LightOrange,colframe=Warm,title={#1},fonttitle=\bfseries}
+\newtcolorbox{warningbox}[1]{breakable,colback=red!3,colframe=AlertRed,title={#1},fonttitle=\bfseries}
+
+\lstdefinelanguage{Lean}{
+  morekeywords={def,theorem,lemma,abbrev,inductive,namespace,end,by,where,if,then,else,let,in,match,with,case,constructor,refine,exact,intro,have,show,obtain,rcases,open,noncomputable,instance,structure},
+  sensitive=true,
+  morecomment=[l]{--},
+  morecomment=[s]{/-}{-/},
+  morestring=[b]"
+}
+\lstset{
+  basicstyle=\ttfamily\small,
+  columns=fullflexible,
+  breaklines=true,
+  frame=single,
+  backgroundcolor=\color{LightGray},
+  rulecolor=\color{black!25},
+  showstringspaces=false,
+  tabsize=2,
+  upquote=true
+}
+
+\newcommand{\Pset}{\mathbb{P}}
+\newcommand{\GPF}{P^{+}}
+\newcommand{\gexp}{\mathbin{\uparrow_{G}}}
+\newcommand{\Kadd}{K_{+}}
+\newcommand{\Kmul}{K_{\times}}
+\newcommand{\Kexp}{K_{\exp}}
+\newcommand{\verified}{\textcolor{DeepGreen}{\textbf{Verified}}}
+\newcommand{\conditional}{\textcolor{Warm}{\textbf{Conditional}}}
+\newcommand{\lean}[1]{\ifmmode\text{\texttt{\detokenize{#1}}}\else\nolinkurl{#1}\fi}
+
+\input{diagrams.tex}
+
+\begin{document}
+\frontmatter
+
+\begin{titlepage}
+\centering
+\vspace*{14mm}
+{\sffamily\bfseries\Huge Prime-GPF Magmas\par}
+\vspace{3mm}
+{\sffamily\Large Mathematics, Lean Verification, and Literature Context\par}
+\vspace{5mm}
+{\Large Revised Theorem Compendium\par}
+\vspace{12mm}
+{\large Project consolidation for Anders Hellström\par}
+\vspace{4mm}
+{\large Revised 13 September 2026\par}
+\vfill
+\begin{tcolorbox}[width=.92\textwidth,colback=red!3,colframe=AlertRed,boxrule=1.2pt,title={\large AI-ASSISTED REPORT --- READ THIS NOTICE},fonttitle=\bfseries]
+AI and deep-research tools assisted with literature discovery, source comparison, drafting, and XeLaTeX production. Mathematical claims and bibliographic entries still require human review. Lean compiler/kernel acceptance is a separate machine-checking process: it is evidence about formal proof terms relative to formal statements and imports, and must not be conflated with AI validation. A complete disclosure appears in \cref{app:ai}.
+\end{tcolorbox}
+\vfill
+{\small Baseline: the 17 June 2026 theorem compendium, revised against the PrimeGPF Lean development and a targeted literature/novelty search.}
+\end{titlepage}
+
+\chapter*{Abstract and verification snapshot}
+\addcontentsline{toc}{chapter}{Abstract and verification snapshot}
+This report revises and expands the June 2026 \emph{Theorem Compendium for Prime GPF Magmas} \parencite{OriginalCompendium}. The subject is a family of binary operations on the prime numbers obtained by taking the greatest prime factor of three elementary kernels,
+\[
+ p\boxplus q=\GPF(p+q+1),\qquad
+ p\boxtimes q=\GPF(pq+1),\qquad
+ p\gexp q=\GPF(p^q+1).
+\]
+The revision has three purposes. First, it makes the mathematical exposition self-contained by explaining the algebraic, analytic, cyclotomic, dynamical, and formal-verification concepts that the theorems use. Second, it reconciles every numbered result with the Lean 4 formalization. Third, it places the construction in its relevant literature and reports a targeted prior-art/novelty search.
+
+\begin{statusbox}{Formal verification snapshot as of 13 September 2026}
+The author-supplied local build and audit record reports \textbf{33 complete unconditional compiler-verified numbered results} and \textbf{6 compiler-verified conditional numbered results}, with no statement-only and no false \emph{numbered} result in the corrected inventory. The conditional results are 6.1 and 6.3, both depending only on \lean{PrimeAPInput}, and 8.3, 8.4, 8.5, and 9.3, all depending only on \lean{ZsigmondyInput}. The historical, originally printed form of 5.5 is retained separately and formally refuted; the official corrected 5.5 adds the necessary condition $r\ne2$ and is unconditionally verified. The latest audit shown to the author contains only the ordinary dependencies \lean{propext}, \lean{Classical.choice}, and \lean{Quot.sound}, with no \lean{sorryAx} or compiler-trust shortcuts.
+\end{statusbox}
+
+The formal development targets Lean 4.19.0 and a pinned mathlib revision. A successful Lean build establishes that the kernel has accepted proof terms for the stated declarations relative to their imported definitions and axioms; Lean's own documentation emphasizes both this guarantee and the separate obligation to check that the formal statement means what the informal author intends \parencite{LeanFAQ,LeanValidate}.
+
+\tableofcontents
+
+\mainmatter
+
+\chapter{Scope, source record, and formal verification}\label{ch:scope}
+
+\section{From a short compendium to a checked research record}
+The original 15-page report was designed as a deduplicated list of the main prime-GPF results. It contained concise proofs, a computational appendix, and a bibliography, but it predated the completed Lean work for Theorem 6.2, the conditional Lean proof of Theorem 6.3, and the correction of Theorem 5.5. The present version therefore treats the old document as a historical baseline rather than an authority whenever it conflicts with the checked formal source.
+
+The formal project is organized around a declarative inventory of 39 numbered propositions (3.1--9.8) and proof modules that discharge them. In Lean, a declaration such as
+\begin{lstlisting}[language=Lean]
+def t6_3 : Prop := ...
+\end{lstlisting}
+merely gives a name to a proposition. It does \emph{not} prove it. A declaration such as
+\begin{lstlisting}[language=Lean]
+theorem proof_6_3_from_PNT_AP (H : PrimeAPInput) : Claims.t6_3 := by
+  ...
+\end{lstlisting}
+proves an implication: if a term of type \lean{PrimeAPInput} is supplied, Lean checks a term of type \lean{Claims.t6_3}. This is a genuine formal proof of the implication, but not a proof of the external input.
+
+\section{What ``verified'' means here}
+\begin{conceptbox}{Lean elaboration, proof terms, and the kernel}
+Lean translates notation, tactics, coercions, and typeclass search into a proof term in its dependent type theory. The kernel then checks that proof term against the claimed type. The Lean documentation explicitly separates the validity of a formal proof from the semantic question of whether the formal theorem statement faithfully expresses the intended mathematics \parencite{LeanValidate}. Accordingly, this report uses \emph{compiler-verified} to mean that the checked local project accepted the declaration, not that an AI system or informal argument endorsed it.
+\end{conceptbox}
+
+The project further audits axiom dependencies. The accepted foundational items in the supplied audit are \lean{propext}, \lean{Classical.choice}, and \lean{Quot.sound}. The project policy forbids using \lean{sorry}, \lean{admit}, a newly postulated mathematical axiom, \lean{native_decide}, \lean{Lean.ofReduceBool}, or \lean{Lean.trustCompiler} to bypass a missing proof.
+
+\section{Repository and reproducibility record}
+The Lean source is maintained in the private GitHub repository \lean{AndersH3/PrimeGPF}; the associated local working directory reported during verification was
+\begin{center}
+\lean{~/Documents/prime_gpf_lean_new/prime_gpf_lean}.
+\end{center}
+At the time of this report, the remote repository and the local tree were temporarily asynchronous for some of the newest density work: the author's local transcript is therefore the source of truth for the verified 6.3 status. This distinction matters in a reproducibility report and should be removed once the complete verified local milestone is pushed.
+
+\begin{figure}[H]
+\centering
+\FormalDependencyDiagram
+\caption{Logical architecture of the formalization. Green boxes represent checked theorem layers; orange boxes are the two remaining external mathematical inputs.}
+\label{fig:dependencies}
+\end{figure}
+
+\section{Source hierarchy used in this revision}
+When sources disagree, this report uses the following order of authority: (1) the checked Lean statement and current verification transcript for formal status; (2) the original compendium for historical exposition and notation; (3) standard mathematical references for classical ingredients; and (4) novelty-search results for contextual comparison. This prevents a common error in formalization reports: silently upgrading an informal proof sketch into a machine-verified claim.
+
+\chapter{Greatest prime factors, magmas, and the Lean model}\label{ch:definitions}
+
+\section{Greatest prime factor}
+For an integer $n>1$, write
+\[
+\GPF(n)=\max\{\ell\in\Pset:\ell\mid n\}.
+\]
+This is the greatest (largest) prime factor of $n$, a standard arithmetic function; related sequence data are catalogued in OEIS A006530 and standard references \parencite{OEISGPF,MathWorldGPF}. The formal project intentionally defines its own finite search \lean{gpf} rather than depending on a version-sensitive library API. Its core specification proves that, for $n>1$, \lean{gpf n} is prime, divides $n$, and dominates every prime divisor of $n$.
+
+\begin{conceptbox}{Why the kernels are always in the domain of $\GPF$}
+For primes $p,q\ge2$, each kernel $p+q+1$, $pq+1$, and $p^q+1$ exceeds $1$. Hence it has a prime divisor and therefore a greatest prime divisor. Lean formalizes this elementary fact as \lean{kernel_gt_one}, which is the gateway from the total computational \lean{gpf} function to the mathematically intended operation.
+\end{conceptbox}
+
+\section{Three prime-GPF operations}
+Let $\Pset$ denote the set of primes. Define
+\begin{align*}
+K_{+}(p,q)&=p+q+1, & p\boxplus q&=\GPF(K_{+}(p,q)),\\
+K_{\times}(p,q)&=pq+1, & p\boxtimes q&=\GPF(K_{\times}(p,q)),\\
+K_{\exp}(p,q)&=p^q+1, & p\gexp q&=\GPF(K_{\exp}(p,q)).
+\end{align*}
+The symbols are notation; the structural fact is that all three outputs are primes.
+
+\begin{definition}[Magma]
+A \emph{magma} is a set $B$ equipped with a closed binary operation $B\times B\to B$. No associativity, identity, commutativity, or cancellation is assumed \parencite{BurrisSankappanavar1981}. Thus showing closure is enough to conclude that $(\Pset,\boxplus)$, $(\Pset,\boxtimes)$, and $(\Pset,\gexp)$ are magmas.
+\end{definition}
+
+\section{Fibers, translations, diagonals, and orbits}
+For a binary operation $\star$ and fixed $a$, the \emph{left translation} is $L_a(q)=a\star q$. A \emph{fiber} over $r$ is the set of inputs mapping to $r$. The \emph{diagonal map} is $D(p)=p\star p$. Iterating a unary map $T$ produces an orbit $x_0=x$, $x_{n+1}=T(x_n)$. An orbit is periodic if $x_d=x_0$ for some $d>0$, and eventually periodic if repetition begins after some transient stage.
+
+Lean uses the subtype
+\begin{lstlisting}[language=Lean]
+abbrev Prime := {p : ℕ // Nat.Prime p}
+\end{lstlisting}
+so that a value of type \lean{Prime} carries both a natural number and a proof of primality. The functions \lean{operate}, \lean{leftTranslation}, \lean{diagonal}, and \lean{orbit} implement these ideas directly.
+
+\section{Smooth numbers}
+\begin{definition}[$r$-smooth]
+A positive integer $s$ is $r$-smooth if every prime divisor of $s$ is at most $r$. In modern analytic number theory one often writes $P^+(s)\le r$. Smooth numbers are a classical subject with asymptotic theories due to Dickman, de Bruijn, Hildebrand, Tenenbaum, and others \parencite{Dickman1930,deBruijn1951,HildebrandTenenbaum1986,HildebrandTenenbaum1993}.
+\end{definition}
+
+For this project, the relevant regime is unusually elementary: $r$ is fixed while the size bound $x$ grows. Then an $r$-smooth number is built from only finitely many primes, and a simple exponent-box count already yields a polylogarithmic bound. The project does not need the full Dickman--de Bruijn asymptotic machinery to prove Theorem 6.2.
+
+\section{Congruence rings and multiplicative order}
+The type \lean{ZMod r} represents integers modulo $r$. When $r$ is prime it is a finite field. The \emph{multiplicative order} of a nonzero residue $a\pmod r$ is the least positive $k$ with $a^k\equiv1\pmod r$. In a finite field this order divides $r-1$, the size of the multiplicative group. The project bridges its explicit predicate \lean{ExactOrder} to mathlib's group-theoretic \lean{orderOf} in \lean{Orders.lean}.
+
+\begin{definition}[Primitive divisor in this project]
+\lean{PrimitiveDivisor r p k} says that $r$ is prime, $p^k\equiv1\pmod r$, and no exponent $0<j<k$ has $p^j\equiv1\pmod r$. For $k>0$ this is exactly an order statement. The positivity caveat matters: the original generic assertion ``a primitive divisor of order $k$ implies $k\mid r-1$'' was false at $k=0$, and Lean forced that hidden hypothesis to be made explicit.
+\end{definition}
+
+\chapter{Basic algebraic laws}\label{ch:basic}
+
+This chapter corresponds to results 3.1--3.8. All are unconditional and compiler-verified in the current inventory.
+
+\begin{theorem}[3.1: closure and divisibility certificates]\label{thm:31}
+For all primes $p,q$ and each operation $\star\in\{\boxplus,\boxtimes,\gexp\}$, the output $p\star q$ is prime and divides the corresponding kernel.
+\end{theorem}
+\begin{proof}[Idea]
+This is immediate from the greatest-prime-factor specification. In Lean the proof is \lean{proof_3_1}, built from \lean{output_spec}.
+\end{proof}
+
+\begin{theorem}[3.2: commutativity split]
+The operations $\boxplus$ and $\boxtimes$ are commutative, whereas $\gexp$ is not.
+\end{theorem}
+The first two statements reflect symmetry of $p+q+1$ and $pq+1$. For the exponential operation, a concrete witness suffices: $2\gexp3=\GPF(9)=3$, while $3\gexp2=\GPF(10)=5$.
+
+\begin{theorem}[3.3: nonassociativity]
+None of $\boxplus$, $\boxtimes$, or $\gexp$ is associative.
+\end{theorem}
+Lean verifies explicit small counterexamples. This is an instructive use of formal computation: a universal algebraic law is disproved by a single checked instance.
+
+\begin{theorem}[3.4: anti-projection, diagonal non-idempotence, and no identities]
+For primes $p,q$, $p\boxtimes q\notin\{p,q\}$; $p\boxplus p\ne p$; and $p\gexp q\ne p$. Consequently none of the three magmas has a two-sided identity.
+\end{theorem}
+For multiplication, $pq+1\equiv1\pmod p$ and $\equiv1\pmod q$, so neither input can divide the kernel. The other claims follow from equally direct congruences.
+
+\begin{theorem}[3.5: odd-prime closure split]
+Let $\Pset_{\mathrm{odd}}=\Pset\setminus\{2\}$. Then $\Pset_{\mathrm{odd}}$ is closed under $\boxplus$ and $\gexp$, but not under $\boxtimes$.
+\end{theorem}
+For $\boxplus$, the kernel of two odd primes is odd. For $\gexp$, the project gives a direct factorization/odd-cofactor proof, independent of Zsigmondy's theorem. Multiplication fails: $3\boxtimes5=\GPF(16)=2$.
+
+\begin{theorem}[3.6: cancellation and distributive laws fail]
+The operations $\boxplus$ and $\boxtimes$ are not left-cancellative. Moreover $\boxtimes$ does not distribute over $\boxplus$, and $\boxplus$ does not distribute over $\boxtimes$.
+\end{theorem}
+
+\begin{proposition}[3.7: mixed associativity failures]
+The three mixed laws tracked in the source inventory all fail; the Lean proof uses the common witness $(2,2,2)$ after unfolding the operations.
+\end{proposition}
+
+\begin{theorem}[3.8: monotonicity fails in both coordinates]
+With the usual ordering of primes, none of the three operations is monotone in either coordinate.
+\end{theorem}
+This is a conceptual warning: the kernels themselves grow monotonically in several variables, but taking the \emph{greatest prime factor} destroys monotonicity. A larger integer can have a smaller largest prime divisor.
+
+\begin{leanbox}{Lean correspondence for this chapter}
+Results 3.1--3.4 and 3.6--3.8 are implemented in \lean{PrimeGPF/Elementary.lean}. Result 3.5 has a direct unconditional proof in \lean{PrimeGPF/DirectExponential.lean}. The audit classifies all eight numbered results as complete and compiler-verified.
+\end{leanbox}
+
+\chapter{Exact fibers and smoothness}\label{ch:fibers}
+
+\section{The general fiber theorem}
+\begin{theorem}[4.1: exact fixed-output criterion]\label{thm:fiber}
+Let $p,q,r$ be primes and let $K$ be any of the three kernels. Then
+\[
+\GPF(K(p,q))=r
+\quad\Longleftrightarrow\quad
+\exists s\ge1:\ K(p,q)=rs\ \text{and $s$ is $r$-smooth}.
+\]
+\end{theorem}
+
+The statement isolates the key structure used throughout the report. Once $r$ is declared to be the greatest prime factor, dividing by $r$ leaves a cofactor whose prime factors cannot exceed $r$. Conversely, if the cofactor is $r$-smooth and $r$ itself is prime, no prime larger than $r$ can divide the kernel.
+
+In Lean this appears first as the general lemma \lean{gpf_fiber}, then as the numbered wrapper \lean{proof_4_1}. It correctly allows the cofactor $s=1$.
+
+\begin{theorem}[4.2: prime kernels and output two]
+For each operation, the output equals its kernel exactly when the kernel is prime. The output is $2$ exactly when the kernel is a positive power of $2$.
+\end{theorem}
+The second clause follows because an integer $>1$ has greatest prime factor $2$ precisely when all its prime factors are $2$.
+
+\section{Small exact fibers}
+\begin{theorem}[4.3: explicit fibers at $2$ and $3$]\label{thm:43}
+The Lean theorem packages six classifications:
+\begin{enumerate}[label=(\alph*)]
+\item $p\boxplus q=2$ iff exactly one input is $2$ and the other satisfies $q+3=2^m$ (or symmetrically $p+3=2^m$) for some $m\ge3$.
+\item $p\boxtimes q=2$ iff $pq+1=2^m$ for some $m>0$.
+\item If $p\boxtimes q=2$, then $p,q$ are odd and lie in opposite residue classes modulo $4$.
+\item For odd primes $p,q$, $p\boxplus q=3$ iff $p+q+1=3^m$ for some $m\ge2$.
+\item If $p,q>3$ and $p\boxplus q=3$, then $p\equiv q\equiv1\pmod6$.
+\item $2\boxtimes q=3$ iff $2q+1=3^m$ for some $m\ge2$.
+\end{enumerate}
+\end{theorem}
+
+These are exact, not heuristic, fiber descriptions. They illustrate how an output restriction on $\GPF$ often becomes a pure-power equation plus elementary congruences.
+
+\chapter{Congruences, multiplicative orders, and cyclotomic forcing}\label{ch:orders}
+
+\section{Modular inverse structure}
+\begin{theorem}[5.1: modular inverse and affine laws]
+For primes $p,q$, let $r=p\boxtimes q$ and $s=p\boxplus q$. Then
+\[
+pq\equiv-1\pmod r,\qquad p+q\equiv-1\pmod s.
+\]
+Moreover, since $r$ cannot equal $p$ or $q$, the residues of $p$ and $q$ modulo $r$ are invertible and
+\[
+q\equiv-p^{-1}\pmod r,\qquad p\equiv-q^{-1}\pmod r.
+\]
+\end{theorem}
+The Lean statement avoids depending on notation for inverses by producing explicit inverse witnesses. This is a good example of a formal statement being slightly more implementation-stable than its conventional mathematical rendering.
+
+\section{Diagonal multiplication and order four}
+\begin{theorem}[5.2: diagonal congruence and primitive-divisor form]
+For every prime $p$,
+\[
+p\boxtimes p\equiv1\pmod4.
+\]
+If $r=p\boxtimes p$, then $p^2\equiv-1\pmod r$, so $p$ has exact order $4$ modulo $r$; equivalently, $r$ is a primitive prime divisor of $p^4-1$ in the project's positive-order sense.
+\end{theorem}
+The bridge from exact modular order to group-theoretic \lean{orderOf} is formalized in \lean{Orders.lean}.
+
+\begin{corollary}[5.3: diagonal orbit confinement]
+After one iteration of the diagonal $\boxtimes$ map, every value is congruent to $1\pmod4$. Hence a periodic starting point must itself be $1\pmod4$.
+\end{corollary}
+
+\section{Quadratic character}
+\begin{conceptbox}{Legendre symbol and quadratic character}
+For an odd prime $r$, the Legendre symbol $(a/r)$ is $0$ when $r\mid a$, $1$ when $a$ is a nonzero square modulo $r$, and $-1$ otherwise. It is multiplicative, and Euler's criterion gives $(a/r)\equiv a^{(r-1)/2}\pmod r$. Quadratic reciprocity relates $(p/r)$ and $(r/p)$; standard references include Ireland--Rosen \parencite{IrelandRosen1990}. The Lean development defines a finite \lean{quadraticCharacter} explicitly and proves compatibility with mathlib's character machinery.
+\end{conceptbox}
+
+\begin{theorem}[5.4: quadratic-character constraint]
+Let $r=p\boxtimes q$ and assume $r\ne2$. Then
+\[
+\chi_r(p)\chi_r(q)=\chi_r(-1).
+\]
+Thus if $r\equiv1\pmod4$, $p$ and $q$ have the same quadratic character modulo $r$; if $r\equiv3\pmod4$, exactly one is a quadratic residue.
+\end{theorem}
+
+\section{The correction to Theorem 5.5}
+\begin{warningbox}{Correction discovered and certified during formalization}
+The June 2026 report stated Theorem 5.5 without excluding $r=2$. That statement is false. The Lean project contains a checked counterexample at $p=3$, $q=5$, $m=1$: here $r=3\boxtimes5=2$, the displayed congruence hypothesis holds, but the conclusion $r\equiv1\pmod4$ fails. The old proposition is retained as \lean{t5_5_original} and formally refuted. The official numbered theorem is now the corrected version below.
+\end{warningbox}
+
+\begin{theorem}[5.5: corrected dyadic cyclotomic forcing]\label{thm:55}
+Let $p,q$ be primes and $m\ge1$. Put $r=p\boxtimes q$. Assume
+\[
+r\ne2,
+\qquad
+q\equiv p^{2^m-1}\pmod r.
+\]
+Then
+\[
+\operatorname{ord}_r(p)=2^{m+1},\qquad
+r\equiv1\pmod{2^{m+1}},
+\]
+$r$ is a primitive divisor for order $2^{m+1}$, and
+\[
+r\mid p^{2^m}+1=\Phi_{2^{m+1}}(p).
+\]
+\end{theorem}
+
+The proof uses $r\mid pq+1$ together with the assumed congruence to obtain $p^{2^m}\equiv-1\pmod r$. Since $r\ne2$, $-1\ne1$ in $\mathbb Z/r\mathbb Z$. Squaring gives exponent $2^{m+1}$, while the halfway exponent is not $1$, forcing exact order $2^{m+1}$. The order divides $r-1$, yielding the congruence. For $2$-power cyclotomic indices, $\Phi_{2^{m+1}}(X)=X^{2^m}+1$; see standard cyclotomic references \parencite{Washington1997}.
+
+\begin{leanbox}{Formal status of corrected 5.5}
+The official declaration \lean{Claims.t5_5} is definitionally the corrected proposition and \lean{proof_5_5} is compiler-verified. Its underlying proof is \lean{proof_5_5_corrected} in \lean{Orders.lean}; the wrapper lives in \lean{FiveFive.lean}. The audit supplied with the project reports only \lean{propext}, \lean{Classical.choice}, and \lean{Quot.sound}.
+\end{leanbox}
+
+\begin{theorem}[5.6: parity split for odd multiplicative inputs]
+For odd primes $p,q$, equality $p\equiv q\pmod4$ prevents $p\boxtimes q=2$; conversely, output $2$ forces different residues modulo $4$.
+\end{theorem}
+
+\chapter{Arithmetic progressions, smooth counting, and density}\label{ch:density}
+
+This is the chapter most substantially changed by the Lean development.
+
+\section{Prime number theorem in arithmetic progressions}
+\begin{conceptbox}{Dirichlet versus PNT-AP}
+Dirichlet's theorem says that every reduced residue class modulo $r$ contains infinitely many primes. The prime number theorem for arithmetic progressions is quantitatively much stronger: for $(c,r)=1$,
+\[
+\pi(x;r,c)\sim \frac{\operatorname{Li}(x)}{\varphi(r)}\sim\frac{x}{\varphi(r)\log x}.
+\]
+For prime $r$ and $0<c<r$, $\varphi(r)=r-1$. Davenport gives a classical treatment of primes in arithmetic progressions \parencite{Davenport2000}. Current mathlib's \lean{PrimesInAP} file proves Dirichlet infinitude, with main declarations giving infinitely many primes in an invertible residue class, but the searches performed for this report did not locate the quantitative PNT-AP ratio required by PrimeGPF \parencite{MathlibPrimesInAP}.
+\end{conceptbox}
+
+\begin{definition}[The formal external input \lean{PrimeAPInput}]
+For a prime modulus $r\ne2$ and $0<c<r$, let \lean{apCount r c x} count primes $q\le x$ satisfying $q\equiv c\pmod r$. The proposition \lean{APAsymptotic r c} says, using Lean's filter limit notation,
+\[
+\frac{\operatorname{apCount}(r,c,x)}{x/((r-1)\log x)}\longrightarrow1
+\qquad (x\to\infty).
+\]
+Then \lean{PrimeAPInput} asserts \lean{APAsymptotic r c} for every such $r,c$.
+\end{definition}
+
+\begin{conceptbox}{What \lean{Filter.Tendsto} means}
+Lean represents limits using filters. \lean{Filter.atTop} encodes the phrase ``for sufficiently large $x$'', and \lean{nhds L} is the filter of neighborhoods of $L$. Thus \lean{Filter.Tendsto f Filter.atTop (nhds L)} is the formal counterpart of $f(x)\to L$ as $x\to\infty$. This abstraction makes the same machinery usable for sequences, real-variable limits, and more general topological convergence.
+\end{conceptbox}
+
+\begin{theorem}[6.1: progression reduction and conditional PNT-AP]\label{thm:61}
+Fix primes $a,r$ with $r\ne2$.
+\begin{enumerate}[label=(\alph*)]
+\item If $a\ne r$, the primes $q$ for which $r\mid aq+1$ lie in exactly one nonzero residue class $q\equiv c\pmod r$; their exact finite count agrees with \lean{apCount r c x}. Under \lean{PrimeAPInput}, this count has the PNT-AP asymptotic.
+\item If $(a+1)\not\equiv0\pmod r$, the primes $q$ for which $r\mid a+q+1$ likewise lie in one reduced class, with the same asymptotic input.
+\item If $(a+1)\equiv0\pmod r$, then for prime $q$ the additive divisibility condition is equivalent to $q=r$.
+\end{enumerate}
+\end{theorem}
+The residue-class algebra and exact counting identities are unconditional in \lean{Progressions.lean}. Only the asymptotic ratio is external.
+
+\section{An elementary smooth-number bound strong enough for the fibers}
+Let
+\[
+S_r(x)=\#\{s\le x:s\text{ is $r$-smooth}\}.
+\]
+Every $r$-smooth integer has a unique factorization
+\[
+s=\prod_{\substack{\ell\le r\\ \ell\text{ prime}}}\ell^{e_\ell}.
+\]
+If $s\le x$, then $e_\ell\log\ell\le\log x$, hence
+\[
+0\le e_\ell\le \left\lfloor\frac{\log x}{\log\ell}\right\rfloor.
+\]
+Therefore the exponent vector belongs to a finite box and
+\[
+S_r(x)\le
+\prod_{\substack{\ell\le r\\\ell\text{ prime}}}
+\left(1+\left\lfloor\frac{\log x}{\log\ell}\right\rfloor\right).
+\]
+For fixed $r$, there are exactly $\pi(r)$ factors, so elementary comparison yields
+\[
+S_r(x)=O_r\!\left((\log x)^{\pi(r)}\right).
+\]
+This is much weaker than the refined smooth-number theory of Dickman--de Bruijn--Hildebrand--Tenenbaum, but it is perfectly adapted to a fixed smoothness bound $r$ \parencite{Dickman1930,deBruijn1951,HildebrandTenenbaum1993}.
+
+\begin{theorem}[6.2: unconditional polylogarithmic fibers]\label{thm:62}
+For every prime $r$, there is a constant $C_r>0$ such that for every prime anchor $a$ there is a threshold $N_{a,r}$ with, for $x\ge N_{a,r}$,
+\[
+F^{(+)}_{a,r}(x),F^{(\times)}_{a,r}(x)
+\le C_r(\log x)^{\pi(r)}.
+\]
+The same development proves the explicit smooth exponent-box bound above and a corresponding bound for \lean{smoothCount}.
+\end{theorem}
+
+\begin{proof}[Lean proof architecture]
+If $a\boxplus q=r$, Theorem \ref{thm:fiber} writes $a+q+1=rs$ with $s$ $r$-smooth. Likewise $a\boxtimes q=r$ gives $aq+1=rs$. For a fixed anchor, distinct $q$ give distinct kernels and hence distinct cofactors. The cofactor is bounded by a quadratic function of the cutoff; therefore each fiber injects into a finite set of $r$-smooth integers, and the exponent-box estimate applies. Lean's \lean{proof_6_2} composes explicit finite-set/cardinality lemmas rather than appealing to an asymptotic black box.
+\end{proof}
+
+\begin{statusbox}{What Lean strengthened in 6.2}
+The original report gave the polylogarithmic heuristic/proof in concise asymptotic form. The formal development exposes an explicit finite product \lean{smoothBoxBound} and proves it as an actual cardinality upper bound before deriving the big-picture polylogarithmic estimate. This separation makes the dependence on $r$ and on the anchor threshold precise.
+\end{statusbox}
+
+\section{Zero density: the new conditional formal proof}
+Define \lean{divisorCount(o,a,r,x)} as the number of prime $q\le x$ for which $r$ divides the kernel, and \lean{fiberCount(o,a,r,x)} as the number for which the output equals $r$. The fixed-anchor relative density is
+\[
+\frac{\operatorname{fiberCount}(o,a,r,x)}{\operatorname{divisorCount}(o,a,r,x)}.
+\]
+Define \lean{pairCount(o,r,x)} using ordered prime pairs $p,q\le x$. The global pair density is
+\[
+\frac{\operatorname{pairCount}(o,r,x)}{\pi(x)^2}.
+\]
+
+\begin{theorem}[6.3: zero density, formally conditional only on PNT-AP]\label{thm:63}
+For every odd prime $r$:
+\begin{enumerate}[label=(\roman*)]
+\item for every prime anchor $a$, the multiplicative fixed-output fiber has relative density $0$ whenever $a\ne r$;
+\item the additive fixed-output fiber has relative density $0$ whenever $(a+1)\not\equiv0\pmod r$;
+\item the ordered-pair densities for both $\boxplus$ and $\boxtimes$ tend to $0$.
+\end{enumerate}
+All three clauses are compiler-verified from \lean{PrimeAPInput} by \lean{proof_6_3_from_PNT_AP}.
+\end{theorem}
+
+For fixed-anchor density, Theorem \ref{thm:62} gives a numerator $O((\log x)^{\pi(r)})$, while the exact progression reduction of Theorem \ref{thm:61}, together with PNT-AP, gives a denominator asymptotic to a constant multiple of $x/\log x$. Hence the ratio is bounded by a constant times
+\[
+\frac{(\log x)^{\pi(r)+1}}{x}\to0.
+\]
+Lean proves the log-power limit using mathlib asymptotic machinery and then uses squeeze arguments.
+
+For pair density, the local counting module proves the concrete inequalities
+\[
+N_r^{(+)}(x),N_r^{(\times)}(x)
+\le \pi(x)\,S_r((x+1)^2).
+\]
+Consequently
+\[
+\frac{N_r^{(\star)}(x)}{\pi(x)^2}
+\le
+\frac{S_r((x+1)^2)}{\pi(x)}.
+\]
+Under \lean{PrimeAPInput}, one fixed reduced progression already supplies an eventual lower bound $\pi(x)\gg x/\log x$, while Theorem \ref{thm:62} gives $S_r((x+1)^2)=O((\log x)^{\pi(r)})$. The quotient tends to zero.
+
+\begin{leanbox}{Conditional does not mean unverified}
+The Lean kernel has checked the entire implication
+\[
+\lean{PrimeAPInput}\Longrightarrow\lean{Claims.t6_3}.
+\]
+What remains absent from the pinned project is a proof term for \lean{PrimeAPInput} itself. This is materially stronger than having only an informal proof sketch: every finite counting reduction and every analytic consequence after assuming PNT-AP has been checked.
+\end{leanbox}
+
+\begin{theorem}[6.4: unbounded sections]
+For fixed prime input, the additive and multiplicative sections are unbounded; for fixed prime exponent, the exponential section is unbounded in the base. This theorem is unconditional in Lean. The construction uses congruence classes and Dirichlet's theorem on primes in arithmetic progressions, a theorem available in mathlib \parencite{MathlibPrimesInAP}.
+\end{theorem}
+
+\chapter{Prime dynamics}\label{ch:dynamics}
+
+\section{Fixed points of additive translations}
+Fix a prime anchor $a$ and write $G_a(q)=a\boxplus q$.
+\begin{theorem}[7.1: additive fixed points]
+For prime $q$,
+\[
+G_a(q)=q
+\quad\Longleftrightarrow\quad
+q\mid a+1\quad\text{and}\quad
+\frac{a+1}{q}+1\text{ is $q$-smooth}.
+\]
+Hence $G_a$ has only finitely many prime fixed points, all among the prime divisors of $a+1$.
+\end{theorem}
+The identity follows by writing $a+q+1=q((a+1)/q+1)$ once $q\mid a+1$ and applying the exact fiber criterion.
+
+\begin{theorem}[7.2: multiplicative translations have no fixed points]
+For primes $a,q$, $a\boxtimes q$ equals neither $a$ nor $q$. In particular, the left translation $q\mapsto a\boxtimes q$ has no fixed point.
+\end{theorem}
+
+\begin{theorem}[7.3: the anchor-two additive dynamics]
+For $G_2(q)=2\boxplus q$:
+\begin{enumerate}[label=(\alph*)]
+\item the unique prime fixed point is $3$;
+\item $2\leftrightarrow5$ is a two-cycle;
+\item if $q+3$ is a power of $2$, then $G_2(q)=2$, so the orbit enters the two-cycle in one step.
+\end{enumerate}
+\end{theorem}
+
+\begin{figure}[H]
+\centering
+\AnchorTwoDiagram
+\caption{The explicitly verified fixed point and two-cycle for the anchored additive map $G_2$.}
+\label{fig:g2}
+\end{figure}
+
+\begin{theorem}[7.4: dual additive self-output]
+For primes $a,q$,
+\[
+a\boxplus q=a
+\quad\Longleftrightarrow\quad
+a\mid q+1\quad\text{and}\quad
+\frac{q+1}{a}+1\text{ is $a$-smooth}.
+\]
+\end{theorem}
+This is the symmetric counterpart of Theorem 7.1.
+
+\begin{theorem}[7.5: finite-state eventual periodicity]
+Let $T:\Pset\to\Pset$ be any unary map obtained by fixing all but one input of a GPF operation. If the entire forward orbit of $x$ lies in a finite set, then it is eventually periodic.
+\end{theorem}
+This is simply the pigeonhole principle plus determinism: two orbit values repeat, and applying the same function thereafter forces repetition forever. Lean formalizes the general finite-state argument, not merely the special GPF case.
+
+\chapter{Exponential GPF structure and the Zsigmondy frontier}\label{ch:exp}
+
+\section{Unconditional elementary structure}
+\begin{theorem}[8.1: no output two and nonsurjectivity]
+For all primes $p,q$, $p\gexp q$ is an odd prime. Consequently the map $(p,q)\mapsto p\gexp q$ is not surjective onto the primes.
+\end{theorem}
+The formal proof is direct. If $p=2$, then $2^q+1$ is odd and greater than $1$, so its greatest prime factor is odd. If $p$ is odd and $q=2$, then $p^2+1\equiv2\pmod4$ and is greater than $2$, hence it is not a power of $2$ and has an odd prime divisor. If $p$ and $q$ are both odd, the factorization of $p^q+1$ contains an odd factor greater than $1$. Thus the greatest prime factor is never $2$. No Zsigmondy theorem is needed.
+
+\begin{theorem}[8.2: exponent-two congruence]
+For every prime $p$,
+\[
+p\gexp2\equiv1\pmod4.
+\]
+By the bridge identity of Theorem 9.1, this is the same value as $p\boxtimes p$.
+\end{theorem}
+
+\section{Primitive divisors and Bang--Zsigmondy}
+\begin{conceptbox}{Primitive prime divisors}
+A prime $r$ is a primitive prime divisor of $a^n-b^n$ when it divides $a^n-b^n$ but no earlier $a^k-b^k$ with $1\le k<n$. In group language, when $r\nmid ab$, this means the residue $a/b$ has exact multiplicative order $n$ modulo $r$. Bang and Zsigmondy proved classical existence theorems with explicit exceptional cases \parencite{Bang1886,Zsigmondy1892}.
+\end{conceptbox}
+
+The formal project isolates exactly the specialized existence statement it still needs:
+\begin{lstlisting}[language=Lean]
+def ZsigmondyInput : Prop := ∀ p q,
+  Nat.Prime p → Nat.Prime q → q ≠ 2 → (p, q) ≠ (2, 3) →
+  ∃ r, PrimitiveDivisor r p (2 * q) ∧ r ∣ p ^ q + 1
+\end{lstlisting}
+
+The intended classical route is transparent. Apply Bang--Zsigmondy to $p^{2q}-1$. A primitive prime divisor $r$ has order $2q$, so it cannot divide $p^q-1$. Since
+\[
+p^{2q}-1=(p^q-1)(p^q+1),
+\]
+it must divide $p^q+1$. The exceptional pair $(p,q)=(2,3)$ corresponds to the classical $2^6-1$ exception; the condition $q\ne2$ removes the low even-exponent situation relevant to the specialized statement.
+
+\begin{theorem}[8.3: Zsigmondy lower bound --- conditional]\label{thm:83}
+Let $p,q$ be primes with $q\ne2$ and $(p,q)\ne(2,3)$. Assuming \lean{ZsigmondyInput}, there is a prime $r\mid p^q+1$ satisfying
+\[
+r\equiv1\pmod{2q}.
+\]
+Consequently
+\[
+p\gexp q\ge2q+1.
+\]
+\end{theorem}
+The implication from the primitive divisor to the congruence and output bound is fully checked; only the existence input is external.
+
+\begin{theorem}[8.4: near anti-projection --- conditional]
+For primes $p,q$, $p\gexp q\ne p$, and, assuming the same Zsigmondy input,
+\[
+p\gexp q=q\quad\Longleftrightarrow\quad(p,q)=(2,3).
+\]
+\end{theorem}
+
+\begin{theorem}[8.5: anchored exponential dynamics --- conditional]
+For a fixed prime anchor $a\ne2$, the map $E_a(q)=a\gexp q$ satisfies $E_a(q)>q$ for every prime $q$; hence each forward orbit is strictly increasing, unbounded, and nonperiodic. For $a=2$, $3$ is fixed and every other prime is strictly increased; thus $3$ is the only periodic point.
+\end{theorem}
+
+\begin{statusbox}{Current formal boundary}
+Results 8.3--8.5 are not informal conjectures: Lean has checked their proofs from \lean{ZsigmondyInput}. A single formal proof of that input would immediately turn all three into unconditional results and would also discharge Theorem 9.3.
+\end{statusbox}
+
+\chapter{Mixed-operation collisions}\label{ch:mixed}
+
+\begin{theorem}[9.1: bridge identities]
+For every prime $p$,
+\[
+p\boxplus p=p\boxtimes2,
+\qquad
+p\gexp2=p\boxtimes p.
+\]
+\end{theorem}
+These are kernel identities: $p+p+1=2p+1$ and $p^2+1=pp+1$.
+
+\begin{theorem}[9.2: second-column rigidity]
+Let
+\[
+A_2(p)=p\boxplus2,\quad M_2(p)=p\boxtimes2,\quad E_2(p)=p\gexp2.
+\]
+If any two are equal, their common value is $5$.
+\end{theorem}
+The proof combines divisibility by the corresponding kernels to force the common prime to divide a small integer, then eliminates impossible factors.
+
+\begin{theorem}[9.3: exponential dominance on the $p=2$ row --- conditional]
+For prime $q>3$, assuming \lean{ZsigmondyInput},
+\[
+2\boxplus q<2\gexp q,
+\qquad
+2\boxtimes q\le2\gexp q.
+\]
+If $2q+1$ is composite, the second inequality is strict.
+\end{theorem}
+The lower bound in Theorem \ref{thm:83} gives $2\gexp q\ge2q+1$, while greatest-prime-factor outputs are at most their kernels.
+
+\begin{theorem}[9.4: additive--multiplicative collision compatibility]\label{thm:94}
+Fix primes $p,r$ with $r\ne p$. The congruences
+\[
+r\mid p+q+1,\qquad r\mid pq+1
+\]
+have a simultaneous residue solution $q\pmod r$ iff
+\[
+r\mid p^2+p-1.
+\]
+When it exists, the residue is unique and
+\[
+q\equiv-p-1\equiv-p^{-1}\pmod r.
+\]
+Consequently, if $p\boxplus q=p\boxtimes q=r$, then $r\mid p^2+p-1$.
+\end{theorem}
+Eliminating $q$ gives the quadratic polynomial: multiply the additive relation by $p$ and subtract the multiplicative one.
+
+\begin{corollary}[9.5: finite common outputs]
+For fixed prime $p$, every common output of $\boxplus$ and $\boxtimes$ is among the prime divisors of $p^2+p-1$. Hence there are only finitely many. The same finite containment holds for three-way collisions involving $\gexp$.
+\end{corollary}
+
+\begin{theorem}[9.6: quadratic-residue restriction]
+If prime $r$ divides both $p+q+1$ and $pq+1$, then
+\[
+r\mid p^2+p-1,
+\qquad
+r\mid q^2+q-1.
+\]
+If additionally $r\ne2,5$, then $5$ is a quadratic residue modulo $r$, and therefore
+\[
+r\equiv1\ \text{or}\ 4\pmod5.
+\]
+\end{theorem}
+The discriminant of $X^2+X-1$ is $5$. Existence of a root modulo $r$ therefore yields a square root of $5$; quadratic reciprocity then gives the residue restriction \parencite{IrelandRosen1990}.
+
+\begin{theorem}[9.7: multiplicative--exponential obstruction]
+If
+\[
+p\boxtimes q=p\gexp q=r,
+\]
+then
+\[
+p^{q-1}\equiv q\pmod r.
+\]
+\end{theorem}
+Both kernels are $-1$ modulo $r$: $pq\equiv p^q\equiv-1$, and cancelling the invertible residue $p$ yields the result.
+
+\begin{theorem}[9.8: three-way collision obstruction]
+If
+\[
+p\boxplus q=p\boxtimes q=p\gexp q=r,
+\]
+then
+\[
+r\mid p^2+p-1,
+\qquad p^{q-1}\equiv q\pmod r,
+\qquad q\equiv-p-1\pmod r.
+\]
+If $r\ne2,5$, then $r\equiv\pm1\pmod5$.
+\end{theorem}
+This theorem is a clean composition of the independently verified collision results 9.4, 9.6, and 9.7.
+
+\chapter{Lean formalization and proof-status map}\label{ch:lean}
+
+\section{Architecture of the source}
+The project separates mathematical layers rather than placing all proofs in one file. The main modules are:
+\begin{description}[style=nextline,leftmargin=28mm]
+\item[\lean{Core.lean}] executable greatest-prime-factor scan; smoothness; operations; orbits; order predicates.
+\item[\lean{Statements.lean}] proposition inventory for the numbered results.
+\item[\lean{Elementary.lean}] elementary algebraic laws, exact fibers, fixed points, and historical refutation of old 5.5.
+\item[\lean{Arithmetic.lean}] congruences, collision elimination, and mixed-operation arithmetic.
+\item[\lean{SmallFibers.lean}] exact output-$2$ and output-$3$ classifications.
+\item[\lean{Dynamics.lean}] generic eventual-periodicity argument.
+\item[\lean{DirectExponential.lean}] unconditional odd-output structure for the exponential operation.
+\item[\lean{Orders.lean}] finite-field orders, primitive-divisor bridges, 5.2, 5.3, 8.2, and the corrected 5.5 proof.
+\item[\lean{FiveFive.lean}] official corrected numbered wrapper for 5.5.
+\item[\lean{Quadratic.lean}] quadratic-character and quadratic-reciprocity results.
+\item[\lean{Unbounded.lean}] unbounded-section theorem 6.4.
+\item[\lean{Progressions.lean}] exact AP reductions, \lean{PrimeAPInput}, and conditional 6.1.
+\item[\lean{Counting.lean}] smooth-number and fiber bounds for 6.2; pair-count bounds for 6.3.
+\item[\lean{Density.lean}] local analytic bridge proving 6.3 from \lean{PrimeAPInput}.
+\item[\lean{Conditional.lean}] \lean{ZsigmondyInput} and its downstream wrappers.
+\end{description}
+
+\section{Complete numbered-status table}
+\small
+\begin{longtblr}[
+  caption={Formal status of the 39 corrected numbered results},
+  label={tab:status}
+]{colspec={Q[l,wd=11mm] Q[l,wd=37mm] Q[l,wd=27mm] X[l]},colsep=2pt,rowhead=1,rows={valign=t},hlines}
+\toprule
+Result & Topic & Status & Principal Lean declaration / module \\
+\midrule
+3.1 & Closure and divisibility & Verified & \lean{proof_3_1}, Elementary \\
+3.2 & Commutativity split & Verified & \lean{proof_3_2}, Elementary \\
+3.3 & Nonassociativity & Verified & \lean{proof_3_3}, Elementary \\
+3.4 & Anti-projection / identities & Verified & \lean{proof_3_4}, Elementary \\
+3.5 & Odd-prime closure & Verified & \lean{proof_3_5}, DirectExponential \\
+3.6 & Cancellation / distributivity failures & Verified & \lean{proof_3_6}, Elementary \\
+3.7 & Mixed associativity failures & Verified & \lean{proof_3_7}, Elementary \\
+3.8 & Monotonicity failures & Verified & \lean{proof_3_8}, Elementary \\
+4.1 & Exact fibers & Verified & \lean{proof_4_1}, Elementary \\
+4.2 & Prime kernel and output two & Verified & \lean{proof_4_2}, Elementary \\
+4.3 & Small fibers & Verified & \lean{proof_4_3}, SmallFibers \\
+5.1 & Modular inverse laws & Verified & \lean{proof_5_1}, Arithmetic \\
+5.2 & Diagonal order and congruence & Verified & \lean{proof_5_2}, Orders \\
+5.3 & Diagonal orbit confinement & Verified & \lean{proof_5_3}, Orders \\
+5.4 & Quadratic-character constraint & Verified & \lean{proof_5_4}, Quadratic \\
+5.5 & Corrected dyadic forcing ($r\ne2$) & Verified & \lean{proof_5_5}, FiveFive / Orders \\
+5.6 & Parity split & Verified & \lean{proof_5_6}, Arithmetic \\
+6.1 & AP reduction + PNT-AP & Conditional & \lean{proof_6_1_from_PNT_AP}, Progressions; needs \lean{PrimeAPInput} \\
+6.2 & Polylogarithmic fibers & Verified & \lean{proof_6_2}, Counting \\
+6.3 & Zero density & Conditional & \lean{proof_6_3_from_PNT_AP}, Density; needs \lean{PrimeAPInput} \\
+6.4 & Unbounded sections & Verified & \lean{proof_6_4}, Unbounded \\
+7.1 & Additive fixed points & Verified & \lean{proof_7_1}, Elementary \\
+7.2 & Multiplicative fixed points & Verified & \lean{proof_7_2}, Elementary \\
+7.3 & Anchor-two additive dynamics & Verified & \lean{proof_7_3}, Elementary \\
+7.4 & Dual additive self-output & Verified & \lean{proof_7_4}, Elementary \\
+7.5 & Finite-state eventual periodicity & Verified & \lean{proof_7_5}, Dynamics \\
+8.1 & No exponential output two & Verified & \lean{proof_8_1}, DirectExponential \\
+8.2 & Exponent-two congruence & Verified & \lean{proof_8_2}, Orders \\
+8.3 & Zsigmondy lower bound & Conditional & \lean{proof_8_3_from_zsigmondy}, Conditional; needs \lean{ZsigmondyInput} \\
+8.4 & Near anti-projection & Conditional & \lean{proof_8_4_from_zsigmondy}, Conditional \\
+8.5 & Exponential dynamics & Conditional & \lean{proof_8_5_from_zsigmondy}, Conditional \\
+9.1 & Bridge identities & Verified & \lean{proof_9_1}, Elementary \\
+9.2 & Second-column rigidity & Verified & \lean{proof_9_2}, Arithmetic \\
+9.3 & Exponential dominance & Conditional & \lean{proof_9_3_from_zsigmondy}, Conditional \\
+9.4 & Collision compatibility & Verified & \lean{proof_9_4}, Arithmetic \\
+9.5 & Finite common outputs & Verified & \lean{proof_9_5}, Arithmetic \\
+9.6 & Quadratic-residue restriction & Verified & \lean{proof_9_6}, Quadratic \\
+9.7 & Multiplicative--exponential obstruction & Verified & \lean{proof_9_7}, Arithmetic \\
+9.8 & Three-way collision obstruction & Verified & \lean{proof_9_8}, Quadratic \\
+\bottomrule
+\end{longtblr}
+\normalsize
+
+\section{What formalization clarified}
+The Lean development did more than encode existing prose. It exposed several points that are mathematically informative:
+\begin{enumerate}
+\item \textbf{Exceptional cases become unavoidable.} The old 5.5 failed precisely because characteristic two collapses $-1$ and $1$. Formal proof pressure isolated $r\ne2$ as the missing hypothesis.
+\item \textbf{Positivity assumptions on order matter.} The project's raw primitive-divisor predicate admits the formal edge case $k=0$; the generic order-divides-$r-1$ statement is correct only for $k>0$.
+\item \textbf{Finite combinatorics separates cleanly from analytic input.} The exact residue-class reductions and the entire smooth/fiber-counting theory are unconditional. Only PNT-AP is external in 6.1 and 6.3.
+\item \textbf{Zsigmondy is localized.} The order-theoretic consequences are checked; four numbered results depend on one existence proposition.
+\item \textbf{Theorem 6.2 became more explicit.} The proof now contains a finite exponent-box bound rather than only asymptotic notation.
+\end{enumerate}
+
+\chapter{Related work and novelty assessment}\label{ch:novelty}
+
+\section{Search methodology}
+A targeted prior-art search was conducted on 13 September 2026. Sources included ordinary web search, publisher/journal pages, Google-indexed scholarly records, OEIS, GitHub, current mathlib source/documentation, and searches for exact formula strings. Representative queries included:
+\begin{itemize}
+\item ``greatest prime factor related magmas'', ``prime magmas greatest prime factor'', ``prime GPF magma'';
+\item exact or near-exact forms \lean{gpf(p+q+1)}, \lean{gpf(pq+1)}, \lean{gpf(p^q+1)}, and variants using $P^+$ or ``largest prime factor'';
+\item ``Zsigmondy Lean'', ``primitive divisor mathlib'', ``prime number theorem arithmetic progression Lean mathlib'';
+\item conceptual searches on smooth-number fibers, prime dynamical systems, and greatest-prime-factor recurrences.
+\end{itemize}
+Negative search results are inherently non-exhaustive: absence from the returned corpus is not a proof of novelty.
+
+\section{Direct prior art on greatest-prime-factor magmas}
+The broad idea of defining magmas on primes via a greatest-prime-factor map is \emph{not new}. Caragiu and Back introduced a family of infinite nonassociative magmas on the primes using the greatest prime factor and studied a particular commutative example in 2009 \parencite{CaragiuBack2009}. Caragiu and Vicol later studied the family
+\[
+f_{a,b}(p,q)=P(ap+bq)
+\]
+for positive integers $a,b$, including cyclicity questions \parencite{CaragiuVicol2016}. Earlier and related papers study greatest-prime-factor sequences and recurrences \parencite{CaragiuScheckelhoff2006,BackCaragiu2010}.
+
+This prior art materially changes how originality should be described. ``Prime magmas defined using the greatest prime factor'' cannot be claimed as an original concept of the present project.
+
+\section{Comparison with the three kernels in this report}
+The 2016 affine family $P(ap+bq)$ is structurally different from the multiplicative kernel $P(pq+1)$ and the exponential kernel $P(p^q+1)$. The additive kernel $P(p+q+1)$ is affine with an added constant term and is not literally of the homogeneous form $P(ap+bq)$. The abstract of the 2009 paper does not disclose every operation in its family, so the search record does not justify claiming that no earlier paper contains an equivalent shifted operation.
+
+Exact-formula and phrase searches performed for this revision did not locate an indexed scholarly publication directly matching the complete triple
+\[
+P^+(p+q+1),\quad P^+(pq+1),\quad P^+(p^q+1)
+\]
+or the same theorem package (fibers, density, dynamics, and cross-operation collision restrictions). The correct conclusion is therefore limited:
+
+\begin{statusbox}{Novelty assessment}
+\textbf{Operations:} greatest-prime-factor prime magmas have clear prior art. No directly matching publication for the exact three-kernel system was located in the searches performed, but this does not establish absolute novelty.\par
+\textbf{Individual theorems:} many proof ingredients are classical; some statements appear tailored to these kernels and no direct antecedent was located, but a theorem-by-theorem exhaustive literature proof of novelty was not achieved.\par
+\textbf{Formalization:} no directly matching public Lean formalization of this exact prime-GPF system was located. This supports a cautious claim of apparent formalization novelty, not a universal claim of first formalization.
+\end{statusbox}
+
+\section{Classical ingredients versus project-specific synthesis}
+The following ingredients are unquestionably classical: smooth-number theory \parencite{Dickman1930,deBruijn1951,HildebrandTenenbaum1993}; primes in arithmetic progressions \parencite{Davenport2000}; multiplicative orders and quadratic reciprocity \parencite{IrelandRosen1990}; cyclotomic polynomials \parencite{Washington1997}; and primitive-divisor existence \parencite{Bang1886,Zsigmondy1892}. Potential originality therefore lies, if anywhere, in the choice of kernels, the specific deductions linking them, the density/fiber questions posed for them, and the mechanized organization of those deductions.
+
+\section{Formal-library search}
+Current mathlib's \lean{PrimesInAP} module proves Dirichlet infinitude in reduced classes and provides theorems such as \lean{Nat.infinite_setOfPred_prime_and_eq_mod} and \lean{Nat.forall_exists_prime_gt_and_eq_mod} \parencite{MathlibPrimesInAP}. These are infinitude statements, not the counting asymptotic required by \lean{PrimeAPInput}. A separate public Lean project, \emph{PrimeNumberTheoremAnd}, explicitly lists the prime number theorem in arithmetic progressions among its formalization objectives \parencite{PNTAndLean}. This is relevant evidence of ongoing formal work, but it is not part of the PrimeGPF project's pinned mathlib dependency and does not by itself discharge \lean{PrimeAPInput}.
+
+The web/GitHub searches for this report did not locate a directly matching Bang--Zsigmondy existence theorem in current mathlib. Public Lean code outside mathlib does use custom primitive-prime-divisor predicates in other contexts, so the underlying formal concept is not unique to PrimeGPF; no source located in this search directly proves the specialized \lean{ZsigmondyInput} used here. These are search findings, not assertions of nonexistence; specialized repositories, unindexed work, or later commits may change the picture.
+
+\chapter{Conclusions and open problems}\label{ch:conclusions}
+
+The corrected project has reached a useful boundary: all elementary algebra, fixed-fiber structure, smooth counting, collision arithmetic, and finite dynamics in the numbered inventory are kernel-checked, while six results depend on only two mathematically natural external propositions.
+
+\section{Immediate formal targets}
+\begin{enumerate}
+\item \textbf{Formalize PNT-AP in the needed form.} A proof of \lean{PrimeAPInput} would make 6.1 and 6.3 unconditional. Because the project's finite residue/count identities are already proved, this task is essentially a bridge from a quantitative analytic-number-theory theorem to the exact \lean{apCount}/\lean{Tendsto} normalization.
+\item \textbf{Formalize the specialized Zsigmondy existence statement.} A proof of \lean{ZsigmondyInput} would simultaneously discharge 8.3, 8.4, 8.5, and 9.3.
+\end{enumerate}
+
+\section{Mathematical directions}
+Several questions suggested by the formal structure remain attractive independently of Lean:
+\begin{itemize}
+\item sharpen the polylogarithmic fixed-$r$ fiber bounds and determine asymptotic constants where possible;
+\item classify exceptional small fibers beyond outputs $2$ and $3$;
+\item study cycle structure and escape rates of anchored translations, especially for $\gexp$;
+\item quantify the rarity of double and triple collisions and exploit the polynomial divisor restrictions in 9.4--9.8;
+\item compare the exact three-kernel system systematically with the previously studied greatest-prime-factor magma families.
+\end{itemize}
+
+\section{Interpretive conclusion}
+The greatest benefit of formalization here is not merely a ``verified'' label. It is the decomposition of the argument into exact finite arithmetic, explicit exceptional cases, and two clearly isolated classical inputs. That decomposition both corrected a false theorem and sharpened the mathematical roadmap.
+
+\appendix
+
+\chapter{Computational appendix: PARI/GP}\label{app:pari}
+The original report included exploratory PARI/GP routines. PARI/GP's official documentation describes \lean{factorint} and the arithmetic-function factoring machinery \parencite{PARIArithmetic}. The following compact version reproduces the basic greatest-prime-factor operations. It is useful for experimentation but is not a substitute for formal proof.
+
+\begin{lstlisting}[language={},caption={Basic PARI/GP definitions for the three GPF operations}]
+greatestPrimeFactor(n) = {
+  my(F = factor(n));
+  F[matsize(F)[1], 1]
+};
+
+gpfPlus(p,q)  = greatestPrimeFactor(p + q + 1);
+gpfTimes(p,q) = greatestPrimeFactor(p*q + 1);
+gpfPower(p,q) = greatestPrimeFactor(p^q + 1);
+
+primePrefix(k) = vector(k, i, prime(i));
+
+gpfPowerTable(k) = {
+  my(P = primePrefix(k));
+  matrix(k,k,i,j,gpfPower(P[i],P[j]))
+};
+
+fiberTimes(r,B) = {
+  my(P=listcreate(), out=List());
+  forprime(p=2,B,listput(P,p));
+  for(i=1,#P, for(j=1,#P,
+    if(gpfTimes(P[i],P[j])==r, listput(out,[P[i],P[j]]))
+  ));
+  Vec(out)
+};
+\end{lstlisting}
+
+For large inputs, care is needed: the documentation notes that factorization routines may use probable-prime stages depending on settings. For theorem discovery, computational data are valuable; for theorem certification, the Lean development is the stronger artifact.
+
+\chapter{Lean declaration guide}\label{app:lean-guide}
+\begin{longtblr}{colspec={Q[l,wd=38mm] X[l]},colsep=2pt,hlines,rows={valign=t}}
+\toprule
+Formal object & Mathematical role \\
+\midrule
+\lean{gpf n} & executable greatest-prime-factor function \\
+\lean{IsGPF n r} & $r$ is prime, divides $n$, and dominates all prime divisors of $n$ \\
+\lean{Smooth r n} & positive $r$-smooth integer \\
+\lean{kernel o p q} & one of $p+q+1$, $pq+1$, $p^q+1$ \\
+\lean{output o p q} & greatest prime factor of the kernel \\
+\lean{Prime} & subtype of natural numbers carrying a primality proof \\
+\lean{orbit f x n} & $n$th iterate of $f$ on $x$ \\
+\lean{ExactOrder p r k} & explicit least positive exponent condition modulo $r$ \\
+\lean{PrimitiveDivisor r p k} & prime $r$ realizing exact exponent $k$ in project notation \\
+\lean{primeCount x} & primes $\le x$ \\
+\lean{apCount r c x} & primes $\le x$ in a residue class \\
+\lean{divisorCount o a r x} & prime inputs whose kernel is divisible by $r$ \\
+\lean{fiberCount o a r x} & prime inputs whose output equals $r$ \\
+\lean{pairCount o r x} & ordered prime pairs $\le x$ with output $r$ \\
+\lean{smoothCount r x} & positive $r$-smooth integers $\le x$ \\
+\lean{APAsymptotic r c} & PNT-AP ratio expressed as a filter limit \\
+\lean{RelativeZero o a r} & fixed-anchor fiber/divisibility ratio tends to $0$ \\
+\lean{PairZero o r} & global ordered-pair density tends to $0$ \\
+\bottomrule
+\end{longtblr}
+
+\chapter{Complete AI-use disclosure}\label{app:ai}
+\begin{warningbox}{Scope of AI assistance}
+This report was produced with substantial AI assistance. AI/deep-research and browsing tools were used to locate candidate literature, compare bibliographic records, synthesize mathematical background, organize the exposition, draft and edit prose, generate XeLaTeX/TikZ/listing source, and assist with document quality control. The user supplied the mathematical project, source compendium, Lean project context, build/audit transcripts, and direction for the revision.
+\end{warningbox}
+
+\section*{What AI assistance does not establish}
+AI-generated prose is not a proof. Web search is not an exhaustive literature review. A plausible citation can be wrong or incomplete. A mathematical explanation can mistranscribe a hypothesis. Therefore the report distinguishes three evidential levels:
+\begin{enumerate}
+\item \textbf{Lean-verified claims:} status is based on supplied successful build/audit evidence and source declarations. These claims are about formal propositions actually accepted by Lean, subject to the correctness of the formal statement and imported environment.
+\item \textbf{Source-derived mathematical context:} classical facts are attributed to books, papers, or official documentation and should be checked against those sources for publication use.
+\item \textbf{Research synthesis and novelty assessment:} conclusions about prior art are inferences from a targeted, non-exhaustive search. Negative results mean only that no direct match was located in the searches performed.
+\end{enumerate}
+
+\section*{Formal verification is independent of AI validation}
+The Lean proof checker does not accept a theorem because an AI judges it correct. Tactics and generated scripts must elaborate into proof terms accepted by Lean's kernel. The project's audit additionally checks for disallowed escape hatches. Lean's documentation explains this trust model and also stresses that kernel acceptance does not by itself prove that the human-readable interpretation of a formal statement is the intended one \parencite{LeanFAQ,LeanValidate}.
+
+\section*{Recommended human review before publication}
+A human author or referee should: (i) compare every displayed theorem against the current committed Lean source; (ii) rerun the pinned Lean build and axiom audit; (iii) verify the bibliographic metadata and page/DOI data against primary sources; (iv) examine the novelty-search log and repeat searches in MathSciNet/zbMATH/Google Scholar where access permits; (v) check that the informal proof sketches faithfully represent the formal argument; and (vi) decide what originality language is appropriate for the intended venue.
+
+\chapter{Change log and author-review checklist}\label{app:changes}
+\section*{Major mathematical corrections}
+\begin{itemize}
+\item Replaced the old false numbered Theorem 5.5 by the formally verified corrected theorem with $r\ne2$; retained the counterexample as historical evidence.
+\item Upgraded Theorem 6.2 to unconditional compiler-verified status and documented the explicit exponent-box proof.
+\item Upgraded Theorem 6.3 from an informal density argument to a compiler-verified implication from \lean{PrimeAPInput}, including pair-count and limit architecture.
+\item Marked 6.1, 6.3, 8.3, 8.4, 8.5, and 9.3 explicitly conditional rather than presenting their external analytic/primitive-divisor inputs as already formalized.
+\end{itemize}
+
+\section*{Explanatory additions}
+Added introductions to magmas, greatest prime factors, fibers, smooth numbers, residue rings, multiplicative orders, primitive divisors, cyclotomic polynomials, quadratic characters, PNT-AP, filter limits, density notions, and finite dynamics, together with a source-module guide and formal proof-status table.
+
+\section*{Literature and novelty additions}
+Added classical smooth-number, PNT-AP, cyclotomic, reciprocity, and Bang--Zsigmondy references; identified direct prior art on greatest-prime-factor prime magmas; and added a dated, cautious novelty assessment for the exact three-kernel system and its Lean formalization.
+
+\section*{Items requiring author review}
+\begin{itemize}
+\item Push the newest local \lean{Density.lean}/coverage milestone to GitHub so remote and local source records agree.
+\item Before making a publication-level originality claim, repeat the novelty search in MathSciNet and zbMATH.
+\item Decide whether the historical old 5.5 should remain in the main narrative or be moved entirely to an erratum appendix.
+\item Confirm preferred notation for the exponential operation; this edition uses $\gexp$ to avoid fragile glyphs.
+\end{itemize}
+
+\backmatter
+\printbibliography[heading=bibintoc,title={Bibliography}]
+
+\end{document}
