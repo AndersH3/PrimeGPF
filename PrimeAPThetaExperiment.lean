@@ -82,10 +82,109 @@ theorem nonprime_residueClass_sum_div_tendsto_zero
     exact Finset.sum_congr rfl (fun n hn ↦ hterm n)
   simpa [A, hsum_eq] using hk
 
+/--
+After removing proper prime powers, Wiener--Ikehara gives the same asymptotic
+for the prime part of the residue-class von Mangoldt sum.
+-/
+theorem prime_residueClass_sum_div_from_WienerIkehara
+    (WIT : WienerIkeharaInput) {q : ℕ} [NeZero q] {a : ZMod q}
+    (ha : IsUnit a) :
+    Tendsto
+      (fun N : ℕ ↦
+        (N : ℝ)⁻¹ *
+          ∑ n ∈ Finset.range N,
+            (if n.Prime then vonMangoldt.residueClass a n else 0))
+      atTop (𝓝 ((q.totient : ℝ)⁻¹)) := by
+  classical
+  have hVM := vonMangoldt_AP_from_WienerIkehara WIT ha
+  have hfull :
+      Tendsto
+        (fun N : ℕ ↦
+          (N : ℝ)⁻¹ * ∑ n ∈ Finset.range N, vonMangoldt.residueClass a n)
+        atTop (𝓝 ((q.totient : ℝ)⁻¹)) := by
+    apply hVM.congr'
+    filter_upwards with N
+    have H :
+        ((Finset.range N).filter (fun n : ℕ ↦ (n : ZMod q) = a)).sum Λ =
+          ∑ n ∈ Finset.range N, vonMangoldt.residueClass a n := by
+      exact (Finset.sum_indicator_eq_sum_filter _ _
+        (fun _ ↦ {n : ℕ | (n : ZMod q) = a}) _).symm
+    rw [H]
+    ring
+  have hnon := nonprime_residueClass_sum_div_tendsto_zero a
+  have hsub := hfull.sub hnon
+  simp only [sub_zero] at hsub
+  apply hsub.congr'
+  filter_upwards with N
+  have hsplit :
+      (∑ n ∈ Finset.range N, vonMangoldt.residueClass a n) =
+        (∑ n ∈ Finset.range N,
+          (if n.Prime then vonMangoldt.residueClass a n else 0)) +
+        (∑ n ∈ Finset.range N,
+          (if n.Prime then 0 else vonMangoldt.residueClass a n)) := by
+    rw [← Finset.sum_add_distrib]
+    apply Finset.sum_congr rfl
+    intro n hn
+    by_cases hp : n.Prime <;> simp [hp]
+  rw [hsplit]
+  ring
+
+/--
+Prime-modulus version written as the usual logarithmically weighted prime sum.
+-/
+theorem primeLog_AP_prime_modulus_from_WienerIkehara
+    (WIT : WienerIkeharaInput) {r c : ℕ}
+    (hr : Nat.Prime r) (hc0 : 0 < c) (hcr : c < r) :
+    Tendsto
+      (fun N : ℕ ↦
+        (N : ℝ)⁻¹ *
+          ∑ n ∈ Finset.range N,
+            (if n.Prime ∧ n % r = c then Real.log n else 0))
+      atTop (𝓝 ((((r - 1 : ℕ) : ℝ))⁻¹)) := by
+  letI : NeZero r := ⟨hr.ne_zero⟩
+  have hcop : c.Coprime r :=
+    (hr.coprime_iff_not_dvd.mpr (Nat.not_dvd_of_pos_of_lt hc0 hcr)).symm
+  have hunit : IsUnit (c : ZMod r) :=
+    (ZMod.isUnit_iff_coprime c r).mpr hcop
+  have h := prime_residueClass_sum_div_from_WienerIkehara WIT hunit
+  apply h.congr'
+  filter_upwards with N
+  congr 1
+  apply Finset.sum_congr rfl
+  intro n hn
+  have hres : ((n : ZMod r) = (c : ZMod r)) ↔ n % r = c := by
+    rw [ZMod.natCast_eq_natCast_iff', Nat.mod_eq_of_lt hcr]
+  by_cases hp : n.Prime
+  · simp [hp, vonMangoldt.residueClass, hres, vonMangoldt_apply_prime hp]
+  · simp [hp]
+
+/-- The complete logarithmically weighted prime-modulus AP layer. -/
+def ThetaPrimeAPInput : Prop :=
+  ∀ r c, Nat.Prime r → 0 < c → c < r →
+    Tendsto
+      (fun N : ℕ ↦
+        (N : ℝ)⁻¹ *
+          ∑ n ∈ Finset.range N,
+            (if n.Prime ∧ n % r = c then Real.log n else 0))
+      atTop (𝓝 ((((r - 1 : ℕ) : ℝ))⁻¹))
+
+/-- Wiener--Ikehara discharges the complete logarithmically weighted AP layer. -/
+theorem thetaPrimeAPInput_from_WienerIkehara
+    (WIT : WienerIkeharaInput) : ThetaPrimeAPInput := by
+  intro r c hr hc0 hcr
+  exact primeLog_AP_prime_modulus_from_WienerIkehara WIT hr hc0 hcr
+
 #check weighted_sum_eq_partial_sums
 #check kronecker_weighted_of_summable
 #check nonprime_residueClass_sum_div_tendsto_zero
+#check prime_residueClass_sum_div_from_WienerIkehara
+#check primeLog_AP_prime_modulus_from_WienerIkehara
+#check ThetaPrimeAPInput
+#check thetaPrimeAPInput_from_WienerIkehara
 #print axioms kronecker_weighted_of_summable
 #print axioms nonprime_residueClass_sum_div_tendsto_zero
+#print axioms prime_residueClass_sum_div_from_WienerIkehara
+#print axioms primeLog_AP_prime_modulus_from_WienerIkehara
+#print axioms thetaPrimeAPInput_from_WienerIkehara
 
 end PrimeGPF
