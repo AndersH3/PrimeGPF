@@ -111,7 +111,7 @@ theorem counting_limit_of_weighted {S : ℕ → Finset ℕ} {A : ℝ} (hA : 0 < 
     have hb := weighted_count_upper hN (fun n hn => (hS N n hn).1) hδ0
     calc
       _ = ((S N).card : ℝ) * (δ * Real.log N) / ((N : ℝ) * δ) := by
-        field_simp [hn.ne', hδ0.ne']
+        field_simp [hn.ne', hδ0.ne'] <;> ring
       _ ≤ (((N : ℝ) ^ δ + 1) * (δ * Real.log N) + ∑ n ∈ S N, Real.log n) /
           ((N : ℝ) * δ) :=
         div_le_div_of_nonneg_right hb (mul_nonneg hn.le hδ0.le)
