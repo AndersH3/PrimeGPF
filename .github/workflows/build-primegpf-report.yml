@@ -33,18 +33,32 @@ jobs:
           echo '5bc0f0e88a9c2c83f8e9a4df7ded5429f3b6bf8e39e61beaca2bd55dc1cb92a4  /tmp/prime_gpf_report_source.tar.xz' | sha256sum -c -
           tar -xJf /tmp/prime_gpf_report_source.tar.xz -C report
 
+      - name: Prepare CI-only font-compatible source
+        shell: bash
+        run: |
+          set -euo pipefail
+          cp report/prime_gpf_report.tex report/prime_gpf_report_ci.tex
+          sed -i \
+            -e 's/\\setmainfont{Noto Serif}/\\setmainfont{Latin Modern Roman}/' \
+            -e 's/\\setsansfont{Noto Sans}/\\setsansfont{Latin Modern Sans}/' \
+            -e 's/\\setmonofont{DejaVu Sans Mono}\[Scale=MatchLowercase\]/\\setmonofont{Latin Modern Mono}[Scale=MatchLowercase]/' \
+            -e 's/\\setmathfont{Asana Math}/\\setmathfont{Latin Modern Math}/' \
+            report/prime_gpf_report_ci.tex
+
       - name: Compile XeLaTeX report
         uses: xu-cheng/latex-action@v3
         with:
-          root_file: prime_gpf_report.tex
+          root_file: prime_gpf_report_ci.tex
           working_directory: report
           latexmk_use_xelatex: true
           texlive_version: 2025
 
-      - name: Package report project
+      - name: Finalize PDF and package report project
         shell: bash
         run: |
           set -euo pipefail
+          mv report/prime_gpf_report_ci.pdf report/prime_gpf_report.pdf
+          rm -f report/prime_gpf_report_ci.tex
           python3 - <<'PY'
           from pathlib import Path
           from zipfile import ZipFile, ZIP_DEFLATED
@@ -71,7 +85,8 @@ jobs:
         run: |
           set -euo pipefail
           rm -rf report/.bootstrap
-          rm -f report/*.aux report/*.bbl report/*.bcf report/*.blg report/*.log report/*.out report/*.run.xml report/*.toc report/*.lof report/*.lot report/*.fls report/*.fdb_latexmk
+          rm -f report/prime_gpf_report_ci.*
+          rm -f report/*.aux report/*.bbl report/*.bcf report/*.blg report/*.log report/*.out report/*.run.xml report/*.toc report/*.lof report/*.lot report/*.fls report/*.fdb_latexmk report/*.xdv
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add -A report
