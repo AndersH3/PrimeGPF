@@ -87,8 +87,7 @@ theorem cutoff_log_ratio_limit {c : ℕ} (hc : 0 < c) :
   have hf : (0 : ℝ) < (X / c : ℕ) := by exact_mod_cast Nat.div_pos hXc hc
   have hl : Real.log (X : ℝ) ≠ 0 := (Real.log_pos (by exact_mod_cast hX2)).ne'
   rw [Real.log_div hf.ne' hx.ne']
-  field_simp
-  ring
+  field_simp <;> ring
 
 /-- PNT scaling at an integer cutoff. -/
 theorem primeCount_scaled_limit {c : ℕ} (hc : 0 < c) :
@@ -128,7 +127,8 @@ theorem image_prime_upper_density {a : ℕ} (ha : Nat.Prime a) (k : ℕ)
   have hε' : ((2 : ℝ) ^ k)⁻¹ < ((2 : ℝ) ^ k)⁻¹ + ε := by linarith
   filter_upwards [hh.eventually (gt_mem_nhds hε')] with X hX
   have hcut : (X + 1) / 2 ^ k - 1 ≤ X / 2 ^ k := by
-    have h := Nat.div_le_div_right (show X + 1 ≤ X + 2 ^ k by omega)
+    have h : (X + 1) / 2 ^ k ≤ (X + 2 ^ k) / 2 ^ k :=
+      Nat.div_le_div_right (show X + 1 ≤ X + 2 ^ k by omega)
     rw [Nat.add_div_right X hp] at h
     omega
   have hc := image_count_bound ha k X

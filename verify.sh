@@ -37,3 +37,4 @@ else:
     print(f'Project compiled; {len(remaining)} results remain incomplete or conditional.')
 sys.exit(0 if complete else 2)
 PY
+bash verify_extensions.sh

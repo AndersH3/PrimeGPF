@@ -4,8 +4,12 @@ on:
     paths:
       - 'PrimeGPF/Extensions/**'
       - 'PrimeGPF/Extensions.lean'
+      - 'PrimeGPF.lean'
       - 'ExtensionAudit.lean'
       - 'verify_extensions.sh'
+      - 'verify.sh'
+      - 'tools/check_extension_audit.py'
+      - 'report/extensions/**'
       - '.github/workflows/extensions.yml'
   workflow_dispatch:
 permissions:
@@ -35,6 +39,18 @@ jobs:
         run: lake exe cache get
       - name: Compile and audit extensions
         run: bash verify_extensions.sh
+      - name: Regression check original 39-result inventory
+        run: bash verify.sh
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: extension-validation
+          path: |
+            evidence/extensions-*
+            evidence/build.log
+            evidence/axioms.log
+            evidence/local_build_status.json
+            evidence/lean-version.txt
       - uses: actions/cache/save@v4
         if: always() && steps.cache.outputs.cache-hit != 'true'
         with:
