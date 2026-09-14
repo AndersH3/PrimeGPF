@@ -279,7 +279,7 @@ theorem three_mul_gpf_le_of_odd_composite {n : ℕ} (hn : 1 < n)
     intro hs1
     apply hcomp
     have he : n = gpf n := by simpa [hs1] using hs
-    simpa [he] using hg.1
+    exact (gpf_eq_self_iff hn).mp he.symm
   have hs3 : 3 ≤ s := by omega
   have hmul := Nat.mul_le_mul_left (gpf n) hs3
   calc
