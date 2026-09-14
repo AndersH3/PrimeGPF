@@ -120,6 +120,20 @@ theorem infinite_ancestry_iff {a r : ℕ} (ha : Nat.Prime a) :
   · rintro ⟨rfl, rfl⟩ k
     exact ⟨3, Nat.prime_three, expIter_exception k⟩
 
+theorem infinite_positive_ancestry_iff {a r : ℕ} (ha : Nat.Prime a) :
+    (∀ k, 0 < k → r ∈ iterImage a k) ↔ a = 2 ∧ r = 3 := by
+  constructor
+  · intro h
+    apply (infinite_ancestry_iff ha).mp
+    intro k
+    cases k with
+    | zero =>
+      obtain ⟨q, hq, he⟩ := h 1 (by omega)
+      exact ⟨r, he ▸ expIter_prime ha hq 1, rfl⟩
+    | succ k => exact h (k + 1) (by omega)
+  · intro h k _
+    exact (infinite_ancestry_iff ha).mpr h k
+
 noncomputable def primesTo (X : ℕ) : Finset ℕ :=
   (Finset.range (X + 1)).filter Nat.Prime
 
@@ -210,7 +224,8 @@ theorem exp_fiber_card_bound {a r : ℕ} (ha : Nat.Prime a) (hr : 5 ≤ r) :
       have hq3 := congrArg Prod.snd he
       simp only [Prod.fst, Prod.snd] at ha2 hq3
       subst a; subst q
-      have hh := proof_8_5.2.1
+      have hh := hq.2
+      rw [proof_8_5.2.1] at hh
       omega
     have hb := exp_double ha hq.1 hex
     rw [hq.2] at hb

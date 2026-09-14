@@ -13,6 +13,13 @@ theorem add_exp_localization {p q : ℕ} (hp : Nat.Prime p) (hq : Nat.Prime q)
     rw [h] at hu
     exact Or.inl (by omega)
 
+theorem add_exp_collision_finite {p : ℕ} (hp : Nat.Prime p) :
+    Set.Finite {q | Nat.Prime q ∧ add p q = exp p q} := by
+  apply (Finset.finite_toSet (Finset.range (p + 4))).subset
+  intro q hq
+  have hb := add_exp_localization hp hq.1 hq.2
+  exact Finset.mem_range.mpr (by rcases hb with hb | ⟨_, hb⟩ <;> omega)
+
 /-- A composite odd additive kernel makes the localization five times stronger. -/
 theorem add_exp_composite_bound {p q : ℕ} (hp : Nat.Prime p) (hq : Nat.Prime q)
     (hp2 : p ≠ 2) (hq2 : q ≠ 2) (h : add p q = exp p q)

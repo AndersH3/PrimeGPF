@@ -2,6 +2,8 @@ import PrimeGPF.Extensions
 
 -- Audit every theorem in the extension modules, including supporting lemmas.
 #print axioms PrimeGPF.Extensions.mem_primesTo
+#print axioms PrimeGPF.Extensions.infinite_positive_ancestry_iff
+#print axioms PrimeGPF.Extensions.add_exp_collision_finite
 #print axioms PrimeGPF.Extensions.two_five_support
 #print axioms PrimeGPF.Extensions.gpf_five_not_three_support
 #print axioms PrimeGPF.Extensions.prime_square_add_one_not_three
