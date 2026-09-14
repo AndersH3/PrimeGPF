@@ -4,10 +4,10 @@
 \usepackage{mathtools}
 \usepackage{amsthm}
 \usepackage{unicode-math}
-\setmainfont{Noto Serif}
-\setsansfont{Noto Sans}
+\setmainfont{Latin Modern Roman}
+\setsansfont{Latin Modern Sans}
 \setmonofont{DejaVu Sans Mono}[Scale=MatchLowercase]
-\setmathfont{Asana Math}
+\setmathfont{Latin Modern Math}
 
 \usepackage[a4paper,left=16mm,right=16mm,top=17mm,bottom=18mm,headsep=5mm,footskip=8mm]{geometry}
 \usepackage{microtype}
@@ -21,12 +21,19 @@
 \usepackage{booktabs}
 \usepackage{enumitem}
 \usepackage{float}
+\usepackage{needspace}
 \usepackage{scrhack}
 \usepackage{listings}
+\PassOptionsToPackage{obeyspaces}{url}
 \usepackage{xurl}
 \Urlmuskip=0mu plus 1mu\relax
 \setlength{\emergencystretch}{2em}
 \usepackage{csquotes}
+% Compatibility with LaTeX kernels predating the metadata conditionals.
+% This document does not enable the optional PDF-management metadata layer.
+\providecommand\IfDocumentMetadataT[1]{}
+\providecommand\IfDocumentMetadataF[1]{#1}
+\providecommand\IfDocumentMetadataTF[2]{#2}
 \usepackage[backend=biber,style=alphabetic,maxnames=4,giveninits=true,doi=true,url=true,isbn=false]{biblatex}
 \setcounter{biburllcpenalty}{100}
 \setcounter{biburlnumpenalty}{100}
@@ -64,7 +71,7 @@
 \pagestyle{scrheadings}
 \KOMAoptions{parskip=half}
 \setkomafont{chapter}{\normalfont\sffamily\bfseries\LARGE\color{DeepBlue}}
-\RedeclareSectionCommand[tocnumwidth=2.6em]{chapter}
+\RedeclareSectionCommand[tocnumwidth=2.6em,beforeskip=18pt,afterskip=16pt]{chapter}
 \setkomafont{section}{\normalfont\sffamily\bfseries\Large\color{DeepBlue}}
 \setkomafont{subsection}{\normalfont\sffamily\bfseries\large\color{DeepGreen}}
 
@@ -98,7 +105,11 @@
   rulecolor=\color{black!25},
   showstringspaces=false,
   tabsize=2,
-  upquote=true
+  upquote=true,
+  keepspaces=true,
+  literate={∀}{{$\forall$}}1 {→}{{$\to$}}1 {≠}{{$\ne$}}1
+    {∃}{{$\exists$}}1 {∧}{{$\land$}}1 {∣}{{$\mid$}}1
+    {ℕ}{{$\mathbb{N}$}}1
 }
 
 \newcommand{\Pset}{\mathbb{P}}
@@ -127,7 +138,7 @@
 \vspace{12mm}
 {\large Project consolidation for Anders Hellström\par}
 \vspace{4mm}
-{\large Revised 13 September 2026\par}
+{\large Revised 14 September 2026\par}
 \vfill
 \begin{tcolorbox}[width=.92\textwidth,colback=red!3,colframe=AlertRed,boxrule=1.2pt,title={\large AI-ASSISTED REPORT --- READ THIS NOTICE},fonttitle=\bfseries]
 AI and deep-research tools assisted with literature discovery, source comparison, drafting, and XeLaTeX production. Mathematical claims and bibliographic entries still require human review. Lean compiler/kernel acceptance is a separate machine-checking process: it is evidence about formal proof terms relative to formal statements and imports, and must not be conflated with AI validation. A complete disclosure appears in \cref{app:ai}.
@@ -146,8 +157,9 @@ This report revises and expands the June 2026 \emph{Theorem Compendium for Prime
 \]
 The revision has three purposes. First, it makes the mathematical exposition self-contained by explaining the algebraic, analytic, cyclotomic, dynamical, and formal-verification concepts that the theorems use. Second, it reconciles every numbered result with the Lean 4 formalization. Third, it places the construction in its relevant literature and reports a targeted prior-art/novelty search.
 
-\begin{statusbox}{Formal verification snapshot as of 13 September 2026}
-The author-supplied local build and audit record reports \textbf{33 complete unconditional compiler-verified numbered results} and \textbf{6 compiler-verified conditional numbered results}, with no statement-only and no false \emph{numbered} result in the corrected inventory. The conditional results are 6.1 and 6.3, both depending only on \lean{PrimeAPInput}, and 8.3, 8.4, 8.5, and 9.3, all depending only on \lean{ZsigmondyInput}. The historical, originally printed form of 5.5 is retained separately and formally refuted; the official corrected 5.5 adds the necessary condition $r\ne2$ and is unconditionally verified. The latest audit shown to the author contains only the ordinary dependencies \lean{propext}, \lean{Classical.choice}, and \lean{Quot.sound}, with no \lean{sorryAx} or compiler-trust shortcuts.
+\begin{statusbox}{Formal verification snapshot as of 14 September 2026}
+All \textbf{39 corrected numbered results are unconditional and compiler-verified}. The former inputs \lean{PrimeAPInput} and \lean{ZsigmondyInput} are now proved by \lean{proof_primeAP_dependency} and \lean{proof_zsigmondy_dependency}. Thus 6.1, 6.3, 8.3, 8.4, 8.5, and 9.3 no longer require external mathematical hypotheses. The combined theorem \lean{proof_all_39} proves the conjunction of all 39 corrected propositions. The full GitHub Actions build and transitive axiom audit passed on 14 September 2026 \parencite{PrimeGPFValidation}. Its dependencies are limited to \lean{propext}, \lean{Classical.choice}, and \lean{Quot.sound}. The official corrected 5.5 retains the necessary condition $r\ne2$; its originally printed false form remains separately refuted.
+
 \end{statusbox}
 
 The formal development targets Lean 4.19.0 and a pinned mathlib revision. A successful Lean build establishes that the kernel has accepted proof terms for the stated declarations relative to their imported definitions and axioms; Lean's own documentation emphasizes both this guarantee and the separate obligation to check that the formal statement means what the informal author intends \parencite{LeanFAQ,LeanValidate}.
@@ -159,7 +171,7 @@ The formal development targets Lean 4.19.0 and a pinned mathlib revision. A succ
 \chapter{Scope, source record, and formal verification}\label{ch:scope}
 
 \section{From a short compendium to a checked research record}
-The original 15-page report was designed as a deduplicated list of the main prime-GPF results. It contained concise proofs, a computational appendix, and a bibliography, but it predated the completed Lean work for Theorem 6.2, the conditional Lean proof of Theorem 6.3, and the correction of Theorem 5.5. The present version therefore treats the old document as a historical baseline rather than an authority whenever it conflicts with the checked formal source.
+The original 15-page report was designed as a deduplicated list of the main prime-GPF results. It contained concise proofs, a computational appendix, and a bibliography, but it predated the completed Lean work for Theorem 6.2, the proof of Theorem 6.3, the two completed dependency proofs, and the correction of Theorem 5.5. The present version therefore treats the old document as a historical baseline rather than an authority whenever it conflicts with the checked formal source.
 
 The formal project is organized around a declarative inventory of 39 numbered propositions (3.1--9.8) and proof modules that discharge them. In Lean, a declaration such as
 \begin{lstlisting}[language=Lean]
@@ -170,26 +182,34 @@ merely gives a name to a proposition. It does \emph{not} prove it. A declaration
 theorem proof_6_3_from_PNT_AP (H : PrimeAPInput) : Claims.t6_3 := by
   ...
 \end{lstlisting}
-proves an implication: if a term of type \lean{PrimeAPInput} is supplied, Lean checks a term of type \lean{Claims.t6_3}. This is a genuine formal proof of the implication, but not a proof of the external input.
+proves an implication: if a term of type \lean{PrimeAPInput} is supplied, Lean checks a term of type \lean{Claims.t6_3}. This is a genuine formal proof of the implication, but does not itself prove its premise. The current library also supplies that premise and exports the unconditional theorem:
+\begin{lstlisting}[language=Lean]
+theorem proof_6_3 : Claims.t6_3 :=
+  proof_6_3_from_PNT_AP proof_primeAP_dependency
+\end{lstlisting}
+The suffix ``Input'' names a proposition used as a modular interface; it does not make that proposition a postulated axiom. The distinction between a proved interface and an unresolved assumption is essential when reading the older experiment files.
 
 \section{What ``verified'' means here}
 \begin{conceptbox}{Lean elaboration, proof terms, and the kernel}
-Lean translates notation, tactics, coercions, and typeclass search into a proof term in its dependent type theory. The kernel then checks that proof term against the claimed type. The Lean documentation explicitly separates the validity of a formal proof from the semantic question of whether the formal theorem statement faithfully expresses the intended mathematics \parencite{LeanValidate}. Accordingly, this report uses \emph{compiler-verified} to mean that the checked local project accepted the declaration, not that an AI system or informal argument endorsed it.
+Lean translates notation, tactics, coercions, and typeclass search into a proof term in its dependent type theory. The kernel then checks that proof term against the claimed type. The Lean documentation explicitly separates the validity of a formal proof from the semantic question of whether the formal theorem statement faithfully expresses the intended mathematics \parencite{LeanValidate}. Accordingly, this report uses \emph{compiler-verified} to mean that the pinned project build accepted the declaration, not that an AI system or informal argument endorsed it.
 \end{conceptbox}
 
 The project further audits axiom dependencies. The accepted foundational items in the supplied audit are \lean{propext}, \lean{Classical.choice}, and \lean{Quot.sound}. The project policy forbids using \lean{sorry}, \lean{admit}, a newly postulated mathematical axiom, \lean{native_decide}, \lean{Lean.ofReduceBool}, or \lean{Lean.trustCompiler} to bypass a missing proof.
 
 \section{Repository and reproducibility record}
-The Lean source is maintained in the private GitHub repository \lean{AndersH3/PrimeGPF}; the associated local working directory reported during verification was
-\begin{center}
-\lean{~/Documents/prime_gpf_lean_new/prime_gpf_lean}.
-\end{center}
-At the time of this report, the remote repository and the local tree were temporarily asynchronous for some of the newest density work: the author's local transcript is therefore the source of truth for the verified 6.3 status. This distinction matters in a reproducibility report and should be removed once the complete verified local milestone is pushed.
+The source is maintained in the private repository \href{https://github.com/AndersH3/PrimeGPF}{AndersH3/PrimeGPF}. The proof snapshot used here is commit \lean{f169752012e60d0decda7533c3edbc427c759d59}, validated by GitHub Actions run \lean{34798956017}; it was merged into \lean{main} as \lean{9c60cd35f329dc7380d3a17db6da23cbe7c54e9d} \parencite{PrimeGPFRepo,PrimeGPFValidation}. Lean is pinned to 4.19.0 and mathlib to \lean{c44e0c8ee63ca166450922a373c7409c5d26b00b}. Repository and workflow links require access at the time of this revision; a public archival release would improve independent reproducibility. This report update changes exposition, not the numbered Lean statements.
+
+From a checkout of that source, run:
+\begin{lstlisting}[language={}]
+lake exe cache get
+bash verify.sh
+\end{lstlisting}
+The verifier builds the full library, compiles \lean{Audit.lean}, enforces the foundational-axiom allowlist, and requires the audit of \lean{proof_all_39} before returning success (exit status 0). The targeted \lean{verify_prime_ap.sh} checks the new analytic dependency and 6.1/6.3 separately. The workflow artifact contains build and audit logs. Older module comments and archived status files describe earlier stages; the committed declarations and successful audit, rather than stale prose labels, determine current proof status.
 
 \begin{figure}[H]
 \centering
 \FormalDependencyDiagram
-\caption{Logical architecture of the formalization. Green boxes represent checked theorem layers; orange boxes are the two remaining external mathematical inputs.}
+\caption{Selected dependency paths in the formalization. Every displayed layer is proved. The two formerly external interfaces are discharged before their numbered consequences are combined in the full audit.}
 \label{fig:dependencies}
 \end{figure}
 
@@ -204,6 +224,9 @@ For an integer $n>1$, write
 \GPF(n)=\max\{\ell\in\Pset:\ell\mid n\}.
 \]
 This is the greatest (largest) prime factor of $n$, a standard arithmetic function; related sequence data are catalogued in OEIS A006530 and standard references \parencite{OEISGPF,MathWorldGPF}. The formal project intentionally defines its own finite search \lean{gpf} rather than depending on a version-sensitive library API. Its core specification proves that, for $n>1$, \lean{gpf n} is prime, divides $n$, and dominates every prime divisor of $n$.
+
+\paragraph{Interoperability and computational scope.}
+The custom implementation is a finite scan, not a fast factorizer. It is totalized by $\lean{gpf}(0)=\lean{gpf}(1)=0$; mathematical GPF specifications require $n>1$. Interoperability rests on the specification, not on unfolding the scan: \lean{gpf_eq_of_spec} proves that any candidate satisfying \lean{IsGPF n r} equals \lean{gpf n}. A future mathlib greatest-prime-factor implementation can therefore be connected by proving the same primality, divisibility, and maximality properties, with explicit treatment of 0 and 1. That bridge is possible using the current API but is not claimed to have been implemented here. Users can import the relevant \lean{PrimeGPF.Core} module for this infrastructure; importing the root \lean{PrimeGPF} also loads the analytic proof development.
 
 \begin{conceptbox}{Why the kernels are always in the domain of $\GPF$}
 For primes $p,q\ge2$, each kernel $p+q+1$, $pq+1$, and $p^q+1$ exceeds $1$. Hence it has a prime divisor and therefore a greatest prime divisor. Lean formalizes this elementary fact as \lean{kernel_gt_one}, which is the gateway from the total computational \lean{gpf} function to the mathematically intended operation.
@@ -242,7 +265,7 @@ For this project, the relevant regime is unusually elementary: $r$ is fixed whil
 The type \lean{ZMod r} represents integers modulo $r$. When $r$ is prime it is a finite field. The \emph{multiplicative order} of a nonzero residue $a\pmod r$ is the least positive $k$ with $a^k\equiv1\pmod r$. In a finite field this order divides $r-1$, the size of the multiplicative group. The project bridges its explicit predicate \lean{ExactOrder} to mathlib's group-theoretic \lean{orderOf} in \lean{Orders.lean}.
 
 \begin{definition}[Primitive divisor in this project]
-\lean{PrimitiveDivisor r p k} says that $r$ is prime, $p^k\equiv1\pmod r$, and no exponent $0<j<k$ has $p^j\equiv1\pmod r$. For $k>0$ this is exactly an order statement. The positivity caveat matters: the original generic assertion ``a primitive divisor of order $k$ implies $k\mid r-1$'' was false at $k=0$, and Lean forced that hidden hypothesis to be made explicit.
+\lean{PrimitiveDivisor r p k} says that $r$ is prime, $p^k\equiv1\pmod r$, and no exponent $0<j<k$ has $p^j\equiv1\pmod r$. For $k>0$ this is exactly an order statement. The positivity caveat matters: the original generic assertion ``a primitive divisor of order $k$ implies $k\mid r-1$'' was false at $k=0$, and the formalization exposed the need to make that hypothesis explicit.
 \end{definition}
 
 \chapter{Basic algebraic laws}\label{ch:basic}
@@ -371,6 +394,7 @@ Let $r=p\boxtimes q$ and assume $r\ne2$. Then
 Thus if $r\equiv1\pmod4$, $p$ and $q$ have the same quadratic character modulo $r$; if $r\equiv3\pmod4$, exactly one is a quadratic residue.
 \end{theorem}
 
+\Needspace{9\baselineskip}
 \section{The correction to Theorem 5.5}
 \begin{warningbox}{Correction discovered and certified during formalization}
 The June 2026 report stated Theorem 5.5 without excluding $r=2$. That statement is false. The Lean project contains a checked counterexample at $p=3$, $q=5$, $m=1$: here $r=3\boxtimes5=2$, the displayed congruence hypothesis holds, but the conclusion $r\equiv1\pmod4$ fails. The old proposition is retained as \lean{t5_5_original} and formally refuted. The official numbered theorem is now the corrected version below.
@@ -414,10 +438,10 @@ Dirichlet's theorem says that every reduced residue class modulo $r$ contains in
 \[
 \pi(x;r,c)\sim \frac{\operatorname{Li}(x)}{\varphi(r)}\sim\frac{x}{\varphi(r)\log x}.
 \]
-For prime $r$ and $0<c<r$, $\varphi(r)=r-1$. Davenport gives a classical treatment of primes in arithmetic progressions \parencite{Davenport2000}. Current mathlib's \lean{PrimesInAP} file proves Dirichlet infinitude, with main declarations giving infinitely many primes in an invertible residue class, but the searches performed for this report did not locate the quantitative PNT-AP ratio required by PrimeGPF \parencite{MathlibPrimesInAP}.
+For prime $r$ and $0<c<r$, $\varphi(r)=r-1$. Davenport gives a classical treatment of primes in arithmetic progressions \parencite{Davenport2000}. The pinned mathlib's \lean{PrimesInAP} file supplies Dirichlet infinitude and the residue-class L-series facts used below. PrimeGPF now derives the required quantitative ratio by combining these with a proved Wiener--Ikehara theorem \parencite{MathlibPrimesInAP,PNTAndLean}.
 \end{conceptbox}
 
-\begin{definition}[The formal external input \lean{PrimeAPInput}]
+\begin{definition}[The now-proved interface \lean{PrimeAPInput}]
 For a prime modulus $r\ne2$ and $0<c<r$, let \lean{apCount r c x} count primes $q\le x$ satisfying $q\equiv c\pmod r$. The proposition \lean{APAsymptotic r c} says, using Lean's filter limit notation,
 \[
 \frac{\operatorname{apCount}(r,c,x)}{x/((r-1)\log x)}\longrightarrow1
@@ -430,15 +454,36 @@ Then \lean{PrimeAPInput} asserts \lean{APAsymptotic r c} for every such $r,c$.
 Lean represents limits using filters. \lean{Filter.atTop} encodes the phrase ``for sufficiently large $x$'', and \lean{nhds L} is the filter of neighborhoods of $L$. Thus \lean{Filter.Tendsto f Filter.atTop (nhds L)} is the formal counterpart of $f(x)\to L$ as $x\to\infty$. This abstraction makes the same machinery usable for sequences, real-variable limits, and more general topological convergence.
 \end{conceptbox}
 
-\begin{theorem}[6.1: progression reduction and conditional PNT-AP]\label{thm:61}
+\begin{theorem}[6.1: progression reduction and PNT-AP]\label{thm:61}
 Fix primes $a,r$ with $r\ne2$.
 \begin{enumerate}[label=(\alph*)]
-\item If $a\ne r$, the primes $q$ for which $r\mid aq+1$ lie in exactly one nonzero residue class $q\equiv c\pmod r$; their exact finite count agrees with \lean{apCount r c x}. Under \lean{PrimeAPInput}, this count has the PNT-AP asymptotic.
-\item If $(a+1)\not\equiv0\pmod r$, the primes $q$ for which $r\mid a+q+1$ likewise lie in one reduced class, with the same asymptotic input.
+\item If $a\ne r$, the primes $q$ for which $r\mid aq+1$ lie in exactly one nonzero residue class $q\equiv c\pmod r$; their exact finite count agrees with \lean{apCount r c x}. This count has the PNT-AP asymptotic.
+\item If $(a+1)\not\equiv0\pmod r$, the primes $q$ for which $r\mid a+q+1$ likewise lie in one reduced class, with the same asymptotic conclusion.
 \item If $(a+1)\equiv0\pmod r$, then for prime $q$ the additive divisibility condition is equivalent to $q=r$.
 \end{enumerate}
 \end{theorem}
-The residue-class algebra and exact counting identities are unconditional in \lean{Progressions.lean}. Only the asymptotic ratio is external.
+The residue-class algebra and exact counting identities are unconditional in \lean{Progressions.lean}. The ratio limit is proved in \lean{PrimeAP.lean}; \lean{proof_6_1} combines these ingredients.
+
+\section{How the PNT-AP interface is now proved}\label{sec:pnt-proof}
+The analytic proof uses the version of \lean{WienerIkeharaTheorem'} with explicit summability and Chebyshev-bound hypotheses, adapted from \emph{PrimeNumberTheoremAnd} at commit \lean{d3cea76119684a766d2cd195b05b137442205653}. This upstream revision matches the project's Lean/mathlib pins. The retained files preserve their Apache 2.0 license and author notices. Unfinished later formulations and AP declarations are excluded: the proof does not import an admitted PNT-AP theorem. A private helper family was renamed to avoid a generated-declaration collision with mathlib; no mathematical statement was changed \parencite{PNTAndLean,PrimeGPFProvenance}.
+
+For a reduced class $a\pmod q$, put $f(n)=\Lambda(n)\mathbf{1}_{n\equiv a\, (q)}$, where $\Lambda$ is von Mangoldt's function. Then $0\le f(n)\le\Lambda(n)$. Domination supplies the required Dirichlet-series summability for real part greater than 1 and the Chebyshev bound on partial sums. The pinned mathlib declarations \lean{vonMangoldt.continuousOn_LFunctionResidueClassAux} and \lean{vonMangoldt.eqOn_LFunctionResidueClassAux} supply the continuation and pole subtraction. Applying the proved Tauberian theorem gives
+\[
+ \frac1N\sum_{n<N}f(n)\longrightarrow\frac1{\varphi(q)}.
+\]
+The endpoint change to $n\le N$ costs at most $\log N/N$. Removing proper prime powers costs no more than the unrestricted von Mangoldt-minus-prime sum, whose normalized limit is zero by the retained proved PNT consequences. Thus, for
+\[
+ \theta_{q,a}(N)=\sum_{\substack{\ell\le N,\ \ell\text{ prime}\\\ell\equiv a\, (q)}}\log\ell,
+ \qquad \theta_{q,a}(N)/N\longrightarrow1/\varphi(q).
+\]
+These steps are in \lean{PrimeAPAnalytic.lean}. The retained Kronecker experiment gives another prime-power-removal argument, but it is not the route used by the final numbered proofs.
+
+\paragraph{From logarithmic weights to prime counts.}
+The general lemma \lean{counting_limit_of_weighted} handles finite sets $S_N\subseteq\{1,\ldots,N\}$. Write $A_N=|S_N|$ and $W_N=\sum_{n\in S_N}\log n$, and suppose $W_N/N\to A>0$. The lower estimate is $W_N\le A_N\log N$. For fixed $0<\delta<1$, split at $N^\delta$ to obtain
+\[
+ A_N\,\delta\log N\le (N^\delta+1)\delta\log N+W_N.
+\]
+Since $(N^\delta+1)\log N/N\to0$, the normalized count has lower limit at least $A$ and upper limit at most $A/\delta$. Letting $\delta$ approach 1 yields $A_N\log N/N\to A$. The Lean proof uses eventual upper and lower bounds, avoiding any unproved limsup principle. Finally, \lean{PrimeAP.lean} identifies the exact inclusive count and substitutes $\varphi(r)=r-1$ to produce \lean{proof_primeAP_dependency : PrimeAPInput}.
 
 \section{An elementary smooth-number bound strong enough for the fibers}
 Let
@@ -482,7 +527,7 @@ If $a\boxplus q=r$, Theorem \ref{thm:fiber} writes $a+q+1=rs$ with $s$ $r$-smoot
 The original report gave the polylogarithmic heuristic/proof in concise asymptotic form. The formal development exposes an explicit finite product \lean{smoothBoxBound} and proves it as an actual cardinality upper bound before deriving the big-picture polylogarithmic estimate. This separation makes the dependence on $r$ and on the anchor threshold precise.
 \end{statusbox}
 
-\section{Zero density: the new conditional formal proof}
+\section{Zero density: the completed formal proof}
 Define \lean{divisorCount(o,a,r,x)} as the number of prime $q\le x$ for which $r$ divides the kernel, and \lean{fiberCount(o,a,r,x)} as the number for which the output equals $r$. The fixed-anchor relative density is
 \[
 \frac{\operatorname{fiberCount}(o,a,r,x)}{\operatorname{divisorCount}(o,a,r,x)}.
@@ -492,14 +537,14 @@ Define \lean{pairCount(o,r,x)} using ordered prime pairs $p,q\le x$. The global 
 \frac{\operatorname{pairCount}(o,r,x)}{\pi(x)^2}.
 \]
 
-\begin{theorem}[6.3: zero density, formally conditional only on PNT-AP]\label{thm:63}
+\begin{theorem}[6.3: zero density]\label{thm:63}
 For every odd prime $r$:
 \begin{enumerate}[label=(\roman*)]
 \item for every prime anchor $a$, the multiplicative fixed-output fiber has relative density $0$ whenever $a\ne r$;
 \item the additive fixed-output fiber has relative density $0$ whenever $(a+1)\not\equiv0\pmod r$;
 \item the ordered-pair densities for both $\boxplus$ and $\boxtimes$ tend to $0$.
 \end{enumerate}
-All three clauses are compiler-verified from \lean{PrimeAPInput} by \lean{proof_6_3_from_PNT_AP}.
+All three clauses are compiler-verified by \lean{proof_6_3}, which supplies the proved \lean{PrimeAPInput} to the existing density reduction.
 \end{theorem}
 
 For fixed-anchor density, Theorem \ref{thm:62} gives a numerator $O((\log x)^{\pi(r)})$, while the exact progression reduction of Theorem \ref{thm:61}, together with PNT-AP, gives a denominator asymptotic to a constant multiple of $x/\log x$. Hence the ratio is bounded by a constant times
@@ -519,14 +564,11 @@ Consequently
 \le
 \frac{S_r((x+1)^2)}{\pi(x)}.
 \]
-Under \lean{PrimeAPInput}, one fixed reduced progression already supplies an eventual lower bound $\pi(x)\gg x/\log x$, while Theorem \ref{thm:62} gives $S_r((x+1)^2)=O((\log x)^{\pi(r)})$. The quotient tends to zero.
+Using the now-proved \lean{PrimeAPInput}, one fixed reduced progression already supplies an eventual lower bound $\pi(x)\gg x/\log x$, while Theorem \ref{thm:62} gives $S_r((x+1)^2)=O((\log x)^{\pi(r)})$. The quotient tends to zero.
 
-\begin{leanbox}{Conditional does not mean unverified}
-The Lean kernel has checked the entire implication
-\[
-\lean{PrimeAPInput}\Longrightarrow\lean{Claims.t6_3}.
-\]
-What remains absent from the pinned project is a proof term for \lean{PrimeAPInput} itself. This is materially stronger than having only an informal proof sketch: every finite counting reduction and every analytic consequence after assuming PNT-AP has been checked.
+\begin{leanbox}{The dependency is discharged}
+The checked implication \lean{PrimeAPInput}\,$\Longrightarrow$\,\lean{Claims.t6_3} remains a useful modular interface. The current library also proves its premise, so the exported \lean{proof_6_3 : Claims.t6_3} is unconditional. Axiom inspection is transitive: the successful audit follows the proof through the analytic development, rather than merely inspecting this final wrapper.
+
 \end{leanbox}
 
 \begin{theorem}[6.4: unbounded sections]
@@ -585,7 +627,7 @@ Let $T:\Pset\to\Pset$ be any unary map obtained by fixing all but one input of a
 \end{theorem}
 This is simply the pigeonhole principle plus determinism: two orbit values repeat, and applying the same function thereafter forces repetition forever. Lean formalizes the general finite-state argument, not merely the special GPF case.
 
-\chapter{Exponential GPF structure and the Zsigmondy frontier}\label{ch:exp}
+\chapter{Exponential GPF structure and prime-exponent divisors}\label{ch:exp}
 
 \section{Unconditional elementary structure}
 \begin{theorem}[8.1: no output two and nonsurjectivity]
@@ -606,21 +648,36 @@ By the bridge identity of Theorem 9.1, this is the same value as $p\boxtimes p$.
 A prime $r$ is a primitive prime divisor of $a^n-b^n$ when it divides $a^n-b^n$ but no earlier $a^k-b^k$ with $1\le k<n$. In group language, when $r\nmid ab$, this means the residue $a/b$ has exact multiplicative order $n$ modulo $r$. Bang and Zsigmondy proved classical existence theorems with explicit exceptional cases \parencite{Bang1886,Zsigmondy1892}.
 \end{conceptbox}
 
-The formal project isolates exactly the specialized existence statement it still needs:
+The formal project isolates and now proves the following specialized existence statement:
 \begin{lstlisting}[language=Lean]
 def ZsigmondyInput : Prop := ∀ p q,
   Nat.Prime p → Nat.Prime q → q ≠ 2 → (p, q) ≠ (2, 3) →
   ∃ r, PrimitiveDivisor r p (2 * q) ∧ r ∣ p ^ q + 1
 \end{lstlisting}
 
-The intended classical route is transparent. Apply Bang--Zsigmondy to $p^{2q}-1$. A primitive prime divisor $r$ has order $2q$, so it cannot divide $p^q-1$. Since
+One classical route would be to use the general theorem. Apply Bang--Zsigmondy to $p^{2q}-1$. A primitive prime divisor $r$ has order $2q$, so it cannot divide $p^q-1$. Since
 \[
 p^{2q}-1=(p^q-1)(p^q+1),
 \]
 it must divide $p^q+1$. The exceptional pair $(p,q)=(2,3)$ corresponds to the classical $2^6-1$ exception; the condition $q\ne2$ removes the low even-exponent situation relevant to the specialized statement.
 
-\begin{theorem}[8.3: Zsigmondy lower bound --- conditional]\label{thm:83}
-Let $p,q$ be primes with $q\ne2$ and $(p,q)\ne(2,3)$. Assuming \lean{ZsigmondyInput}, there is a prime $r\mid p^q+1$ satisfying
+\section{A direct proof for prime exponents}\label{sec:prime-exponent}
+The implemented proof in \lean{PrimeExponent.lean} does not formalize the full Bang--Zsigmondy theorem. It proves exactly the displayed interface using an odd cofactor, lifting the exponent, and finite-field order \parencite{PrimeExponentSource,MathlibValuation}.
+
+Let $q=2n+1$ be an odd prime and set
+\[
+ C=\frac{p^q+1}{p+1}.
+\]
+The recursively defined \lean{oddCofactor p n} proves this quotient identity without natural-number subtraction difficulties. It is odd, and $C>q$ outside $(p,q)=(2,3)$. Suppose every prime divisor $r$ of $C$ also divides $p+1$. Reducing the cofactor at $p\equiv-1\pmod r$ gives $C\equiv q\pmod r$, so every such $r$ equals $q$. Unique factorization then gives $C=q^k$ with $k>0$. In particular $q\mid p+1$. The odd-prime lifting-the-exponent identity yields
+\[
+ v_q(p^q+1)=v_q(p+1)+v_q(q)=v_q(p+1)+1.
+\]
+Since $(p+1)C=p^q+1$, this forces $v_q(C)=1$, hence $C=q$, contradicting $C>q$. Therefore $C$ has an odd prime divisor $r$ outside $p+1$.
+
+For this divisor, $p^q\equiv-1\pmod r$, while $p^2\not\equiv1\pmod r$: in the field modulo $r$, a square root of 1 is $1$ or $-1$, and both possibilities contradict the construction. The order divides $2q$ but divides neither $q$ nor 2; since $q$ is prime, it equals $2q$. This constructs the required primitive divisor. The declaration \lean{proof_zsigmondy_dependency} closes the interface; the general two-base, arbitrary-exponent Bang--Zsigmondy theorem is not a claimed deliverable.
+
+\begin{theorem}[8.3: prime-exponent lower bound]\label{thm:83}
+Let $p,q$ be primes with $q\ne2$ and $(p,q)\ne(2,3)$. There is a prime $r\mid p^q+1$ satisfying
 \[
 r\equiv1\pmod{2q}.
 \]
@@ -629,21 +686,22 @@ Consequently
 p\gexp q\ge2q+1.
 \]
 \end{theorem}
-The implication from the primitive divisor to the congruence and output bound is fully checked; only the existence input is external.
+The existence and order arguments are now both checked. The theorem \lean{proof_8_3} supplies the proved interface to the original order-theoretic reduction.
 
-\begin{theorem}[8.4: near anti-projection --- conditional]
-For primes $p,q$, $p\gexp q\ne p$, and, assuming the same Zsigmondy input,
+\begin{theorem}[8.4: near anti-projection]
+For primes $p,q$, $p\gexp q\ne p$, and
 \[
 p\gexp q=q\quad\Longleftrightarrow\quad(p,q)=(2,3).
 \]
 \end{theorem}
 
-\begin{theorem}[8.5: anchored exponential dynamics --- conditional]
+\begin{theorem}[8.5: anchored exponential dynamics]
 For a fixed prime anchor $a\ne2$, the map $E_a(q)=a\gexp q$ satisfies $E_a(q)>q$ for every prime $q$; hence each forward orbit is strictly increasing, unbounded, and nonperiodic. For $a=2$, $3$ is fixed and every other prime is strictly increased; thus $3$ is the only periodic point.
 \end{theorem}
 
-\begin{statusbox}{Current formal boundary}
-Results 8.3--8.5 are not informal conjectures: Lean has checked their proofs from \lean{ZsigmondyInput}. A single formal proof of that input would immediately turn all three into unconditional results and would also discharge Theorem 9.3.
+\begin{statusbox}{Completed exponential dependency}
+The unconditional declarations \lean{proof_8_3}, \lean{proof_8_4}, \lean{proof_8_5}, and \lean{proof_9_3} all use \lean{proof_zsigmondy_dependency}. Their historical conditional wrappers remain available, but the numbered results no longer assume an external existence theorem.
+
 \end{statusbox}
 
 \chapter{Mixed-operation collisions}\label{ch:mixed}
@@ -667,8 +725,8 @@ If any two are equal, their common value is $5$.
 \end{theorem}
 The proof combines divisibility by the corresponding kernels to force the common prime to divide a small integer, then eliminates impossible factors.
 
-\begin{theorem}[9.3: exponential dominance on the $p=2$ row --- conditional]
-For prime $q>3$, assuming \lean{ZsigmondyInput},
+\begin{theorem}[9.3: exponential dominance on the $p=2$ row]
+For prime $q>3$,
 \[
 2\boxplus q<2\gexp q,
 \qquad
@@ -756,13 +814,21 @@ The project separates mathematical layers rather than placing all proofs in one 
 \item[\lean{FiveFive.lean}] official corrected numbered wrapper for 5.5.
 \item[\lean{Quadratic.lean}] quadratic-character and quadratic-reciprocity results.
 \item[\lean{Unbounded.lean}] unbounded-section theorem 6.4.
-\item[\lean{Progressions.lean}] exact AP reductions, \lean{PrimeAPInput}, and conditional 6.1.
+\item[\lean{Progressions.lean}] exact AP reductions, \lean{PrimeAPInput}, and the modular reduction for 6.1.
 \item[\lean{Counting.lean}] smooth-number and fiber bounds for 6.2; pair-count bounds for 6.3.
 \item[\lean{Density.lean}] local analytic bridge proving 6.3 from \lean{PrimeAPInput}.
-\item[\lean{Conditional.lean}] \lean{ZsigmondyInput} and its downstream wrappers.
+\item[\lean{Conditional.lean}] reusable input propositions and downstream implication wrappers.
+\item[\lean{PrimeExponent.lean}] the specialized primitive-divisor proof and unconditional 8.3--8.5, 9.3.
+\item[\lean{PrimeGPF/PNT/}] credited, version-compatible upstream analytic proofs.
+\item[\lean{PrimeAPAnalytic.lean}] residue-class weighted asymptotics and prime-power removal.
+\item[\lean{WeightedCounting.lean}] general logarithmic-weight-to-count conversion.
+\item[\lean{PrimeAP.lean}] the proved AP input and unconditional 6.1, 6.3.
+\item[\lean{Complete.lean}] \lean{proof_all_39}, the conjunction of all corrected numbered statements.
 \end{description}
 
 \section{Complete numbered-status table}
+\begingroup
+\setlength{\parskip}{0pt}
 \small
 \begin{longtblr}[
   caption={Formal status of the 39 corrected numbered results},
@@ -788,9 +854,9 @@ Result & Topic & Status & Principal Lean declaration / module \\
 5.4 & Quadratic-character constraint & Verified & \lean{proof_5_4}, Quadratic \\
 5.5 & Corrected dyadic forcing ($r\ne2$) & Verified & \lean{proof_5_5}, FiveFive / Orders \\
 5.6 & Parity split & Verified & \lean{proof_5_6}, Arithmetic \\
-6.1 & AP reduction + PNT-AP & Conditional & \lean{proof_6_1_from_PNT_AP}, Progressions; needs \lean{PrimeAPInput} \\
+6.1 & AP reduction + PNT-AP & Verified & \lean{proof_6_1}, PrimeAP \\
 6.2 & Polylogarithmic fibers & Verified & \lean{proof_6_2}, Counting \\
-6.3 & Zero density & Conditional & \lean{proof_6_3_from_PNT_AP}, Density; needs \lean{PrimeAPInput} \\
+6.3 & Zero density & Verified & \lean{proof_6_3}, PrimeAP \\
 6.4 & Unbounded sections & Verified & \lean{proof_6_4}, Unbounded \\
 7.1 & Additive fixed points & Verified & \lean{proof_7_1}, Elementary \\
 7.2 & Multiplicative fixed points & Verified & \lean{proof_7_2}, Elementary \\
@@ -799,12 +865,12 @@ Result & Topic & Status & Principal Lean declaration / module \\
 7.5 & Finite-state eventual periodicity & Verified & \lean{proof_7_5}, Dynamics \\
 8.1 & No exponential output two & Verified & \lean{proof_8_1}, DirectExponential \\
 8.2 & Exponent-two congruence & Verified & \lean{proof_8_2}, Orders \\
-8.3 & Zsigmondy lower bound & Conditional & \lean{proof_8_3_from_zsigmondy}, Conditional; needs \lean{ZsigmondyInput} \\
-8.4 & Near anti-projection & Conditional & \lean{proof_8_4_from_zsigmondy}, Conditional \\
-8.5 & Exponential dynamics & Conditional & \lean{proof_8_5_from_zsigmondy}, Conditional \\
+8.3 & Prime-exponent lower bound & Verified & \lean{proof_8_3}, PrimeExponent \\
+8.4 & Near anti-projection & Verified & \lean{proof_8_4}, PrimeExponent \\
+8.5 & Exponential dynamics & Verified & \lean{proof_8_5}, PrimeExponent \\
 9.1 & Bridge identities & Verified & \lean{proof_9_1}, Elementary \\
 9.2 & Second-column rigidity & Verified & \lean{proof_9_2}, Arithmetic \\
-9.3 & Exponential dominance & Conditional & \lean{proof_9_3_from_zsigmondy}, Conditional \\
+9.3 & Exponential dominance & Verified & \lean{proof_9_3}, PrimeExponent \\
 9.4 & Collision compatibility & Verified & \lean{proof_9_4}, Arithmetic \\
 9.5 & Finite common outputs & Verified & \lean{proof_9_5}, Arithmetic \\
 9.6 & Quadratic-residue restriction & Verified & \lean{proof_9_6}, Quadratic \\
@@ -812,15 +878,15 @@ Result & Topic & Status & Principal Lean declaration / module \\
 9.8 & Three-way collision obstruction & Verified & \lean{proof_9_8}, Quadratic \\
 \bottomrule
 \end{longtblr}
-\normalsize
+\endgroup
 
 \section{What formalization clarified}
 The Lean development did more than encode existing prose. It exposed several points that are mathematically informative:
 \begin{enumerate}
 \item \textbf{Exceptional cases become unavoidable.} The old 5.5 failed precisely because characteristic two collapses $-1$ and $1$. Formal proof pressure isolated $r\ne2$ as the missing hypothesis.
 \item \textbf{Positivity assumptions on order matter.} The project's raw primitive-divisor predicate admits the formal edge case $k=0$; the generic order-divides-$r-1$ statement is correct only for $k>0$.
-\item \textbf{Finite combinatorics separates cleanly from analytic input.} The exact residue-class reductions and the entire smooth/fiber-counting theory are unconditional. Only PNT-AP is external in 6.1 and 6.3.
-\item \textbf{Zsigmondy is localized.} The order-theoretic consequences are checked; four numbered results depend on one existence proposition.
+\item \textbf{Finite combinatorics separates cleanly from analytic input.} The exact residue-class reductions and the entire smooth/fiber-counting theory are unconditional. The PNT-AP layer is now proved and composed with them in 6.1 and 6.3.
+\item \textbf{Zsigmondy is localized.} The required existence proposition is proved directly for prime exponents, making its four numbered consequences unconditional.
 \item \textbf{Theorem 6.2 became more explicit.} The proof now contains a finite exponent-box bound rather than only asymptotic notation.
 \end{enumerate}
 
@@ -863,20 +929,20 @@ or the same theorem package (fibers, density, dynamics, and cross-operation coll
 \section{Classical ingredients versus project-specific synthesis}
 The following ingredients are unquestionably classical: smooth-number theory \parencite{Dickman1930,deBruijn1951,HildebrandTenenbaum1993}; primes in arithmetic progressions \parencite{Davenport2000}; multiplicative orders and quadratic reciprocity \parencite{IrelandRosen1990}; cyclotomic polynomials \parencite{Washington1997}; and primitive-divisor existence \parencite{Bang1886,Zsigmondy1892}. Potential originality therefore lies, if anywhere, in the choice of kernels, the specific deductions linking them, the density/fiber questions posed for them, and the mechanized organization of those deductions.
 
-\section{Formal-library search}
-Current mathlib's \lean{PrimesInAP} module proves Dirichlet infinitude in reduced classes and provides theorems such as \lean{Nat.infinite_setOfPred_prime_and_eq_mod} and \lean{Nat.forall_exists_prime_gt_and_eq_mod} \parencite{MathlibPrimesInAP}. These are infinitude statements, not the counting asymptotic required by \lean{PrimeAPInput}. A separate public Lean project, \emph{PrimeNumberTheoremAnd}, explicitly lists the prime number theorem in arithmetic progressions among its formalization objectives \parencite{PNTAndLean}. This is relevant evidence of ongoing formal work, but it is not part of the PrimeGPF project's pinned mathlib dependency and does not by itself discharge \lean{PrimeAPInput}.
+\section{Formal-library integration after the search}
+The earlier search correctly distinguished Dirichlet infinitude from the quantitative AP ratio. The completed development uses more of the pinned \lean{PrimesInAP} module: its residue-class L-series continuation and pole calculation are combined with the proved Wiener--Ikehara development from a version-compatible \emph{PrimeNumberTheoremAnd} revision \parencite{MathlibPrimesInAP,PNTAndLean}. The latter is now an explicitly credited, adapted source dependency under \lean{PrimeGPF/PNT/}; unfinished upstream AP declarations are excluded. This is a concrete integration, not an inference from a project's stated objectives.
 
-The web/GitHub searches for this report did not locate a directly matching Bang--Zsigmondy existence theorem in current mathlib. Public Lean code outside mathlib does use custom primitive-prime-divisor predicates in other contexts, so the underlying formal concept is not unique to PrimeGPF; no source located in this search directly proves the specialized \lean{ZsigmondyInput} used here. These are search findings, not assertions of nonexistence; specialized repositories, unindexed work, or later commits may change the picture.
+The specialized \lean{ZsigmondyInput} is proved locally using mathlib's valuation and finite-field APIs. No claim is made that a general Bang--Zsigmondy theorem has thereby been added to mathlib, or that no other Lean proof exists. The 13 September prior-art search remains a dated, non-exhaustive search record; this revision updates source integration and verification evidence rather than claiming a new exhaustive literature search.
+
+\paragraph{Scope of the contribution.}
+The work is principally a synthesis and mechanization of elementary number-theoretic statements about these three kernels, with explicit analytic dependencies and reusable formal bridges. The completed PNT-AP route and prime-exponent argument strengthen the formal coverage; they do not make classical Tauberian theory, lifting the exponent, or greatest-prime-factor magmas new mathematics. Kernel acceptance certifies the formal deductions, while novelty and correspondence with the informal formulations remain matters for mathematical review.
 
 \chapter{Conclusions and open problems}\label{ch:conclusions}
 
-The corrected project has reached a useful boundary: all elementary algebra, fixed-fiber structure, smooth counting, collision arithmetic, and finite dynamics in the numbered inventory are kernel-checked, while six results depend on only two mathematically natural external propositions.
+All 39 corrected numbered results are now proved without external mathematical hypotheses. The transitive audit of \lean{proof_all_39} closes the previous six-result gap while preserving the original corrections and foundational trust policy.
 
-\section{Immediate formal targets}
-\begin{enumerate}
-\item \textbf{Formalize PNT-AP in the needed form.} A proof of \lean{PrimeAPInput} would make 6.1 and 6.3 unconditional. Because the project's finite residue/count identities are already proved, this task is essentially a bridge from a quantitative analytic-number-theory theorem to the exact \lean{apCount}/\lean{Tendsto} normalization.
-\item \textbf{Formalize the specialized Zsigmondy existence statement.} A proof of \lean{ZsigmondyInput} would simultaneously discharge 8.3, 8.4, 8.5, and 9.3.
-\end{enumerate}
+\section{Further formal work beyond this inventory}
+The review requested a feasibility roadmap for the missing inputs. Those tasks have now been completed at the existing Lean 4.19.0 pin: the AP route required substantial analytic source integration and a weighted-count bridge, whereas the prime-exponent route used existing valuation and order APIs without the full general Zsigmondy theorem. Remaining engineering directions include upstreaming reusable lemmas, maintaining compatibility with later mathlib releases, connecting the custom GPF specification to other implementations, and reducing reliance on copied compatibility files. Formalizing general Bang--Zsigmondy or stronger uniform AP error estimates would be separate extensions, not prerequisites for the 39 results.
 
 \section{Mathematical directions}
 Several questions suggested by the formal structure remain attractive independently of Lean:
@@ -889,7 +955,7 @@ Several questions suggested by the formal structure remain attractive independen
 \end{itemize}
 
 \section{Interpretive conclusion}
-The greatest benefit of formalization here is not merely a ``verified'' label. It is the decomposition of the argument into exact finite arithmetic, explicit exceptional cases, and two clearly isolated classical inputs. That decomposition both corrected a false theorem and sharpened the mathematical roadmap.
+The greatest benefit of formalization here is not merely a ``verified'' label. It is the decomposition of the argument into exact finite arithmetic, explicit exceptional cases, and two formerly external interfaces whose proofs are now supplied. That decomposition helped expose a false statement, supported independent proof development, and now yields a complete checked inventory. The contribution remains a formal synthesis with explicit scope, not a claim to new classical number theory.
 
 \appendix
 
@@ -925,8 +991,15 @@ fiberTimes(r,B) = {
 
 For large inputs, care is needed: the documentation notes that factorization routines may use probable-prime stages depending on settings. For theorem discovery, computational data are valuable; for theorem certification, the Lean development is the stronger artifact.
 
+\section{The separate Agda computational port}
+The repository also contains \lean{prime-gpf-agda-verified/}, a certificate-preserving translation of the PARI/GP routines. Its types distinguish naturals greater than 1 from certified primes, with operations mapping certified primes to certified primes. The supplied verification record uses Agda 2.8.0, standard library 2.3, and the GHC backend. Its script type-checks the core, checks small definitional-equality regression proofs, and compares a compiled $5\times5$ table with the expected PARI/GP values. A heavier proof-normalization test is retained but omitted from the routine script \parencite{AgdaPort}.
+
+This is a computational companion, not a second formalization of all 39 Lean propositions. Its test evidence is separate from the Lean axiom audit; the report revision does not claim a new Agda run.
+
 \chapter{Lean declaration guide}\label{app:lean-guide}
-\begin{longtblr}{colspec={Q[l,wd=38mm] X[l]},colsep=2pt,hlines,rows={valign=t}}
+\begingroup
+\setlength{\parskip}{0pt}
+\begin{longtblr}[caption={Lean objects and their mathematical roles}]{colspec={Q[l,wd=50mm] X[l]},colsep=2pt,hlines,rows={valign=t}}
 \toprule
 Formal object & Mathematical role \\
 \midrule
@@ -950,16 +1023,17 @@ Formal object & Mathematical role \\
 \lean{PairZero o r} & global ordered-pair density tends to $0$ \\
 \bottomrule
 \end{longtblr}
+\endgroup
 
 \chapter{Complete AI-use disclosure}\label{app:ai}
 \begin{warningbox}{Scope of AI assistance}
-This report was produced with substantial AI assistance. AI/deep-research and browsing tools were used to locate candidate literature, compare bibliographic records, synthesize mathematical background, organize the exposition, draft and edit prose, generate XeLaTeX/TikZ/listing source, and assist with document quality control. The user supplied the mathematical project, source compendium, Lean project context, build/audit transcripts, and direction for the revision.
+This report was produced with substantial AI assistance. AI/deep-research and browsing tools were used to locate candidate literature, compare bibliographic records, synthesize mathematical background, organize the exposition, draft and edit prose, generate XeLaTeX/TikZ/listing source, and assist with document quality control. The user supplied the mathematical project, source compendium, Lean project context, build/audit transcripts, and direction for the revision. The 14 September update also used AI assistance to compare the merged proofs with the manuscript and respond to the supplied peer review. The new informal proof explanations are expository reconstructions of committed Lean arguments, not substitutes for them.
 \end{warningbox}
 
 \section*{What AI assistance does not establish}
 AI-generated prose is not a proof. Web search is not an exhaustive literature review. A plausible citation can be wrong or incomplete. A mathematical explanation can mistranscribe a hypothesis. Therefore the report distinguishes three evidential levels:
 \begin{enumerate}
-\item \textbf{Lean-verified claims:} status is based on supplied successful build/audit evidence and source declarations. These claims are about formal propositions actually accepted by Lean, subject to the correctness of the formal statement and imported environment.
+\item \textbf{Lean-verified claims:} status is based on the committed source and the successful GitHub Actions build/audit cited in this revision. These claims are about formal propositions actually accepted by Lean, subject to the correctness of the formal statement and imported environment.
 \item \textbf{Source-derived mathematical context:} classical facts are attributed to books, papers, or official documentation and should be checked against those sources for publication use.
 \item \textbf{Research synthesis and novelty assessment:} conclusions about prior art are inferences from a targeted, non-exhaustive search. Negative results mean only that no direct match was located in the searches performed.
 \end{enumerate}
@@ -975,8 +1049,8 @@ A human author or referee should: (i) compare every displayed theorem against th
 \begin{itemize}
 \item Replaced the old false numbered Theorem 5.5 by the formally verified corrected theorem with $r\ne2$; retained the counterexample as historical evidence.
 \item Upgraded Theorem 6.2 to unconditional compiler-verified status and documented the explicit exponent-box proof.
-\item Upgraded Theorem 6.3 from an informal density argument to a compiler-verified implication from \lean{PrimeAPInput}, including pair-count and limit architecture.
-\item Marked 6.1, 6.3, 8.3, 8.4, 8.5, and 9.3 explicitly conditional rather than presenting their external analytic/primitive-divisor inputs as already formalized.
+\item Completed \lean{PrimeAPInput} and made 6.1 and 6.3 unconditional, including the existing pair-count and limit architecture.
+\item Proved the specialized \lean{ZsigmondyInput}, making 8.3--8.5 and 9.3 unconditional; added the combined \lean{proof_all_39} audit.
 \end{itemize}
 
 \section*{Explanatory additions}
@@ -987,10 +1061,10 @@ Added classical smooth-number, PNT-AP, cyclotomic, reciprocity, and Bang--Zsigmo
 
 \section*{Items requiring author review}
 \begin{itemize}
-\item Push the newest local \lean{Density.lean}/coverage milestone to GitHub so remote and local source records agree.
+\item Reproduce the cited commit and audit when preparing a publication release, and review informal/formal statement correspondence.
 \item Before making a publication-level originality claim, repeat the novelty search in MathSciNet and zbMATH.
 \item Decide whether the historical old 5.5 should remain in the main narrative or be moved entirely to an erratum appendix.
-\item Confirm preferred notation for the exponential operation; this edition uses $\gexp$ to avoid fragile glyphs.
+\item Check visual and text-extraction quality of the consistent symbols $\boxplus$, $\boxtimes$, and $\gexp$ in the intended publication workflow.
 \end{itemize}
 
 \backmatter

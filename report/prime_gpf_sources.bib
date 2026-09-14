@@ -174,7 +174,7 @@
 @online{MathlibPrimesInAP,
   author   = {{mathlib contributors}},
   title    = {Mathlib.NumberTheory.LSeries.PrimesInAP},
-  url      = {https://leanprover-community.github.io/mathlib4_docs/Mathlib/NumberTheory/LSeries/PrimesInAP.html},
+  url      = {https://github.com/leanprover-community/mathlib4/blob/c44e0c8ee63ca166450922a373c7409c5d26b00b/Mathlib/NumberTheory/LSeries/PrimesInAP.lean},
   urldate  = {2026-09-13}
 }
 
@@ -204,8 +204,8 @@
   author       = {Hellstr\"om, Anders},
   title        = {PrimeGPF: Lean Formalization of Prime Greatest-Prime-Factor Magmas},
   year         = {2026},
-  howpublished = {Private GitHub repository, \texttt{AndersH3/PrimeGPF}},
-  note         = {Lean 4.19.0 project; source and verification transcript reviewed 13 September 2026}
+  url = {https://github.com/AndersH3/PrimeGPF/tree/9c60cd35f329dc7380d3a17db6da23cbe7c54e9d},
+  note         = {Lean 4.19.0 project; merged proof snapshot reviewed 14 September 2026}
 }
 
 @misc{OriginalCompendium,
@@ -220,7 +220,42 @@
 @online{PNTAndLean,
   author   = {Kontorovich, Alex and contributors},
   title    = {PrimeNumberTheoremAnd: Blueprint for the PNT+ Project},
-  url      = {https://github.com/AlexKontorovich/PrimeNumberTheoremAnd},
+  url      = {https://github.com/AlexKontorovich/PrimeNumberTheoremAnd/tree/d3cea76119684a766d2cd195b05b137442205653},
   urldate  = {2026-09-13},
-  note     = {Public Lean project whose stated objectives include the prime number theorem in arithmetic progressions}
+  note     = {Pinned Lean 4.19-compatible source of the proved Wiener--Ikehara development adapted in PrimeGPF}
+}
+
+@online{PrimeGPFValidation,
+  shorthand = {GPF-CI},
+  title = {PrimeGPF: successful full build and axiom audit, 14 September 2026},
+  url = {https://github.com/AndersH3/PrimeGPF/actions/runs/34798956017},
+  urldate = {2026-09-14}
+}
+
+@online{PrimeGPFProvenance,
+  shorthand = {GPF-AP},
+  title = {Provenance of the prime-AP proof},
+  url = {https://github.com/AndersH3/PrimeGPF/blob/9c60cd35f329dc7380d3a17db6da23cbe7c54e9d/PNT_PROVENANCE.md},
+  urldate = {2026-09-14}
+}
+
+@online{PrimeExponentSource,
+  shorthand = {GPF-Exp},
+  title = {Direct specialized primitive-divisor proof in Lean},
+  url = {https://github.com/AndersH3/PrimeGPF/blob/9c60cd35f329dc7380d3a17db6da23cbe7c54e9d/PrimeGPF/PrimeExponent.lean},
+  urldate = {2026-09-14}
+}
+
+@online{MathlibValuation,
+  shorthand = {ML-LTE},
+  title = {Mathlib: p-adic valuations and lifting the exponent},
+  url = {https://github.com/leanprover-community/mathlib4/blob/c44e0c8ee63ca166450922a373c7409c5d26b00b/Mathlib/NumberTheory/Padics/PadicVal/Basic.lean},
+  urldate = {2026-09-14}
+}
+
+@online{AgdaPort,
+  shorthand = {GPF-Agda},
+  title = {Prime GPF: Agda computational port and verification instructions},
+  url = {https://github.com/AndersH3/PrimeGPF/tree/9c60cd35f329dc7380d3a17db6da23cbe7c54e9d/prime-gpf-agda-verified},
+  urldate = {2026-09-14}
 }

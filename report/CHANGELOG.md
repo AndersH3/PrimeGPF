@@ -1,6 +1,20 @@
 # Change log — revised Prime-GPF theorem compendium
 
-Date: 2026-09-13
+## 2026-09-14 — completed proof inventory and peer-review revision
+
+- Updated the LaTeX source, TikZ dependency diagram, and bibliography against main at `9c60cd35f329dc7380d3a17db6da23cbe7c54e9d`.
+- Recorded all 39 corrected numbered results as unconditional, with the transitive axiom audit of `proof_all_39` and successful CI evidence.
+- Explained the actual PNT-AP construction: proved Wiener–Ikehara input, residue-class von Mangoldt sums, prime-power removal, and weighted-to-ordinary counting.
+- Explained the direct prime-exponent proof of `ZsigmondyInput` using the odd cofactor, lifting the exponent, and multiplicative order. Distinguished it from the full general Bang–Zsigmondy theorem.
+- Updated declarations, module guide, status table, verification commands, repository provenance and access status, and future-work discussion.
+- Addressed novelty, custom-gpf interoperability, notation, and the historical theorem-5.5 correction; added `PEER_REVIEW_RESPONSE.md`.
+- Described the Agda computational companion without presenting it as a second proof of the full inventory.
+- Switched to readily available Latin Modern text/math fonts, retaining DejaVu Sans Mono for Lean listings.
+- Regenerated the PDF from LaTeX; no direct PDF content edits.
+
+## 2026-09-13 — historical revision
+
+The entries below describe the earlier 33-unconditional/6-conditional milestone and are superseded by the completion above.
 
 ## Mathematical corrections
 - Made the corrected theorem 5.5 (with the necessary `r ≠ 2` hypothesis) the official numbered statement in the report; retained the old `r = 2` counterexample as historical evidence.

@@ -12,17 +12,20 @@
 \node[base, right=of core] (arith) {Arithmetic, orders,\\quadratic character};
 \node[verified, below=of core] (count) {Unconditional counting\\Theorem 6.2};
 \node[verified, below=of arith] (direct) {Unconditional algebraic\\and dynamical results};
-\node[input, below=of count] (pnt) {External input\\\texttt{PrimeAPInput}};
-\node[input, below=of direct] (zsig) {External input\\\texttt{ZsigmondyInput}};
-\node[verified, below=of pnt] (dens) {Conditional wrappers\\6.1 and 6.3};
-\node[verified, below=of zsig] (exp) {Conditional wrappers\\8.3, 8.4, 8.5, 9.3};
+\node[verified, below=of count] (pnt) {Proved PNT-AP\\\texttt{PrimeAPInput}};
+\node[verified, below=of direct] (zsig) {Proved prime-exponent input\\\texttt{ZsigmondyInput}};
+\node[verified, below=of pnt] (dens) {Unconditional results\\6.1 and 6.3};
+\node[verified, below=of zsig] (exp) {Unconditional results\\8.3, 8.4, 8.5, 9.3};
 \draw[arr] (core) -- (count);
 \draw[arr] (core) -- (arith);
 \draw[arr] (arith) -- (direct);
-\draw[arr] (count) -- (dens);
+\draw[arr] (count.west) -- ++(-6mm,0) |- (dens.west);
 \draw[arr] (pnt) -- (dens);
-\draw[arr] (direct) -- (exp);
+\draw[arr] (direct.east) -- ++(6mm,0) |- (exp.east);
 \draw[arr] (zsig) -- (exp);
+\node[verified,below=9mm of $(dens)!0.5!(exp)$] (all) {New results + existing inventory\\\texttt{proof\_all\_39}};
+\draw[arr] (dens) -- (all);
+\draw[arr] (exp) -- (all);
 \end{tikzpicture}%
 }
 
