@@ -16,3 +16,4 @@ import PrimeGPF.Density
 import PrimeGPF.PrimeExponent
 import PrimeGPF.PrimeAP
 import PrimeGPF.Complete
+import PrimeGPF.Extensions

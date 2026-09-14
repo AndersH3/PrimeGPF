@@ -1,0 +1,58 @@
+name: Extension proofs
+on:
+  pull_request:
+    paths:
+      - 'PrimeGPF/Extensions/**'
+      - 'PrimeGPF/Extensions.lean'
+      - 'PrimeGPF.lean'
+      - 'ExtensionAudit.lean'
+      - 'verify_extensions.sh'
+      - 'verify.sh'
+      - 'tools/check_extension_audit.py'
+      - 'report/extensions/**'
+      - '.github/workflows/extensions.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: extensions-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  lean:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install pinned Lean toolchain
+        run: |
+          curl -sSf https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh | sh -s -- -y --default-toolchain none
+          echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
+      - uses: actions/cache@v4
+        id: cache
+        with:
+          path: .lake
+          key: prime-gpf-extensions-v2-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}
+          restore-keys: |
+            prime-gpf-extensions-
+            prime-gpf-lean419-pnt-
+      - name: Obtain pinned mathlib cache
+        run: lake exe cache get
+      - name: Compile and audit extensions
+        run: bash verify_extensions.sh
+      - name: Regression check original 39-result inventory
+        run: bash verify.sh
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: extension-validation
+          path: |
+            evidence/extensions-*
+            evidence/build.log
+            evidence/axioms.log
+            evidence/local_build_status.json
+            evidence/lean-version.txt
+      - uses: actions/cache/save@v4
+        if: always() && steps.cache.outputs.cache-hit != 'true'
+        with:
+          path: .lake
+          key: prime-gpf-extensions-v2-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}
