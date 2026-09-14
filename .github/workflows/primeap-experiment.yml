@@ -1,7 +1,7 @@
 name: PNT proof validation
 on:
   push:
-    branches: [prove-prime-ap-input-20260913]
+    branches: [finalize-prime-ap-input-20260914]
   workflow_dispatch:
 permissions:
   contents: read
@@ -27,6 +27,11 @@ jobs:
         run: lake exe cache get
       - name: Compile and audit PNT input
         run: bash verify_prime_ap.sh
+      - name: Validate root library and source inventory
+        run: |
+          python3 tools/check_sources.py
+          lake build
+          lake env lean Audit.lean
       - name: Check retained proof experiments
         run: |
           lake env lean -o .lake/build/lib/lean/PrimeAPExperiment.olean PrimeAPExperiment.lean
