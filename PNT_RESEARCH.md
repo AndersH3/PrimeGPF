@@ -1,3 +1,5 @@
+> Historical note: the proposed route below is now completed and compiler-verified. See [README_PRIME_AP.md](README_PRIME_AP.md). The incomplete-status statements below describe the earlier research checkpoint.
+
 # Remaining dependency: PrimeAPInput
 
 Status: NOT PROVED by this patch. Results 6.1 and 6.3 remain conditional.

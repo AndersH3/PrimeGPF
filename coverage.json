@@ -1,5 +1,5 @@
 {
-  "complete_formalization": false,
+  "complete_formalization": true,
   "compiler_available_during_authoring": true,
   "lean_target": "4.19.0",
   "mathlib_target": "v4.19.0",
@@ -198,14 +198,15 @@
       "title": "Progressions and PNT-AP",
       "statement": "t6_1",
       "proofs": [
+        "proof_6_1",
         "proof_6_1_from_PNT_AP",
         "multiplicative_progression",
         "additive_progression",
         "additive_degenerate_progression"
       ],
       "compiler_verified": true,
-      "status": "conditional_script_verified",
-      "note": "All arithmetic and exact counting identities supplied; PrimeAPInput (PNT-AP limit) remains unproved."
+      "status": "full_script_verified",
+      "note": "Unconditional: proof_primeAP_dependency proves the exact PNT-AP input. Lean 4.19.0 build and transitive axiom audit passed in GitHub Actions run 34795580169."
     },
     {
       "id": "6.2",
@@ -228,6 +229,7 @@
       "title": "Zero density",
       "statement": "t6_3",
       "proofs": [
+        "proof_6_3",
         "proof_6_3_from_PNT_AP",
         "relativeZero_of_polylog_AP",
         "PrimeAPInput.pairZero_add",
@@ -236,8 +238,8 @@
         "pairCount_mul_le"
       ],
       "compiler_verified": true,
-      "status": "conditional_script_verified",
-      "note": "Complete conditional proof from PrimeAPInput. Relative-density limits use the uniform polylogarithmic fiber bound and exact arithmetic-progression counts; pair-density limits use finite pair-count injections into bounded smooth cofactors. No additional external hypothesis beyond the PNT-AP input already used for 6.1."
+      "status": "full_script_verified",
+      "note": "Unconditional: proof_primeAP_dependency proves the exact PNT-AP input. Lean 4.19.0 build and transitive axiom audit passed in GitHub Actions run 34795580169."
     },
     {
       "id": "6.4",
@@ -461,7 +463,7 @@
       "note": "Discharged using the new proof_9_6 and existing proof_9_7. Compiler-verified under Lean 4.19.0."
     }
   ],
-  "revision": "2026-09-11 proof extension",
+  "revision": "2026-09-14 complete prime-AP input",
   "additional_obligations": [
     {
       "statement": "OrderDividesPrimePred",
@@ -472,7 +474,7 @@
     }
   ],
   "counts": {
-    "full_script_verified": 37,
-    "conditional_script_verified": 2
+    "full_script_verified": 39,
+    "conditional_script_verified": 0
   }
 }

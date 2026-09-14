@@ -1,9 +1,10 @@
 # Primitive-divisor milestone
 
-Results 8.3, 8.4, 8.5 and 9.3 are now unconditional.
-`PrimeGPF.proof_zsigmondy_dependency` proves the external input itself.
+Results 8.3, 8.4, 8.5 and 9.3 are unconditional.
+`PrimeGPF.proof_zsigmondy_dependency` proves the specialized input itself.
+See PROOF.md for that argument and its sources.
 
-The current local inventory records **37 full verified results out of 39**.
-Other rows, including corrected 5.5 and the local 6.3 work, were preserved.
-
-PrimeAPInput remains unproved. See PROOF.md for the argument and sources.
+That milestone brought coverage to 37 of 39. The subsequent prime-AP proof
+discharges the remaining shared input and results 6.1 and 6.3.
+The current inventory is **39 unconditional results**, including corrected 5.5.
+See [COVERAGE.md](COVERAGE.md).

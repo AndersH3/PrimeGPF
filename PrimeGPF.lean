@@ -14,3 +14,5 @@ import PrimeGPF.Progressions
 import PrimeGPF.Counting
 import PrimeGPF.Density
 import PrimeGPF.PrimeExponent
+import PrimeGPF.PrimeAP
+import PrimeGPF.Complete
