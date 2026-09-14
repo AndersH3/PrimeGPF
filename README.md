@@ -1,115 +1,80 @@
-> Primitive-divisor update: results 8.3, 8.4, 8.5 and 9.3 are now unconditional. See [the current milestone](PRIME_EXPONENT_STATUS.md) and `coverage.json`; older status text below predates this update.
-
 # Prime GPF magma: Lean formalization
 
-**Status:** the project builds successfully under **Lean 4.19.0** with
-mathlib **v4.19.0**. The axiom audit contains no `sorryAx`, `admit`,
-`native_decide`, or compiler-trust shortcuts.
+All **39 corrected numbered results** now have unconditional proofs in
+**Lean 4.19.0**, using pinned mathlib v4.19.0
+(`c44e0c8ee63ca166450922a373c7409c5d26b00b`).
 
-The source compendium contains 39 numbered results. Current status:
+Results **6.1 and 6.3**, including their shared `PrimeAPInput`, passed the
+[Lean build and transitive axiom audit](https://github.com/AndersH3/PrimeGPF/actions/runs/34795580169).
+`PrimeGPF.proof_all_39` combines all 39 corrected numbered statements.
+The audit allows only `propext`, `Classical.choice`, and `Quot.sound`.
 
 | Status | Count |
 |---|---:|
-| Complete compiler-verified proofs | 33 |
-| Compiler-verified conditional proofs | 6 |
-| Statement only | 0 |
-| False numbered statements | 0 |
+| Unconditional compiler-verified numbered results | 39 |
+| Conditional numbered results | 0 |
 
-The official numbered theorem 5.5 is the corrected version with the necessary
-`r ≠ 2` hypothesis. The old printed version is retained separately only for
-its verified counterexample and refutation.
+## New prime-AP proof
 
-Result **6.2 (polylogarithmic fibers)** is now completely and unconditionally
-proved. The proof includes an exponent-vector bound for smooth numbers,
-a polylogarithmic smooth-number estimate, injections from additive and
-multiplicative fibers into bounded smooth cofactors, and the required common
-constant depending only on `r`.
+The proof applies a proved Wiener–Ikehara theorem to von Mangoldt restricted
+to a reduced residue class, supplying its summability and Chebyshev hypotheses.
+It removes higher prime powers and converts the logarithmically weighted sum
+to ordinary prime counts. It then proves the exact `Claims.APAsymptotic`
+normalization and `PrimeAPInput`. The existing density reductions give 6.3.
 
-Result **6.3 (zero density)** now has a compiler-verified conditional proof.
-Both fixed-anchor relative-density limits and the two-variable pair-density
-limits are derived from `PrimeAPInput`, the same PNT-in-arithmetic-progressions
-input already isolated for 6.1. No additional external analytic hypothesis is
-introduced.
-
-## What was added
-
-| File | New work |
+| Module | Contents |
 |---|---|
-| `PrimeGPF/DirectExponential.lean` | Elementary odd-cofactor argument; complete scripts for 8.1 and 3.5 without Zsigmondy |
-| `PrimeGPF/Orders.lean` | Equivalence with mathlib orderOf; positive-order divisibility; dyadic forcing; 5.2, 5.3, 8.2 and corrected 5.5 |
-| `PrimeGPF/Quadratic.lean` | Bridge to quadraticChar; 5.4; explicit discriminant witness; reciprocity at five; 9.6 and 9.8 |
-| `PrimeGPF/Unbounded.lean` | All three clauses of 6.4 using mathlib's Dirichlet theorem |
-| `PrimeGPF/Progressions.lean` | General affine residue lemma; arithmetic and exact count identities in 6.1; remaining PNT-AP limit isolated |
-| `PrimeGPF/Conditional.lean` | Refutation and repair of the old order dependency; wrappers reducing 8.3, 8.4, 8.5 and 9.3 to ZsigmondyInput alone |
-| `PrimeGPF/Counting.lean` | Complete proof of 6.2 plus finite additive and multiplicative pair-count bounds via injections into bounded smooth cofactors |
-| `PrimeGPF/Density.lean` | Conditional proof of 6.3 from `PrimeAPInput`: AP and prime-count asymptotics, relative-zero estimates, and additive/multiplicative pair-density zero |
+| `PrimeGPF/PrimeAPAnalytic.lean` | Residue-class weighted asymptotics and removal of higher prime powers |
+| `PrimeGPF/WeightedCounting.lean` | Conversion from weighted sums to counts |
+| `PrimeGPF/PrimeAP.lean` | `proof_primeAP_dependency`, `proof_6_1`, `proof_6_3` |
+| `PrimeGPF/Complete.lean` | Conjunction of all 39 corrected numbered propositions |
 
-The original operations and the 39 source proposition definitions are retained.
-The original Word source is included unchanged.
+The analytic dependencies are adapted from a version-compatible
+[PrimeNumberTheoremAnd revision](https://github.com/AlexKontorovich/PrimeNumberTheoremAnd/tree/d3cea76119684a766d2cd195b05b137442205653).
+[PNT_PROVENANCE.md](PNT_PROVENANCE.md) records the source, excluded unfinished
+sections, and compatibility edit. The Apache 2.0 license and copyright notices
+are retained.
 
-## A newly discovered false dependency
+The earlier root-level proof experiments and both development histories are
+preserved. Their abstract Wiener–Ikehara interface remains a conditional
+research interface; the final proofs use the proved analytic dependency.
 
-The old definition `OrderDividesPrimePred` claimed that every
-`PrimitiveDivisor r p k` implies `k ∣ r - 1`. However, the draft's
-`PrimitiveDivisor` definition allows **k = 0**. Thus
-`PrimitiveDivisor 3 2 0` holds, while `0 ∣ 2` is false.
+## Build and audit
 
-This revision preserves that proposition as `OrderDividesPrimePredOriginal`
-and supplies `refutation_order_dependency`. The corrected
-`OrderDividesPrimePred` explicitly requires `0 < k`; its script is
-`proof_order_dependency`. The caller for exponent `2*q` now supplies positivity.
-No source claim was silently weakened to close this gap.
-
-The originally printed 5.5 is false at p=3, q=5, m=1. Its refutation is
-retained as historical evidence. The official numbered 5.5 now includes
-`r ≠ 2` and is proved by `proof_5_5`.
-
-## Remaining work
-
-- **6.1 and 6.3:** `PrimeAPInput`, the specified PNT-in-arithmetic-progressions ratio limit. The entire density argument for 6.3 is now proved from this same input.
-- **8.3, 8.4, 8.5, 9.3:** `ZsigmondyInput`, the specialized primitive-divisor existence theorem.
-
-All currently supplied Lean proof scripts and conditional wrappers compile.
-
-## Build locally
-
-The target remains Lean **4.19.0** and mathlib **v4.19.0**.
-With Lean/Elan installed and Internet access available, run:
+With Elan installed, from the repository directory:
 
 ```bash
-cd prime_gpf_lean
-bash bootstrap_and_verify.sh
-```
-
-Equivalently:
-
-```bash
-lake update
 lake exe cache get
 bash verify.sh
 ```
 
-The verification script preserves build and axiom logs. It fails on a compiler
-error or forbidden axiom dependency. It returns **127** if Lake is absent and
-**2 after a successful build** while mathematical obligations remain. The
-intentional exit 2 is not a compilation failure.
-
-`Audit.lean` requests axioms for the project theorem declarations and displays
-the types of the remaining external-input wrappers. Standard foundational
-axioms (choice, propositional extensionality, quotient soundness) are allowed;
-proof admissions and compiler-trust shortcuts are not.
-
-To diagnose a failed module after its imports have built:
+For the prime-AP input and results 6.1 and 6.3 alone:
 
 ```bash
-lake env lean PrimeGPF/Orders.lean
+bash verify_prime_ap.sh
 ```
 
-Static checks and arithmetic spot-checks are supporting development evidence,
-not Lean verification. `evidence/revision_verification_attempt.log` records the
-actual failed build attempt; `evidence/revision_status.json` records its status.
-The old authoring notes in `evidence/original_*` are historical only.
+The full verifier builds the project, compiles `Audit.lean`, enforces the
+axiom allowlist, and requires the `proof_all_39` audit before reporting
+completeness. It returns **0** on success, **127** if Lake is unavailable,
+and a nonzero status on compilation or audit failure. Logs are written
+under `evidence/`. Static inventory checks do not replace compilation.
 
-This package was generated with AI assistance. Mathematical authorship of the
-supplied theory is attributed to Anders Hellström; the Lean translations,
-new proof arguments, repairs and audit notes require review and compilation.
+[GitHub Actions](https://github.com/AndersH3/PrimeGPF/actions/workflows/primeap-experiment.yml)
+runs the checks and publishes the logs. See [COVERAGE.md](COVERAGE.md) and
+`coverage.json` for the current inventory. Earlier status and evidence files
+describe historical development stages.
+
+## Previously corrected statements
+
+Official theorem 5.5 includes the necessary `r ≠ 2` hypothesis. The
+originally printed statement is false at `p=3, q=5, m=1`; it and its
+verified refutation remain separately available.
+
+The corrected `OrderDividesPrimePred` requires a positive exponent. Its old
+version is separately refuted at `(r,p,k)=(3,2,0)`. These corrections predate
+the prime-AP work. This update changes no numbered proposition definitions.
+The original Word source remains unchanged.
+
+The supplied mathematical theory is attributed to Anders Hellström. The Lean
+development includes AI assistance and credited upstream formalizations.
