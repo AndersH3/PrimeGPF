@@ -34,14 +34,22 @@ theorem thetaAPCount_le_apCount_mul_log
         (fun n => n.Prime ∧ n % r = c % r), Real.log n) ≤
       (((Finset.range (x + 1)).filter
         (fun n => n.Prime ∧ n % r = c % r)).card : ℝ) * Real.log x
-  rw [← Finset.sum_const, Nat.cast_smul_eq_nsmul]
-  apply Finset.sum_le_sum
-  intro n hn
-  simp only [Finset.mem_filter, Finset.mem_range] at hn
-  have hnle : n ≤ x := Nat.lt_succ_iff.mp (by simpa [Nat.lt_add_one_iff] using hn.1)
-  have hnpos : 0 < (n : ℝ) := by exact_mod_cast hn.2.1.pos
-  have hxpos : 0 < (x : ℝ) := by exact_mod_cast (lt_of_lt_of_le (by decide : 0 < 2) hx)
-  exact Real.strictMonoOn_log.monotoneOn hnpos hxpos (by exact_mod_cast hnle)
+  calc
+    (∑ n ∈ (Finset.range (x + 1)).filter
+        (fun n => n.Prime ∧ n % r = c % r), Real.log n) ≤
+      ∑ _n ∈ (Finset.range (x + 1)).filter
+        (fun n => n.Prime ∧ n % r = c % r), Real.log x := by
+      apply Finset.sum_le_sum
+      intro n hn
+      simp only [Finset.mem_filter, Finset.mem_range] at hn
+      have hnle : n ≤ x := by omega
+      have hnpos : 0 < (n : ℝ) := by exact_mod_cast hn.2.1.pos
+      have hxpos : 0 < (x : ℝ) := by
+        exact_mod_cast (lt_of_lt_of_le (by decide : 0 < 2) hx)
+      exact Real.strictMonoOn_log.monotoneOn hnpos hxpos (by exact_mod_cast hnle)
+    _ = (((Finset.range (x + 1)).filter
+        (fun n => n.Prime ∧ n % r = c % r)).card : ℝ) * Real.log x := by
+      simp
 
 #check thetaAPCount
 #check thetaAPCount_eq_sum_filter
