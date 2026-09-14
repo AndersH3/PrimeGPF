@@ -123,7 +123,8 @@ theorem extension5_visit_count {a q X : ℕ} (ha : Nat.Prime a)
   constructor
   · intro n hn
     have hb := extension5_index_log_bound ha hq h0 hn
-    simp [expVisitIndices, hb]
+    simp only [expVisitIndices, Finset.mem_filter, Finset.mem_range]
+    exact ⟨by omega, hn⟩
   · calc
       (expVisitIndices a q X).card ≤
           (Finset.range (Nat.log 2 ((X + 1) / (q + 1)) + 1)).card := by
@@ -178,7 +179,8 @@ theorem extension6_image_card_bound {a k X : ℕ} (ha : Nat.Prime a) :
         dsimp [Y]
         omega
       have hqmem : q ∈ primeStartsUpTo Y := by
-        simp [primeStartsUpTo, hq, hqY]
+        simp only [primeStartsUpTo, Finset.mem_filter, Finset.mem_range]
+        exact ⟨by omega, hq⟩
       have himg : expIterNat a q k ∈ expCandidateOutputs a k Y :=
         Finset.mem_image.mpr ⟨q, hqmem, rfl⟩
       exact Finset.mem_union_left _ himg
@@ -187,11 +189,17 @@ theorem extension6_image_card_bound {a k X : ℕ} (ha : Nat.Prime a) :
   have hcard := Finset.card_le_card hsubset
   have hunion := Finset.card_union_le (expCandidateOutputs a k Y) (expExceptionalOutputs a)
   have hexcard : (expExceptionalOutputs a).card = (if a = 2 then 1 else 0) := by
-    simp [expExceptionalOutputs]
+    by_cases ha2 : a = 2 <;> simp [expExceptionalOutputs, ha2]
   have hstart : (primeStartsUpTo Y).card = Claims.primeCount Y := by
     simp [primeStartsUpTo, Claims.primeCount]
-  dsimp [Y] at hstart ⊢
-  omega
+  calc
+    (iteratedExpValuesUpTo a k X).card ≤
+        (expCandidateOutputs a k Y ∪ expExceptionalOutputs a).card := hcard
+    _ ≤ (expCandidateOutputs a k Y).card + (expExceptionalOutputs a).card := hunion
+    _ ≤ (primeStartsUpTo Y).card + (expExceptionalOutputs a).card :=
+      Nat.add_le_add_right hcand _
+    _ = Claims.primeCount Y + (if a = 2 then 1 else 0) := by rw [hstart, hexcard]
+    _ = Claims.primeCount ((X + 1) / 2 ^ k - 1) + (if a = 2 then 1 else 0) := by rfl
 
 /-- Elementary bound used to rule out arbitrarily deep nonexceptional ancestry. -/
 theorem succ_le_two_pow (n : ℕ) : n + 1 ≤ 2 ^ n := by
@@ -260,21 +268,24 @@ theorem three_mul_gpf_le_of_odd_composite {n : ℕ} (hn : 1 < n)
     omega
   have hrodd : gpf n % 2 = 1 := by
     rcases hg.1.eq_two_or_odd with h2 | ho
-    · rw [h2] at hg
-      have hz := Nat.mod_eq_zero_of_dvd hg.2.1
+    · have hd2 : 2 ∣ n := by simpa [h2] using hg.2.1
+      have hz := Nat.mod_eq_zero_of_dvd hd2
       omega
     · exact ho
   have hsodd : s % 2 = 1 := by
     rw [hs] at hodd
-    simpa [Nat.mul_mod, hrodd] using hodd
+    simpa only [Nat.mul_mod, hrodd, one_mul, Nat.mod_mod] using hodd
   have hsne : s ≠ 1 := by
     intro hs1
     apply hcomp
     have he : n = gpf n := by simpa [hs1] using hs
     simpa [he] using hg.1
   have hs3 : 3 ≤ s := by omega
-  rw [hs]
-  nlinarith
+  have hmul := Nat.mul_le_mul_left (gpf n) hs3
+  calc
+    3 * gpf n = gpf n * 3 := by ring
+    _ ≤ gpf n * s := hmul
+    _ = n := hs.symm
 
 /-- Equation (15). -/
 theorem extension8_composite_region {p q : ℕ} (hp : Nat.Prime p)
@@ -316,13 +327,14 @@ theorem extension8_triple_region {p q : ℕ} (hp : Nat.Prime p)
   have hpoly : r ∣ p ^ 2 + p - 1 := collision_divisor hda hdm
   have hpolypos : 1 < p ^ 2 + p - 1 := by
     have hp2 := hp.two_le
-    nlinarith
+    have hsq : 4 ≤ p ^ 2 := by nlinarith
+    omega
   have hrle : r ≤ gpf (p ^ 2 + p - 1) :=
     (gpf_spec hpolypos).2.2 r hr hpoly
   have hlower := exp_ge_two_mul_add_one hp hq hex
   have hlower' : 2 * q + 1 ≤ r := by simpa [r, hae] using hlower
   have hqg : q ≤ (gpf (p ^ 2 + p - 1) - 1) / 2 := by omega
-  exact Nat.le_min hqp hqg
+  exact (Nat.le_min).2 ⟨hqp, hqg⟩
 
 /-! ## Extension 10: algebraic separation from H(p,q)=P⁺(p+q) -/
 
