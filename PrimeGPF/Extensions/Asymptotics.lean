@@ -130,7 +130,7 @@ theorem image_prime_upper_density {a : ℕ} (ha : Nat.Prime a) (k : ℕ)
     have h : (X + 1) / 2 ^ k ≤ (X + 2 ^ k) / 2 ^ k :=
       Nat.div_le_div_right (show X + 1 ≤ X + 2 ^ k by omega)
     rw [Nat.add_div_right X hp] at h
-    omega
+    exact Nat.sub_le_of_le_add h
   have hc := image_count_bound ha k X
   have hm := primeCount_mono hcut
   have hb : (imageTo a k X).card ≤ primeCount (X / 2 ^ k) + 1 := by
