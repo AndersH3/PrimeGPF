@@ -29,6 +29,8 @@ jobs:
         run: lake build
       - name: Compile extension module
         run: lake env lean PrimeGPF/Extensions.lean
+      - name: Compile triple-collision extension
+        run: lake env lean PrimeGPF/Extension9.lean
       - name: Verify baseline project
         run: bash verify.sh
       - uses: actions/cache/save@v4
