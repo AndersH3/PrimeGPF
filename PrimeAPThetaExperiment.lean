@@ -147,6 +147,7 @@ theorem primeLog_AP_prime_modulus_from_WienerIkehara
   have hunit : IsUnit (c : ZMod r) :=
     (ZMod.isUnit_iff_coprime c r).mpr hcop
   have h := prime_residueClass_sum_div_from_WienerIkehara WIT hunit
+  rw [Nat.totient_prime hr] at h
   apply h.congr'
   filter_upwards with N
   congr 1
