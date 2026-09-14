@@ -27,6 +27,8 @@ jobs:
         run: lake exe cache get
       - name: Compile and audit PNT input
         run: bash verify_prime_ap.sh
+      - name: Verify all 39 corrected results
+        run: bash verify.sh
       - name: Check retained proof experiments
         run: |
           lake env lean -o .lake/build/lib/lean/PrimeAPExperiment.olean PrimeAPExperiment.lean
@@ -36,7 +38,12 @@ jobs:
         if: always()
         with:
           name: prime-ap-validation
-          path: evidence/prime-ap-*
+          path: |
+            evidence/prime-ap-*
+            evidence/build.log
+            evidence/axioms.log
+            evidence/lean-version.txt
+            evidence/local_build_status.json
       - uses: actions/cache/save@v4
         if: always() && steps.cache.outputs.cache-hit != 'true'
         with:

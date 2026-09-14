@@ -169,7 +169,7 @@ import PrimeGPF
 #print axioms PrimeGPF.relativeZero_of_polylog_AP
 #print axioms PrimeGPF.proof_6_3_from_PNT_AP
 
--- These types expose remaining hypotheses.
+-- Retained conditional interfaces; their inputs now have unconditional proofs.
 #check PrimeGPF.proof_8_3_from_zsigmondy
 #check PrimeGPF.proof_6_1_from_PNT_AP
 #check PrimeGPF.proof_6_3_from_PNT_AP
@@ -184,3 +184,17 @@ import PrimeGPF
 #print axioms PrimeGPF.proof_8_5
 #print axioms PrimeGPF.proof_9_3
 #print axioms PrimeGPF.proof_zsigmondy_dependency
+
+-- The proved PNT-AP input and complete numbered inventory.
+#print axioms WienerIkeharaTheorem'
+#print axioms PrimeGPF.Analytic.mangoldt_AP_limit
+#print axioms PrimeGPF.Analytic.theta_AP_limit
+#print axioms PrimeGPF.Analytic.counting_limit_of_weighted
+#print axioms PrimeGPF.apCount_log_limit
+#print axioms PrimeGPF.proof_primeAP_dependency
+#print axioms PrimeGPF.proof_6_1
+#print axioms PrimeGPF.proof_6_3
+#print axioms PrimeGPF.proof_all_39
+#check PrimeGPF.proof_6_1
+#check PrimeGPF.proof_6_3
+#check PrimeGPF.proof_all_39

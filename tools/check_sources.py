@@ -17,7 +17,7 @@ def uncomment(text):
     if depth: raise AssertionError('Unclosed block comment')
     return ''.join(result)
 
-files = sorted(root.glob('PrimeGPF/*.lean'))
+files = sorted((root/'PrimeGPF').rglob('*.lean'))
 source = '\n'.join(uncomment(p.read_text()) for p in files)
 for token in ('sorry', 'admit', 'axiom', 'unsafe', 'native_decide'):
     assert not re.search(r'\b'+token+r'\b', source), f'Forbidden proof shortcut: {token}'
