@@ -190,4 +190,31 @@ theorem ancestry_log_bound {a r k : ℕ} (ha : Nat.Prime a)
   apply (Nat.le_div_iff_mul_le (by norm_num : 0 < 3)).mpr
   simpa [Nat.mul_comm] using ancestry_bound ha hex hr
 
+/-- Every one-step exponential fiber is finite, including all small outputs. -/
+theorem exp_fiber_finite {a : ℕ} (ha : Nat.Prime a) (r : ℕ) :
+    Set.Finite {q | Nat.Prime q ∧ exp a q = r} := by
+  apply (Finset.finite_toSet (primesTo r)).subset
+  intro q hq
+  have hb := expIter_seed_le ha hq.1 1
+  change q ≤ exp a q at hb
+  rw [hq.2] at hb
+  exact mem_primesTo.mpr ⟨hq.1, hb⟩
+
+theorem exp_fiber_card_bound {a r : ℕ} (ha : Nat.Prime a) (hr : 5 ≤ r) :
+    Set.ncard {q | Nat.Prime q ∧ exp a q = r} ≤ primeCount ((r - 1) / 2) := by
+  have hs : {q | Nat.Prime q ∧ exp a q = r} ⊆ (primesTo ((r - 1) / 2) : Set ℕ) := by
+    intro q hq
+    have hex : (a, q) ≠ (2, 3) := by
+      intro he
+      have ha2 := congrArg Prod.fst he
+      have hq3 := congrArg Prod.snd he
+      simp only [Prod.fst, Prod.snd] at ha2 hq3
+      subst a; subst q
+      have hh := proof_8_5.2.1
+      omega
+    have hb := exp_double ha hq.1 hex
+    rw [hq.2] at hb
+    exact mem_primesTo.mpr ⟨hq.1, by omega⟩
+  simpa only [Set.ncard_coe_Finset] using Set.ncard_le_ncard hs (Finset.finite_toSet _)
+
 end PrimeGPF.Extensions

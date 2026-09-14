@@ -58,6 +58,7 @@ theorem triple_localization {p q : ℕ} (hp : Nat.Prime p) (hq : Nat.Prime q)
     have hsq : 4 ≤ p ^ 2 := by nlinarith
     omega
   have hu := (gpf_spec hpos).2.2 _ (output_spec .add hp hq).1 hd
+  change add p q ≤ gpf (p ^ 2 + p - 1) at hu
   have hg := exp_double hp hq hex
   rw [hae] at hu
   exact ⟨hqp, hg.trans hu⟩

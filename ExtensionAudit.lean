@@ -1,0 +1,42 @@
+import PrimeGPF.Extensions
+
+-- Audit every theorem in the extension modules, including supporting lemmas.
+#print axioms PrimeGPF.Extensions.mem_primesTo
+#print axioms PrimeGPF.Extensions.two_five_support
+#print axioms PrimeGPF.Extensions.gpf_five_not_three_support
+#print axioms PrimeGPF.Extensions.prime_square_add_one_not_three
+#print axioms PrimeGPF.Extensions.add_exp_two_iff
+#print axioms PrimeGPF.Extensions.triple_two_iff
+#print axioms PrimeGPF.Extensions.exp_double
+#print axioms PrimeGPF.Extensions.expIter_prime
+#print axioms PrimeGPF.Extensions.expIter_exception
+#print axioms PrimeGPF.Extensions.expIter_nonexception
+#print axioms PrimeGPF.Extensions.expIter_growth
+#print axioms PrimeGPF.Extensions.expIter_strictMono
+#print axioms PrimeGPF.Extensions.expIter_escape
+#print axioms PrimeGPF.Extensions.expIter_index_bound
+#print axioms PrimeGPF.Extensions.expIter_seed_le
+#print axioms PrimeGPF.Extensions.ancestry_bound
+#print axioms PrimeGPF.Extensions.infinite_ancestry_iff
+#print axioms PrimeGPF.Extensions.image_count_bound
+#print axioms PrimeGPF.Extensions.expIter_visit_count
+#print axioms PrimeGPF.Extensions.ancestry_log_bound
+#print axioms PrimeGPF.Extensions.exp_fiber_finite
+#print axioms PrimeGPF.Extensions.exp_fiber_card_bound
+#print axioms PrimeGPF.Extensions.primeCount_mono
+#print axioms PrimeGPF.Extensions.primeCount_pos
+#print axioms PrimeGPF.Extensions.primeCount_le_odd_AP_add_one
+#print axioms PrimeGPF.Extensions.primeCount_log_limit
+#print axioms PrimeGPF.Extensions.cutoff_ratio_limit
+#print axioms PrimeGPF.Extensions.cutoff_log_ratio_limit
+#print axioms PrimeGPF.Extensions.primeCount_scaled_limit
+#print axioms PrimeGPF.Extensions.image_prime_upper_density
+#print axioms PrimeGPF.Extensions.orbit_prime_density_zero
+#print axioms PrimeGPF.Extensions.homogeneous_idempotent
+#print axioms PrimeGPF.Extensions.operate_not_idempotent
+#print axioms PrimeGPF.Extensions.no_hom_from_homogeneous
+#print axioms PrimeGPF.Extensions.no_injective_hom_to_homogeneous
+#print axioms PrimeGPF.Extensions.add_exp_localization
+#print axioms PrimeGPF.Extensions.add_exp_composite_bound
+#print axioms PrimeGPF.Extensions.triple_localization
+#print axioms PrimeGPF.Extensions.no_triple_of_prime_polynomial

@@ -27,15 +27,16 @@ jobs:
         id: cache
         with:
           path: .lake
-          key: prime-gpf-extensions-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}
+          key: prime-gpf-extensions-v2-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}
           restore-keys: |
+            prime-gpf-extensions-
             prime-gpf-lean419-pnt-
       - name: Obtain pinned mathlib cache
         run: lake exe cache get
-      - name: Compile extension modules
-        run: lake build PrimeGPF.Extensions.Dynamics PrimeGPF.Extensions.Collisions PrimeGPF.Extensions.Algebra PrimeGPF.Extensions.SmallCollision PrimeGPF.Extensions.Asymptotics
+      - name: Compile and audit extensions
+        run: bash verify_extensions.sh
       - uses: actions/cache/save@v4
         if: always() && steps.cache.outputs.cache-hit != 'true'
         with:
           path: .lake
-          key: prime-gpf-extensions-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}
+          key: prime-gpf-extensions-v2-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}

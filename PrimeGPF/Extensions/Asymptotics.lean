@@ -60,7 +60,7 @@ theorem primeCount_log_limit :
 theorem cutoff_ratio_limit {c : ℕ} (hc : 0 < c) :
     Tendsto (fun X : ℕ => ((X / c : ℕ) : ℝ) / X) atTop (𝓝 ((c : ℝ)⁻¹)) := by
   have hm := tendsto_mod_div_atTop_nhds_zero_nat (m := c) hc
-  have hh := (tendsto_const_nhds.sub hm).div_const (c : ℝ)
+  have hh := ((tendsto_const_nhds (x := (1 : ℝ))).sub hm).div_const (c : ℝ)
   have hh' : Tendsto (fun X : ℕ => (1 - ((X % c : ℕ) : ℝ) / X) / c)
       atTop (𝓝 ((c : ℝ)⁻¹)) := by simpa using hh
   apply Tendsto.congr' _ hh'
@@ -69,7 +69,6 @@ theorem cutoff_ratio_limit {c : ℕ} (hc : 0 < c) :
   have hc' : (c : ℝ) ≠ 0 := by exact_mod_cast hc.ne'
   have he : (X : ℝ) = (c : ℝ) * (X / c : ℕ) + (X % c : ℕ) := by
     exact_mod_cast (Nat.div_add_mod X c).symm
-  dsimp
   field_simp
   nlinarith
 
@@ -87,7 +86,6 @@ theorem cutoff_log_ratio_limit {c : ℕ} (hc : 0 < c) :
   have hx : (0 : ℝ) < X := by exact_mod_cast (show 0 < X by omega)
   have hf : (0 : ℝ) < (X / c : ℕ) := by exact_mod_cast Nat.div_pos hXc hc
   have hl : Real.log (X : ℝ) ≠ 0 := (Real.log_pos (by exact_mod_cast hX2)).ne'
-  dsimp
   rw [Real.log_div hf.ne' hx.ne']
   field_simp
   ring
@@ -111,7 +109,6 @@ theorem primeCount_scaled_limit {c : ℕ} (hc : 0 < c) :
   have hlx : Real.log (X : ℝ) ≠ 0 := (Real.log_pos (by exact_mod_cast hX2)).ne'
   have hlf : Real.log ((X / c : ℕ) : ℝ) ≠ 0 := (Real.log_pos (by exact_mod_cast hf2)).ne'
   have hpx : (primeCount X : ℝ) ≠ 0 := by exact_mod_cast (primeCount_pos hX2).ne'
-  dsimp
   field_simp
   <;> ring
 
@@ -125,11 +122,11 @@ theorem image_prime_upper_density {a : ℕ} (ha : Nat.Prime a) (k : ℕ)
   have hlim := primeCount_scaled_limit hp
   have hone : Tendsto (fun X : ℕ => 1 / (primeCount X : ℝ)) atTop (𝓝 0) := by
     simpa using proof_primeAP_dependency.tendsto_log_pow_div_primeCount 0
-  have hh := hlim.add hone
-  have hε' : ((↑((2 : ℕ) ^ k) : ℝ))⁻¹ < ((2 : ℝ) ^ k)⁻¹ + ε := by
-    norm_cast
-    linarith
-  filter_upwards [hh.eventually (gt_mem_nhds (by simpa using hε'))] with X hX
+  have hh : Tendsto (fun X : ℕ => (primeCount (X / 2 ^ k) : ℝ) / primeCount X +
+      1 / (primeCount X : ℝ)) atTop (𝓝 (((2 : ℝ) ^ k)⁻¹)) := by
+    simpa using hlim.add hone
+  have hε' : ((2 : ℝ) ^ k)⁻¹ < ((2 : ℝ) ^ k)⁻¹ + ε := by linarith
+  filter_upwards [hh.eventually (gt_mem_nhds hε')] with X hX
   have hcut : (X + 1) / 2 ^ k - 1 ≤ X / 2 ^ k := by
     have h := Nat.div_le_div_right (show X + 1 ≤ X + 2 ^ k by omega)
     rw [Nat.add_div_right X hp] at h
