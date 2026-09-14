@@ -156,7 +156,11 @@ theorem primeLog_AP_prime_modulus_from_WienerIkehara
   have hres : ((n : ZMod r) = (c : ZMod r)) ↔ n % r = c := by
     rw [ZMod.natCast_eq_natCast_iff', Nat.mod_eq_of_lt hcr]
   by_cases hp : n.Prime
-  · simp [hp, vonMangoldt.residueClass, hres, vonMangoldt_apply_prime hp]
+  · by_cases hnc : n % r = c
+    · have hz : (n : ZMod r) = (c : ZMod r) := hres.mpr hnc
+      simp [hp, hnc, vonMangoldt.residueClass, hz, vonMangoldt_apply_prime hp]
+    · have hz : (n : ZMod r) ≠ (c : ZMod r) := fun hnc' => hnc (hres.mp hnc')
+      simp [hp, hnc, vonMangoldt.residueClass, hz]
   · simp [hp]
 
 /-- The complete logarithmically weighted prime-modulus AP layer. -/
