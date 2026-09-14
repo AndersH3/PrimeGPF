@@ -83,7 +83,7 @@ theorem expIter_seed_le {a q : ℕ} (ha : Nat.Prime a) (hq : Nat.Prime q) (n : �
     subst a; subst q
     rw [expIter_exception]
   · have hg := expIter_growth ha hq hex n
-    have hp : 1 ≤ 2 ^ n := by positivity
+    have hp : 1 ≤ 2 ^ n := Nat.succ_le_of_lt (pow_pos (by norm_num) n)
     nlinarith
 
 def iterImage (a k : ℕ) : Set ℕ := {r | ∃ q, Nat.Prime q ∧ expIter a q k = r}
@@ -126,7 +126,11 @@ noncomputable def primesTo (X : ℕ) : Finset ℕ :=
 @[simp] theorem mem_primesTo {q X : ℕ} : q ∈ primesTo X ↔ Nat.Prime q ∧ q ≤ X := by
   classical
   simp only [primesTo, Finset.mem_filter, Finset.mem_range]
-  omega
+  constructor
+  · rintro ⟨h, hp⟩
+    exact ⟨hp, by omega⟩
+  · rintro ⟨hp, h⟩
+    exact ⟨by omega, hp⟩
 
 noncomputable def imageTo (a k X : ℕ) : Finset ℕ := by
   classical
@@ -164,6 +168,25 @@ theorem image_count_bound {a : ℕ} (ha : Nat.Prime a) (k X : ℕ) :
     _ ≤ (S ∪ T).card := Finset.card_le_card hsub
     _ ≤ S.card + T.card := Finset.card_union_le _ _
     _ ≤ (primesTo N).card + T.card := Nat.add_le_add_right (Finset.card_image_le) _
-    _ = _ := by simp [primesTo, primeCount, N, T]
+    _ = _ := by by_cases h : a = 2 <;> simp [primesTo, primeCount, N, T, h]
+
+/-- Extension 5, logarithmic visit count, with the floor expressed by Nat.log. -/
+theorem expIter_visit_count {a q : ℕ} (ha : Nat.Prime a) (hq : Nat.Prime q)
+    (hex : (a, q) ≠ (2, 3)) (X : ℕ) :
+    Set.ncard {n | expIter a q n ≤ X} ≤ Nat.log 2 ((X + 1) / (q + 1)) + 1 := by
+  let L := Nat.log 2 ((X + 1) / (q + 1))
+  have hs : {n | expIter a q n ≤ X} ⊆ (Finset.range (L + 1) : Set ℕ) := by
+    intro n hn
+    have hb := Nat.le_log_of_pow_le (by norm_num : 1 < 2)
+      (expIter_index_bound ha hq hex hn)
+    exact Finset.mem_range.mpr (by dsimp [L]; omega)
+  simpa [L] using Set.ncard_le_ncard hs (Finset.finite_toSet _)
+
+theorem ancestry_log_bound {a r k : ℕ} (ha : Nat.Prime a)
+    (hex : (a, r) ≠ (2, 3)) (hr : r ∈ iterImage a k) :
+    k ≤ Nat.log 2 ((r + 1) / 3) := by
+  apply Nat.le_log_of_pow_le (by norm_num)
+  apply (Nat.le_div_iff_mul_le (by norm_num : 0 < 3)).mpr
+  simpa [Nat.mul_comm] using ancestry_bound ha hex hr
 
 end PrimeGPF.Extensions
