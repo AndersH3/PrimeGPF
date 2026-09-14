@@ -1,0 +1,35 @@
+name: Extension proofs
+on:
+  pull_request:
+    paths:
+      - 'PrimeGPF/Extensions/**'
+      - 'PrimeGPF/Extensions.lean'
+      - 'ExtensionAudit.lean'
+      - 'verify_extensions.sh'
+      - '.github/workflows/extensions.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: extensions-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  lean:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install pinned Lean toolchain
+        run: |
+          curl -sSf https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh | sh -s -- -y --default-toolchain none
+          echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
+      - uses: actions/cache@v4
+        with:
+          path: .lake
+          key: prime-gpf-extensions-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}
+          restore-keys: |
+            prime-gpf-lean419-pnt-
+      - name: Obtain pinned mathlib cache
+        run: lake exe cache get
+      - name: Compile extension modules
+        run: lake build PrimeGPF.Extensions.Dynamics PrimeGPF.Extensions.Collisions PrimeGPF.Extensions.Algebra
