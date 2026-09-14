@@ -22,7 +22,7 @@ jobs:
         id: cache
         with:
           path: .lake
-          key: prime-gpf-lean419-extensions-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}
+          key: prime-gpf-lean419-extensions-v2-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}
       - name: Obtain pinned mathlib cache
         run: lake exe cache get
       - name: Build baseline local modules
@@ -35,4 +35,4 @@ jobs:
         if: always() && steps.cache.outputs.cache-hit != 'true'
         with:
           path: .lake
-          key: prime-gpf-lean419-extensions-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}
+          key: prime-gpf-lean419-extensions-v2-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}
