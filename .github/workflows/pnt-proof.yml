@@ -1,7 +1,7 @@
 name: PNT proof validation
 on:
   push:
-    branches: [codex/pnt-ap-lean419]
+    branches: [primeap-integration-20260914]
   workflow_dispatch:
 permissions:
   contents: read
