@@ -25,6 +25,8 @@ jobs:
           key: prime-gpf-lean419-extensions-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}
       - name: Obtain pinned mathlib cache
         run: lake exe cache get
+      - name: Build baseline local modules
+        run: lake build
       - name: Compile extension module
         run: lake env lean PrimeGPF/Extensions.lean
       - name: Verify baseline project
