@@ -180,7 +180,8 @@ theorem expIter_visit_count {a q : ℕ} (ha : Nat.Prime a) (hq : Nat.Prime q)
     have hb := Nat.le_log_of_pow_le (by norm_num : 1 < 2)
       (expIter_index_bound ha hq hex hn)
     exact Finset.mem_range.mpr (by dsimp [L]; omega)
-  simpa [L] using Set.ncard_le_ncard hs (Finset.finite_toSet _)
+  simpa only [Set.ncard_coe_Finset, Finset.card_range, L] using
+    Set.ncard_le_ncard hs (Finset.finite_toSet _)
 
 theorem ancestry_log_bound {a r k : ℕ} (ha : Nat.Prime a)
     (hex : (a, r) ≠ (2, 3)) (hr : r ∈ iterImage a k) :

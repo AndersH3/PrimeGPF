@@ -33,7 +33,7 @@ jobs:
       - name: Obtain pinned mathlib cache
         run: lake exe cache get
       - name: Compile extension modules
-        run: lake build PrimeGPF.Extensions.Dynamics PrimeGPF.Extensions.Collisions PrimeGPF.Extensions.Algebra PrimeGPF.Extensions.SmallCollision
+        run: lake build PrimeGPF.Extensions.Dynamics PrimeGPF.Extensions.Collisions PrimeGPF.Extensions.Algebra PrimeGPF.Extensions.SmallCollision PrimeGPF.Extensions.Asymptotics
       - uses: actions/cache/save@v4
         if: always() && steps.cache.outputs.cache-hit != 'true'
         with:
