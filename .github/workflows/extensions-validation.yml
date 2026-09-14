@@ -1,0 +1,36 @@
+name: Extension proof validation
+on:
+  push:
+    branches: [extensions-5-6-8-9-10-20260915]
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: extension-proof-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  lean:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install elan
+        run: |
+          curl -sSf https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh | sh -s -- -y --default-toolchain none
+          echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
+      - uses: actions/cache@v4
+        id: cache
+        with:
+          path: .lake
+          key: prime-gpf-lean419-extensions-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}
+      - name: Obtain pinned mathlib cache
+        run: lake exe cache get
+      - name: Compile extension module
+        run: lake env lean PrimeGPF/Extensions.lean
+      - name: Verify baseline project
+        run: bash verify.sh
+      - uses: actions/cache/save@v4
+        if: always() && steps.cache.outputs.cache-hit != 'true'
+        with:
+          path: .lake
+          key: prime-gpf-lean419-extensions-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}
