@@ -1,47 +1,44 @@
-name: PrimeAP experiment
-
+name: PNT proof validation
 on:
   push:
-    branches:
-      - prove-prime-ap-input-20260913
-    paths:
-      - 'PrimeAPExperiment.lean'
-      - 'PrimeAPThetaExperiment.lean'
-      - 'PrimeAPUnweightExperiment.lean'
-      - 'PrimeGPF/**'
-      - 'lakefile.toml'
-      - 'lake-manifest.json'
-      - '.github/workflows/primeap-experiment.yml'
+    branches: [prove-prime-ap-input-20260913]
   workflow_dispatch:
-
 permissions:
   contents: read
-
+concurrency:
+  group: pnt-proof-${{ github.ref }}
+  cancel-in-progress: true
 jobs:
-  check:
+  lean:
     runs-on: ubuntu-latest
-    timeout-minutes: 90
+    timeout-minutes: 45
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
+      - uses: actions/checkout@v4
       - name: Install elan
-        shell: bash
         run: |
-          curl https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh -sSf | sh -s -- -y --default-toolchain $(cat lean-toolchain)
+          curl -sSf https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh | sh -s -- -y --default-toolchain none
           echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
-
-      - name: Resolve dependencies
-        run: lake update
-
-      - name: Build PrimeGPF
-        run: lake build
-
-      - name: Compile PrimeAP experiment module
-        run: lake env lean -o .lake/build/lib/lean/PrimeAPExperiment.olean PrimeAPExperiment.lean
-
-      - name: Check theta/Kronecker experiment
-        run: lake env lean PrimeAPThetaExperiment.lean
-
-      - name: Check AP unweighting experiment
-        run: lake env lean PrimeAPUnweightExperiment.lean
+      - uses: actions/cache@v4
+        id: cache
+        with:
+          path: .lake
+          key: prime-gpf-lean419-pnt-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}
+      - name: Obtain pinned mathlib cache
+        run: lake exe cache get
+      - name: Compile and audit PNT input
+        run: bash verify_prime_ap.sh
+      - name: Check retained proof experiments
+        run: |
+          lake env lean -o .lake/build/lib/lean/PrimeAPExperiment.olean PrimeAPExperiment.lean
+          lake env lean PrimeAPThetaExperiment.lean
+          lake env lean PrimeAPUnweightExperiment.lean
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: prime-ap-validation
+          path: evidence/prime-ap-*
+      - uses: actions/cache/save@v4
+        if: always() && steps.cache.outputs.cache-hit != 'true'
+        with:
+          path: .lake
+          key: prime-gpf-lean419-pnt-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}
