@@ -14,7 +14,7 @@ namespace PrimeGPF
 larger prime, is either `1` or the smaller prime. -/
 theorem divisor_prime_product_lt_right
     {a q d : ℕ} (ha : Nat.Prime a) (hq : Nat.Prime q)
-    (haq : a < q) (hdpos : 0 < d) (hd : d ∣ a * q) (hdq : d < q) :
+    (_haq : a < q) (hdpos : 0 < d) (hd : d ∣ a * q) (hdq : d < q) :
     d = 1 ∨ d = a := by
   obtain ⟨m, hm⟩ := hd
   by_cases had : a ∣ d
@@ -51,14 +51,34 @@ theorem divisor_prime_product_lt_right
     · subst d
       omega
 
+/-- For `u ≥ 2`, the elementary congruence `u ≡ 1 (mod u-1)` implies
+`u-1 ∣ u^g-1`.  This local lemma avoids depending on newer mathlib geometric-
+sum theorem names not present in the repository's pinned version. -/
+theorem sub_one_dvd_pow_sub_one {u g : ℕ} (hu : 2 ≤ u) :
+    u - 1 ∣ u ^ g - 1 := by
+  apply Nat.dvd_of_mod_eq_zero
+  have hmpos : 0 < u - 1 := by omega
+  have humod : u % (u - 1) = 1 % (u - 1) := by
+    have hu_eq : u = (u - 1) + 1 := by omega
+    rw [hu_eq, Nat.add_mod]
+    simp
+  have hpowmod : u ^ g % (u - 1) = 1 % (u - 1) := by
+    calc
+      u ^ g % (u - 1) = (u % (u - 1)) ^ g % (u - 1) := by
+        rw [Nat.pow_mod]
+      _ = (1 % (u - 1)) ^ g % (u - 1) := by rw [humod]
+      _ = 1 ^ g % (u - 1) := by rw [← Nat.pow_mod]
+      _ = 1 % (u - 1) := by simp
+  rw [Nat.sub_mod, hpowmod]
+  have honele : 1 % (u - 1) ≤ u - 1 := Nat.mod_le _ _
+  omega
+
 /-- The nonprimitive perfect-power reduction from extension 2. -/
 theorem extension2_nonprimitive_power_base
     {a q u g : ℕ} (ha : Nat.Prime a) (hq : Nat.Prime q)
     (haq : a < q) (hg : 2 ≤ g)
     (hpow : u ^ g = a * q + 1) :
     u = 2 ∨ u = a + 1 := by
-  have hkernel : 1 < a * q + 1 := by
-    exact Nat.succ_lt_succ (Nat.mul_pos ha.pos hq.pos)
   have hu2 : 2 ≤ u := by
     by_contra hu
     have hu_le : u ≤ 1 := by omega
@@ -66,33 +86,37 @@ theorem extension2_nonprimitive_power_base
     · have hg0 : g ≠ 0 := by omega
       have hz : (0 : ℕ) ^ g = 0 := by simp [hg0]
       rw [hz] at hpow
+      have hpos := Nat.mul_pos ha.pos hq.pos
       omega
     · simp at hpow
+      have hpos := Nat.mul_pos ha.pos hq.pos
       omega
   have hsqle : u ^ 2 ≤ u ^ g :=
     Nat.pow_le_pow_right (by omega : 0 < u) hg
   have hqSq : a * q + 1 < q ^ 2 := by
-    have ha1q : a + 1 ≤ q := by omega
+    have ha1q : a + 1 ≤ q := Nat.succ_le_iff.mpr haq
     have hstep : a * q + 1 < (a + 1) * q := by
-      have hq2 := hq.two_le
-      nlinarith
+      calc
+        a * q + 1 < a * q + q := Nat.add_lt_add_left hq.one_lt (a * q)
+        _ = (a + 1) * q := by ring
     have hstep2 : (a + 1) * q ≤ q * q :=
       Nat.mul_le_mul_right q ha1q
     simpa [pow_two] using hstep.trans_le hstep2
   have huq : u < q := by
     by_contra hnot
-    have hqu : q ≤ u := by omega
-    have hsq : q ^ 2 ≤ u ^ 2 := by
-      exact Nat.pow_le_pow_left hqu 2
-    have hbad : q ^ 2 ≤ a * q + 1 := by
+    have hqu : q ≤ u := Nat.le_of_not_gt hnot
+    have hsq : q * q ≤ u * u := Nat.mul_le_mul hqu hqu
+    have hpow2 : u * u ≤ a * q + 1 := by
       calc
-        q ^ 2 ≤ u ^ 2 := hsq
+        u * u = u ^ 2 := by simp [pow_two]
         _ ≤ u ^ g := hsqle
         _ = a * q + 1 := hpow
+    have hbad : q ^ 2 ≤ a * q + 1 := by
+      simpa [pow_two] using hsq.trans hpow2
     exact (not_lt_of_ge hbad) hqSq
   have hdvd : u - 1 ∣ a * q := by
-    have h := Nat.sub_dvd_pow_sub_pow u 1 g
-    rw [one_pow, hpow] at h
+    have h := sub_one_dvd_pow_sub_one (u := u) (g := g) hu2
+    rw [hpow] at h
     simpa using h
   have hdpos : 0 < u - 1 := by omega
   have hdq : u - 1 < q := by omega
