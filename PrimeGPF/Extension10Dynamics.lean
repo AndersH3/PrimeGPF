@@ -9,9 +9,9 @@ orbits and hence eventually periodic orbits, whereas an anchored exponential
 translation with anchor different from 2 moves every prime strictly upward.
 
 The reusable dynamical lemmas are kept separate from the final separation
-statements.  In particular, iteration of a semiconjugacy and repetition along
-an eventually periodic tail are proved once and then used by the final
-finite-to-one contradiction.
+statements.  In particular, bounded prime-valued orbits, iteration of a
+semiconjugacy, and repetition along an eventually periodic tail are proved
+once and then used by the final finite-to-one contradiction.
 -/
 namespace PrimeGPF
 
@@ -85,31 +85,41 @@ theorem homogeneous_orbit_bounded (c x : Prime) (hc2 : c.val ≠ 2) :
       have hstep := homogeneous_step_bound c (orbit (homogeneousOperate c) x n) hc2
       exact hstep.trans (max_le ih (le_max_right _ _))
 
+/-- A prime-valued orbit that is uniformly bounded in the underlying natural
+numbers is eventually periodic.
+
+This is the finite-state pigeonhole principle isolated from the homogeneous
+operation.  The bound `B` gives at most `B+1` possible natural values, while
+we inspect `B+2` orbit positions; equality of the underlying values gives
+equality of primes by subtype extensionality. -/
+theorem eventuallyPeriodic_of_prime_orbit_bounded
+    (f : Prime → Prime) (x : Prime) (B : ℕ)
+    (hbound : ∀ n, (orbit f x n).val ≤ B) :
+    EventuallyPeriodic f x := by
+  obtain ⟨i, _, j, _, hne, heval⟩ :=
+    Finset.exists_ne_map_eq_of_card_lt_of_maps_to
+      (s := Finset.range (B + 2))
+      (t := Finset.range (B + 1))
+      (f := fun n => (orbit f x n).val)
+      (by simp)
+      (by
+        intro n hn
+        exact Finset.mem_range.mpr (by omega using hbound n))
+  have he : orbit f x i = orbit f x j := by
+    apply Subtype.ext
+    exact heval
+  rcases lt_or_gt_of_ne hne with hij | hji
+  · exact eventuallyPeriodic_of_repeat f x hij he
+  · exact eventuallyPeriodic_of_repeat f x hji he.symm
+
 /-- Every orbit of the homogeneous translation anchored at an odd prime is
 eventually periodic.  This is the first dynamical statement in extension 10. -/
 theorem extension10_homogeneous_eventuallyPeriodic
     (c x : Prime) (hc2 : c.val ≠ 2) :
     EventuallyPeriodic (homogeneousOperate c) x := by
-  let B := max x.val (c.val + 2)
-  obtain ⟨i, _, j, _, hne, heval⟩ :=
-    Finset.exists_ne_map_eq_of_card_lt_of_maps_to
-      (s := Finset.range (B + 2))
-      (t := Finset.range (B + 1))
-      (f := fun n => (orbit (homogeneousOperate c) x n).val)
-      (by simp)
-      (by
-        intro n hn
-        apply Finset.mem_range.mpr
-        have hb := homogeneous_orbit_bounded c x hc2 n
-        dsimp [B]
-        omega)
-  have he : orbit (homogeneousOperate c) x i =
-      orbit (homogeneousOperate c) x j := by
-    apply Subtype.ext
-    exact heval
-  rcases lt_or_gt_of_ne hne with hij | hji
-  · exact eventuallyPeriodic_of_repeat (homogeneousOperate c) x hij he
-  · exact eventuallyPeriodic_of_repeat (homogeneousOperate c) x hji he.symm
+  apply eventuallyPeriodic_of_prime_orbit_bounded
+    (homogeneousOperate c) x (max x.val (c.val + 2))
+  exact homogeneous_orbit_bounded c x hc2
 
 /-- Intertwining one step intertwines every iterate. -/
 theorem orbit_intertwine {α β : Type*}
