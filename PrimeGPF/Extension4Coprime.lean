@@ -28,8 +28,8 @@ theorem extension4_exponents_coprime
     exact Nat.gcd_dvd_right α β
   have hg_ne_two : g ≠ 2 := by
     intro he
-    subst g
-    have hz := Nat.mod_eq_zero_of_dvd hgα
+    have h2α : 2 ∣ α := by simpa [he] using hgα
+    have hz := Nat.mod_eq_zero_of_dvd h2α
     omega
   have hg3 : 3 ≤ g := by omega
 
@@ -44,35 +44,29 @@ theorem extension4_exponents_coprime
     dsimp [B]
     simpa [Nat.mul_comm] using h.symm
   have hApos : 0 < A := by
-    by_contra hA
-    have hA0 : A = 0 := by omega
-    rw [hA0, Nat.zero_mul] at hAform
-    omega
+    dsimp [A]
+    exact Nat.div_pos (Nat.le_of_dvd hαpos hgα) hgpos
   have hBpos : 0 < B := by
-    by_contra hB
-    have hB0 : B = 0 := by omega
-    rw [hB0, Nat.zero_mul] at hBform
-    omega
+    dsimp [B]
+    exact Nat.div_pos (Nat.le_of_dvd hβpos hgβ) hgpos
   have hAodd : A % 2 = 1 := by
-    have hAlt := Nat.mod_lt A (by omega : 0 < 2)
-    by_contra hne
-    have hAeven : A % 2 = 0 := by omega
-    have h2A : 2 ∣ A := Nat.dvd_of_mod_eq_zero hAeven
-    have h2α : 2 ∣ α := by
-      rw [hAform]
-      exact dvd_mul_of_dvd_left h2A g
-    have hz := Nat.mod_eq_zero_of_dvd h2α
-    omega
+    rcases Nat.mod_two_eq_zero_or_one A with hzero | hone
+    · have h2A : 2 ∣ A := Nat.dvd_of_mod_eq_zero hzero
+      have h2α : 2 ∣ α := by
+        rw [hAform]
+        exact dvd_mul_of_dvd_left h2A g
+      have hz := Nat.mod_eq_zero_of_dvd h2α
+      omega
+    · exact hone
   have hBodd : B % 2 = 1 := by
-    have hBlt := Nat.mod_lt B (by omega : 0 < 2)
-    by_contra hne
-    have hBeven : B % 2 = 0 := by omega
-    have h2B : 2 ∣ B := Nat.dvd_of_mod_eq_zero hBeven
-    have h2β : 2 ∣ β := by
-      rw [hBform]
-      exact dvd_mul_of_dvd_left h2B g
-    have hz := Nat.mod_eq_zero_of_dvd h2β
-    omega
+    rcases Nat.mod_two_eq_zero_or_one B with hzero | hone
+    · have h2B : 2 ∣ B := Nat.dvd_of_mod_eq_zero hzero
+      have h2β : 2 ∣ β := by
+        rw [hBform]
+        exact dvd_mul_of_dvd_left h2B g
+      have hz := Nat.mod_eq_zero_of_dvd h2β
+      omega
+    · exact hone
 
   let t := 2 ^ A * 5 ^ B
   have h2A : 2 ≤ 2 ^ A := by
@@ -110,15 +104,22 @@ theorem extension4_exponents_coprime
 
   have hpowminus : t ^ g - 1 = 3 * q := by omega
   have hgeom : t - 1 ∣ t ^ g - 1 := by
-    simpa only [one_pow] using Nat.sub_dvd_pow_sub_pow t 1 g
+    let S := ∑ i ∈ Finset.range g, t ^ i
+    refine ⟨S, ?_⟩
+    have hsum := geom_sum_mul_of_one_le (show 1 ≤ t by omega) g
+    dsimp [S]
+    calc
+      t ^ g - 1 = (∑ i ∈ Finset.range g, t ^ i) * (t - 1) := hsum.symm
+      _ = (t - 1) * (∑ i ∈ Finset.range g, t ^ i) := by ring
   rw [← h3d, hpowminus] at hgeom
   have hdq : d ∣ q :=
     Nat.dvd_of_mul_dvd_mul_left (by omega : 0 < (3 : ℕ)) hgeom
   rcases (Nat.dvd_prime hq).mp hdq with hd1 | hdqeq
   · omega
-  · have htg : t ^ g = t := by
-      rw [hdqeq] at h3d
-      omega
+  · have h3q : 3 * q = t - 1 := by simpa [hdqeq] using h3d
+    have ht1 : 1 ≤ t := by omega
+    have hsubadd : t - 1 + 1 = t := Nat.sub_add_cancel ht1
+    have htg : t ^ g = t := by omega
     have htgt1 : 1 < t := by omega
     have htlt : t < t ^ g := by
       calc
