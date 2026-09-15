@@ -67,7 +67,7 @@ theorem weightedTriangleRow_card_cast_ge_width
 
   have hembed : Function.Injective embed := by
     intro β γ h
-    exact Prod.mk.inj_iff.mp h |>.2
+    exact congrArg Prod.snd h
   have hcardImage : (R.image embed).card = R.card :=
     Finset.card_image_of_injective _ hembed
   have hcardNat : R.card ≤ F.card := by
@@ -77,10 +77,14 @@ theorem weightedTriangleRow_card_cast_ge_width
     exact_mod_cast hcardNat
   have hRcard : R.card = ⌊w⌋₊ + 1 := by simp [R]
   have hwlt : w < ((⌊w⌋₊ + 1 : ℕ) : ℝ) := by
-    exact Nat.lt_floor_add_one w
-  dsimp [F]
+    simpa only [Nat.cast_add, Nat.cast_one] using Nat.lt_floor_add_one w
   rw [hRcard] at hcardCast
-  exact (le_of_lt hwlt).trans hcardCast
+  have hcardCast' :
+      (((⌊w⌋₊ + 1 : ℕ) : ℝ) : ℝ) ≤
+        ((weightedTriangleRow u v L α).card : ℝ) := by
+    simpa [F] using hcardCast
+  change w ≤ ((weightedTriangleRow u v L α).card : ℝ)
+  exact (le_of_lt hwlt).trans hcardCast'
 
 /-- The cardinality of the whole weighted triangle dominates the sum of the
 real row widths. -/
@@ -131,16 +135,18 @@ theorem weighted_row_width_sum_closed_form (u v L : ℝ) (A : ℕ) :
   have hones :
       (∑ _α ∈ Finset.range (A + 1), (1 : ℝ)) = (A : ℝ) + 1 := by
     simp
+  have hadd :
+      (∑ α ∈ Finset.range (A + 1),
+          ((L - (α : ℝ) * u) / v + 1)) =
+        (∑ α ∈ Finset.range (A + 1), (L - (α : ℝ) * u) / v) +
+          (∑ _α ∈ Finset.range (A + 1), (1 : ℝ)) := by
+    rw [Finset.sum_add_distrib]
   calc
     (∑ α ∈ Finset.range (A + 1), (L - (α : ℝ) * u) / v)
         = (∑ α ∈ Finset.range (A + 1),
             ((L - (α : ℝ) * u) / v + 1)) -
           (∑ _α ∈ Finset.range (A + 1), (1 : ℝ)) := by
-            rw [Finset.sum_sub_distrib]
-            congr 1
-            apply Finset.sum_congr rfl
-            intro α hα
-            ring
+            linarith
     _ = ((A : ℝ) + 1) * (L / v + 1) -
           (u / v) * ((A : ℝ) * ((A : ℝ) + 1) / 2) -
           ((A : ℝ) + 1) := by rw [hfull, hones]
@@ -148,7 +154,13 @@ theorem weighted_row_width_sum_closed_form (u v L : ℝ) (A : ℕ) :
           (u / v) * ((A : ℝ) * ((A : ℝ) + 1) / 2) := by ring
 
 /-- The continuous weighted-triangle area is a lower bound for the number of
-nonnegative lattice points in the triangle. -/
+nonnegative lattice points in the triangle.
+
+Write `t = L/u`, `a = floor t`, and `δ = t-a`.  The difference between the
+left-endpoint row sum and the continuous area is, up to the positive factor
+`u/v`, exactly `(a + 2*δ - δ^2)/2`.  Since `a ≥ 0` and `0 ≤ δ < 1`, this is
+nonnegative.  Making this algebra explicit is more robust than asking a final
+`linarith` call to discover the scaling identities involving `u` and `v`. -/
 theorem weightedTriangle_area_le_card_cast
     {u v L : ℝ} (hu : 0 < u) (hv : 0 < v) (hL : 0 ≤ L) :
     L ^ 2 / (2 * u * v) ≤ ((weightedTriangle u v L).card : ℝ) := by
@@ -167,24 +179,38 @@ theorem weightedTriangle_area_le_card_cast
   have hut : t < a + 1 := by
     dsimp [a, A, t]
     exact Nat.lt_floor_add_one (L / u)
+  have hδ0 : 0 ≤ t - a := sub_nonneg.mpr hau
+  have hδ1 : t - a ≤ 1 := by linarith
+  have hdelta : 0 ≤ a + 2 * (t - a) - (t - a) ^ 2 := by
+    nlinarith
+  have hbase :
+      t ^ 2 / 2 ≤ (a + 1) * t - a * (a + 1) / 2 := by
+    nlinarith [hdelta]
+  have hLt : L = t * u := by
+    dsimp [t]
+    field_simp [ne_of_gt hu]
+  have hsumArea :
+      L ^ 2 / (2 * u * v) ≤
+        (a + 1) * (L / v) -
+          (u / v) * (a * (a + 1) / 2) := by
+    calc
+      L ^ 2 / (2 * u * v) = (u / v) * (t ^ 2 / 2) := by
+        rw [hLt]
+        field_simp [ne_of_gt hu, ne_of_gt hv]
+        ring
+      _ ≤ (u / v) * ((a + 1) * t - a * (a + 1) / 2) :=
+        mul_le_mul_of_nonneg_left hbase (div_nonneg hu.le hv.le)
+      _ = (a + 1) * (L / v) -
+            (u / v) * (a * (a + 1) / 2) := by
+        rw [hLt]
+        field_simp [ne_of_gt hv]
+        ring
   have hrow := weightedTriangle_card_cast_ge_row_width_sum hu hv hL
   have hclosed :
       (∑ α ∈ Finset.range (A + 1), (L - (α : ℝ) * u) / v) =
         (a + 1) * (L / v) -
           (u / v) * (a * (a + 1) / 2) := by
     simpa [a] using weighted_row_width_sum_closed_form u v L A
-  have hsumArea :
-      L ^ 2 / (2 * u * v) ≤
-        (a + 1) * (L / v) -
-          (u / v) * (a * (a + 1) / 2) := by
-    have huv : 0 < u / v := div_pos hu hv
-    have hdelta : 0 ≤ a + 2 * (t - a) - (t - a) ^ 2 := by
-      have hδ0 : 0 ≤ t - a := sub_nonneg.mpr hau
-      have hδ1 : t - a < 1 := by linarith
-      nlinarith
-    dsimp [t] at hdelta ⊢
-    field_simp [ne_of_gt hu, ne_of_gt hv] at hdelta ⊢
-    nlinarith
   rw [hclosed] at hrow
   exact hsumArea.trans hrow
 
