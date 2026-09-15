@@ -60,8 +60,7 @@ theorem extension1_high_fiber_count_le_restrictedSmoothCount
       omega
     have hsmooth : Smooth r (a + q.1 + 1) := by
       constructor
-      · have hgt := kernel_gt_one .add ha hq
-        simpa [kernel] using (show 0 < kernel .add a q.1 by omega)
+      · omega
       · intro s hs hsd
         exact (extension1_large_input_support_exclusion ha hr hq hout hrq hs hsd).1
     have hrestrict : RestrictedSmooth a r (a + q.1 + 1) := by
