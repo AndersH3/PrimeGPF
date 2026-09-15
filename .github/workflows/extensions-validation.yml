@@ -51,8 +51,8 @@ jobs:
         run: lake env lean PrimeGPF/Extension8Corollary.lean
       - name: Compile extension 10 dynamics
         run: lake env lean PrimeGPF/Extension10Dynamics.lean
-      - name: Compile canonical triple-collision extension
-        run: lake env lean PrimeGPF/Extension9.lean
+      - name: Build canonical triple-collision extension
+        run: lake build PrimeGPF.Extension9
       - name: Verify baseline project
         if: ${{ !cancelled() }}
         run: bash verify.sh
