@@ -21,6 +21,7 @@ on:
       - 'PrimeGPF/Extension7Finite.lean'
       - 'PrimeGPF/Extension7Density.lean'
       - 'PrimeGPF/Extension7Limit.lean'
+      - 'PrimeGPF/Extension7Rate.lean'
       - 'PrimeGPF/Extension17Support.lean'
       - 'PrimeGPF/ExtensionPrimeCount.lean'
       - '.github/workflows/easy-extension-validation.yml'
@@ -100,3 +101,6 @@ jobs:
       - name: Build prime-count normalization
         if: ${{ always() && !cancelled() }}
         run: lake build PrimeGPF.ExtensionPrimeCount
+      - name: Build extension 7 prime-relative rate
+        if: ${{ always() && !cancelled() }}
+        run: lake build PrimeGPF.Extension7Rate
