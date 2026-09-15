@@ -12,6 +12,7 @@ on:
       - 'PrimeGPF/Extension2NonprimitiveCount.lean'
       - 'PrimeGPF/Extension7Core.lean'
       - 'PrimeGPF/Extension7Finite.lean'
+      - 'PrimeGPF/Extension7Density.lean'
       - 'PrimeGPF/Extension17Support.lean'
       - 'PrimeGPF/ExtensionPrimeCount.lean'
       - '.github/workflows/easy-extension-validation.yml'
@@ -62,6 +63,9 @@ jobs:
       - name: Build extension 7 finite bound
         if: always()
         run: lake build PrimeGPF.Extension7Finite
+      - name: Build extension 7 density zero
+        if: always()
+        run: lake build PrimeGPF.Extension7Density
       - name: Build prime-count normalization
         if: always()
         run: lake build PrimeGPF.ExtensionPrimeCount
