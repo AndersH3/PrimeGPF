@@ -5,6 +5,7 @@ on:
     branches: [extensions-5-6-8-9-10-20260915]
     paths:
       - 'PrimeGPF/Extension8Corollary.lean'
+      - 'PrimeGPF/Extension9Revised.lean'
       - 'PrimeGPF/Extension9.lean'
       - 'PrimeGPF/Extension10Dynamics.lean'
       - '.github/workflows/remaining-discrete-validation.yml'
@@ -34,7 +35,10 @@ jobs:
       - name: Compile extension 8 prime-polynomial corollary
         if: always()
         run: lake env lean PrimeGPF/Extension8Corollary.lean
-      - name: Compile extension 9 triple-collision classification
+      - name: Build extension 9 revised proof
+        if: always()
+        run: lake build PrimeGPF.Extension9Revised
+      - name: Compile extension 9 public theorem
         if: always()
         run: lake env lean PrimeGPF/Extension9.lean
       - name: Compile extension 10 dynamics
