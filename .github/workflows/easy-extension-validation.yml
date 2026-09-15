@@ -9,6 +9,7 @@ on:
       - 'PrimeGPF/Extension2Core.lean'
       - 'PrimeGPF/Extension2Support.lean'
       - 'PrimeGPF/Extension2Primitive.lean'
+      - 'PrimeGPF/Extension2NonprimitiveCount.lean'
       - 'PrimeGPF/Extension34Residues.lean'
       - 'PrimeGPF/Extension34Structure.lean'
       - 'PrimeGPF/Extension34Converse.lean'
@@ -59,6 +60,9 @@ jobs:
       - name: Compile extension 2 primitive families
         if: always()
         run: lake env lean PrimeGPF/Extension2Primitive.lean
+      - name: Compile extension 2 nonprimitive count
+        if: always()
+        run: lake env lean PrimeGPF/Extension2NonprimitiveCount.lean
       - name: Build revised extension 9 helpers
         if: always()
         run: lake build PrimeGPF.Extension9Revised
