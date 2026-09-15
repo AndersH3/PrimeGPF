@@ -62,9 +62,13 @@ theorem extension3_fiber_gives_weighted_pair
   have hNmod : N % 2 = 1 := by
     dsimp [N]
     exact odd_product_mod_two h3mod h5mod
-  have hN1 : 1 ≤ N := by
+  -- `quotient_sub_one_reconstruct` needs `1 ≤ N`; prove this from strict
+  -- positivity rather than relying on `positivity` to normalize a Nat
+  -- non-strict inequality.
+  have hNpos : 0 < N := by
     dsimp [N]
-    positivity
+    exact Nat.mul_pos (pow_pos (by norm_num) α) (pow_pos (by norm_num) β)
+  have hN1 : 1 ≤ N := by omega
   have hdiv : 2 ∣ N - 1 := by
     apply Nat.dvd_of_mod_eq_zero
     omega
@@ -123,9 +127,13 @@ theorem extension4_fiber_gives_weighted_pair
   have hNmod : N % 3 = 1 := by
     dsimp [N]
     norm_num [Nat.mul_mod, h2mod, h5mod]
-  have hN1 : 1 ≤ N := by
+  -- As in Extension 3, make positivity of the reconstructed kernel explicit
+  -- before converting it to the `1 ≤ N` hypothesis used by the quotient
+  -- reconstruction helper.
+  have hNpos : 0 < N := by
     dsimp [N]
-    positivity
+    exact Nat.mul_pos (pow_pos (by norm_num) α) (pow_pos (by norm_num) β)
+  have hN1 : 1 ≤ N := by omega
   have hdiv : 3 ∣ N - 1 := by
     apply Nat.dvd_of_mod_eq_zero
     omega
