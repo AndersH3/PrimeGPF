@@ -40,6 +40,13 @@ theorem extension8_no_triple_of_polynomial_prime {p : ℕ}
     simpa [add, output, kernel] using gpf_le (p + q + 1)
   have hupper' : r ≤ 2 * p + 1 := by omega
   rw [hre] at hupper'
+  have hpos : 1 ≤ p ^ 2 + p := by
+    have hp0 : 0 < p := hp.pos
+    nlinarith
+  have hsub : (p ^ 2 + p - 1) + 1 = p ^ 2 + p :=
+    Nat.sub_add_cancel hpos
+  have hquadle : p ^ 2 + p ≤ 2 * p + 2 := by
+    omega
   nlinarith
 
 end PrimeGPF
