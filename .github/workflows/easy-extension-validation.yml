@@ -4,6 +4,7 @@ on:
     branches: [extensions-5-6-8-9-10-20260915]
     paths:
       - 'PrimeGPF/Extensions.lean'
+      - 'PrimeGPF/Extension1Core.lean'
       - 'PrimeGPF/Extension8Corollary.lean'
       - 'PrimeGPF/Extension10Dynamics.lean'
       - 'PrimeGPF/Extension9Revised.lean'
@@ -29,7 +30,10 @@ jobs:
         run: lake exe cache get
       - name: Build extension dependencies
         run: lake build PrimeGPF.Extensions
+      - name: Compile extension 1 core
+        run: lake env lean PrimeGPF/Extension1Core.lean
       - name: Compile extension 8 corollary
+        if: always()
         run: lake env lean PrimeGPF/Extension8Corollary.lean
       - name: Compile extension 10 dynamics
         if: always()
