@@ -50,20 +50,20 @@ theorem extension3_fiber_gives_weighted_pair
   obtain ⟨α, β, hα, hβ, hodd, hcop, hqform⟩ :=
     (extension3_exact_classification hq).mp hout |>.resolve_left hq2
   let N := 3 ^ α * 5 ^ β
-  have hdiv : 2 ∣ N - 1 := by
-    apply Nat.dvd_of_mod_eq_zero
-    have h3odd : 3 ^ α % 2 = 1 := by simp [Nat.pow_mod]
-    have h5odd : 5 ^ β % 2 = 1 := by simp [Nat.pow_mod]
+  have hNmod : N % 2 = 1 := by
     dsimp [N]
-    norm_num [Nat.mul_mod, h3odd, h5odd]
+    simp [Nat.mul_mod]
+  have hdec := Nat.mod_add_div N 2
+  have hsub : N - 1 = 2 * (N / 2) := by omega
+  have hdiv : 2 ∣ N - 1 := by
+    rw [hsub]
+    exact dvd_mul_right 2 (N / 2)
   have hqmul : q * 2 = N - 1 := by
     rw [hqform]
     exact Nat.div_mul_cancel hdiv
-  have hN1 : 1 ≤ N := by
-    dsimp [N]
-    positivity
+  have hqpos : 0 < q := hq.pos
   have hfac : 2 * q + 1 = 3 ^ α * 5 ^ β := by
-    dsimp [N] at hqmul hN1 ⊢
+    dsimp [N] at hqmul ⊢
     omega
   exact ⟨α, β, hα, hβ, hodd, hcop,
     extension3_exponents_weighted_le hfac hqX⟩
@@ -108,21 +108,23 @@ theorem extension4_fiber_gives_weighted_pair
   obtain ⟨α, β, hα, hβ, hαodd, hβodd, hcop, hqform⟩ :=
     (extension4_exact_classification hq).mp hout
   let N := 2 ^ α * 5 ^ β
-  have hdiv : 3 ∣ N - 1 := by
-    apply Nat.dvd_of_mod_eq_zero
-    have h2 : 2 ^ α % 3 = 2 := extension_two_pow_mod_three_of_odd hαodd
-    have h5 : 5 ^ β % 3 = 2 := by
-      simpa [Nat.pow_mod] using extension_two_pow_mod_three_of_odd hβodd
+  have h2 : 2 ^ α % 3 = 2 := extension_two_pow_mod_three_of_odd hαodd
+  have h5 : 5 ^ β % 3 = 2 := by
+    simpa [Nat.pow_mod] using extension_two_pow_mod_three_of_odd hβodd
+  have hNmod : N % 3 = 1 := by
     dsimp [N]
     norm_num [Nat.mul_mod, h2, h5]
+  have hdec := Nat.mod_add_div N 3
+  have hsub : N - 1 = 3 * (N / 3) := by omega
+  have hdiv : 3 ∣ N - 1 := by
+    rw [hsub]
+    exact dvd_mul_right 3 (N / 3)
   have hqmul : q * 3 = N - 1 := by
     rw [hqform]
     exact Nat.div_mul_cancel hdiv
-  have hN1 : 1 ≤ N := by
-    dsimp [N]
-    positivity
+  have hqpos : 0 < q := hq.pos
   have hfac : 3 * q + 1 = 2 ^ α * 5 ^ β := by
-    dsimp [N] at hqmul hN1 ⊢
+    dsimp [N] at hqmul ⊢
     omega
   exact ⟨α, β, hα, hβ, hαodd, hβodd, hcop,
     extension4_exponents_weighted_le hfac hqX⟩
