@@ -40,5 +40,15 @@ jobs:
             echo "EXTENSIONS_REPORT.pdf is already up to date."
           else
             git commit -m "Compile XeLaTeX extensions report"
-            git push
+            for attempt in 1 2 3; do
+              git fetch origin extensions-5-6-8-9-10-20260915
+              git rebase origin/extensions-5-6-8-9-10-20260915
+              if git push origin HEAD:extensions-5-6-8-9-10-20260915; then
+                exit 0
+              fi
+              echo "Push raced with another branch update; retrying ($attempt/3)."
+              sleep 2
+            done
+            echo "Could not push compiled PDF after three retries."
+            exit 1
           fi
