@@ -2,6 +2,15 @@ import Mathlib.Analysis.SpecialFunctions.Pow.Asymptotics
 import Mathlib.Tactic
 import PrimeGPF.PNT.Mathlib.Analysis.SpecialFunctions.Log.Basic
 
+/-!
+# Weighted-to-unweighted counting
+
+These lemmas convert logarithmically weighted counting asymptotics into
+ordinary cardinality asymptotics.  The key device is a cutoff at `N^δ`: small
+integers are few, while every large integer contributes at least `δ log N` to
+the weighted sum.  Keeping these estimates in one module avoids repeating the
+same cutoff argument in the later density proofs.
+-/
 namespace PrimeGPF.Analytic
 open Filter Finset Real
 open scoped Topology
@@ -17,7 +26,8 @@ theorem weighted_count_lower {S : Finset ℕ} {N : ℕ}
       exact Real.log_le_log (by exact_mod_cast (hS n hn).1) (by exact_mod_cast (hS n hn).2)
     _ = _ := by simp
 
-/-- Split at N^delta; the small integers have negligible cardinality. -/
+/-- Split at `N^δ`; the small integers have negligible cardinality, while the
+large integers each contribute at least `δ log N`. -/
 theorem weighted_count_upper {S : Finset ℕ} {N : ℕ} (hN : 1 ≤ N)
     (hS : ∀ n ∈ S, 1 ≤ n) {δ : ℝ} (hδ : 0 < δ) :
     (S.card : ℝ) * (δ * Real.log N) ≤
@@ -55,6 +65,7 @@ theorem weighted_count_upper {S : Finset ℕ} {N : ℕ} (hN : 1 ≤ N)
   rw [hcard, add_mul]
   exact add_le_add (mul_le_mul_of_nonneg_right hlow (mul_nonneg hδ.le hlog)) hhigh
 
+/-- The contribution of the `N^δ` cutoff is negligible whenever `δ < 1`. -/
 theorem small_cutoff_limit {δ : ℝ} (hδ : δ < 1) :
     Tendsto (fun N : ℕ => ((N : ℝ) ^ δ + 1) * Real.log N / N)
       atTop (𝓝 0) := by
@@ -111,12 +122,11 @@ theorem counting_limit_of_weighted {S : ℕ → Finset ℕ} {A : ℝ} (hA : 0 < 
     have hb := weighted_count_upper hN (fun n hn => (hS N n hn).1) hδ0
     calc
       _ = ((S N).card : ℝ) * (δ * Real.log N) / ((N : ℝ) * δ) := by
-        field_simp [hn.ne', hδ0.ne'] <;> ring
+        field_simp [hn.ne', hδ0.ne'] ; ring
       _ ≤ (((N : ℝ) ^ δ + 1) * (δ * Real.log N) + ∑ n ∈ S N, Real.log n) /
           ((N : ℝ) * δ) :=
         div_le_div_of_nonneg_right hb (mul_nonneg hn.le hδ0.le)
       _ = _ := by
-        field_simp [hn.ne', hδ0.ne']
-        <;> ring
+        field_simp [hn.ne', hδ0.ne'] ; ring
 
 end PrimeGPF.Analytic
