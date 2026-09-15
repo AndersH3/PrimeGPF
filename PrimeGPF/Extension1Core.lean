@@ -44,7 +44,7 @@ theorem extension1_dividing_anchor_fiberCount_le_one
     have hq := (Finset.mem_filter.mp hqF).2
     have hqr : q = r :=
       extension1_input_eq_output_of_dvd_anchor ha hr hq.1 har hq.2
-    simpa [hqr]
+    simp [hqr]
   have hc := Finset.card_le_card hsub
   simpa [F] using hc
 
