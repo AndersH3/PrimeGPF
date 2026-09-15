@@ -33,7 +33,8 @@ theorem primeCount_le_apCount_two_one_add_one (N : ℕ) :
       apply Finset.mem_filter.mpr
       exact ⟨hqP'.1, hqP'.2, hqodd⟩
   have hc : P.card ≤ (insert 2 A).card := Finset.card_le_card hsub
-  have hi : (insert 2 A).card ≤ A.card + 1 := Finset.card_insert_le
+  have hi : (insert 2 A).card ≤ A.card + 1 := by
+    exact Finset.card_insert_le 2 A
   have hPA : P.card ≤ A.card + 1 := hc.trans hi
   simpa [Claims.primeCount, Claims.apCount, P, A] using hPA
 
