@@ -7,6 +7,7 @@ on:
       - 'PrimeGPF/Extension6PNT.lean'
       - 'PrimeGPF/Extension6Asymptotic.lean'
       - 'PrimeGPF/Extension6Cutoff.lean'
+      - 'PrimeGPF/Extension6Ratio.lean'
       - '.github/workflows/extension6-asymptotic-validation.yml'
   workflow_dispatch:
 permissions:
@@ -26,14 +27,17 @@ jobs:
           echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
       - name: Obtain pinned mathlib cache
         run: lake exe cache get
-      - name: Compile prime-count normalization
-        run: lake env lean PrimeGPF/ExtensionPrimeCount.lean
-      - name: Compile extension 6 PNT normalization
+      - name: Build prime-count normalization
+        run: lake build PrimeGPF.ExtensionPrimeCount
+      - name: Build extension 6 PNT normalization
         if: always()
-        run: lake env lean PrimeGPF/Extension6PNT.lean
-      - name: Compile fixed-scale PNT ratio
+        run: lake build PrimeGPF.Extension6PNT
+      - name: Build fixed-scale PNT ratio
         if: always()
-        run: lake env lean PrimeGPF/Extension6Asymptotic.lean
-      - name: Compile extension 6 cutoff arithmetic
+        run: lake build PrimeGPF.Extension6Asymptotic
+      - name: Build extension 6 cutoff arithmetic
         if: always()
-        run: lake env lean PrimeGPF/Extension6Cutoff.lean
+        run: lake build PrimeGPF.Extension6Cutoff
+      - name: Build extension 6 image-ratio theorem
+        if: always()
+        run: lake build PrimeGPF.Extension6Ratio
