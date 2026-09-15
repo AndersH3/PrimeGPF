@@ -63,7 +63,7 @@ theorem sub_one_dvd_pow_sub_one {u g : ℕ} (hu : 2 ≤ u) :
     Nat.ModEq.pow g hbase
   have hpow' : 1 ≡ u ^ g [MOD u - 1] := by
     simpa using hpow
-  apply (Nat.modEq_iff_dvd' (Nat.one_le_pow' u g)).mp
+  apply (Nat.modEq_iff_dvd' (Nat.one_le_pow g u (by omega))).mp
   exact hpow'
 
 /-- The nonprimitive perfect-power reduction from extension 2. -/
