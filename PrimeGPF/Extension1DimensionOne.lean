@@ -60,7 +60,8 @@ theorem extension1_fiberCount_real_le_singleton_log
     (Claims.fiberCount .add a r X : ℝ) ≤
       (Claims.primeCount r : ℝ) + 1 +
         Real.log ((X + a + 1 : ℕ) : ℝ) / Real.log (p : ℝ) := by
-  have hnat := extension1_fiberCount_le_singleton_log_box ha hr hT
+  have hnat := extension1_fiberCount_le_singleton_log_box
+    (a := a) (r := r) (p := p) (X := X) ha hr hT
   have hp1 : 1 < p := hp.one_lt
   have hlogp : 0 < Real.log (p : ℝ) :=
     Real.log_pos (by exact_mod_cast hp1)
