@@ -5,6 +5,7 @@ on:
     paths:
       - 'PrimeGPF/Extensions.lean'
       - 'PrimeGPF/Extension1Core.lean'
+      - 'PrimeGPF/Extension2Core.lean'
       - 'PrimeGPF/Extension8Corollary.lean'
       - 'PrimeGPF/Extension10Dynamics.lean'
       - 'PrimeGPF/Extension9Revised.lean'
@@ -32,6 +33,9 @@ jobs:
         run: lake build PrimeGPF.Extensions
       - name: Compile extension 1 core
         run: lake env lean PrimeGPF/Extension1Core.lean
+      - name: Compile extension 2 core
+        if: always()
+        run: lake env lean PrimeGPF/Extension2Core.lean
       - name: Compile extension 8 corollary
         if: always()
         run: lake env lean PrimeGPF/Extension8Corollary.lean
