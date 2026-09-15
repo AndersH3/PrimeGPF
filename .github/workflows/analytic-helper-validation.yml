@@ -8,6 +8,11 @@ on:
       - 'PrimeGPF/WeightedTriangle.lean'
       - 'PrimeGPF/WeightedTriangleRows.lean'
       - 'PrimeGPF/WeightedTriangleArea.lean'
+      - 'PrimeGPF/Extension34ResidueHelpers.lean'
+      - 'PrimeGPF/Extension34Exact.lean'
+      - 'PrimeGPF/Extension34WeightedPairs.lean'
+      - 'PrimeGPF/Extension34CandidatePairs.lean'
+      - 'PrimeGPF/Extension34CandidateCounting.lean'
       - 'PrimeGPF/Extension7Limit.lean'
       - '.github/workflows/analytic-helper-validation.yml'
   workflow_dispatch:
@@ -42,6 +47,21 @@ jobs:
       - name: Build weighted triangle area bound
         if: always()
         run: lake build PrimeGPF.WeightedTriangleArea
+      - name: Build Extension 3/4 residue helpers
+        if: always()
+        run: lake build PrimeGPF.Extension34ResidueHelpers
+      - name: Build Extension 3/4 exact classifications
+        if: always()
+        run: lake build PrimeGPF.Extension34Exact
+      - name: Build Extension 3/4 weighted-pair reduction
+        if: always()
+        run: lake build PrimeGPF.Extension34WeightedPairs
+      - name: Build Extension 3/4 candidate-pair reduction
+        if: always()
+        run: lake build PrimeGPF.Extension34CandidatePairs
+      - name: Build Extension 3/4 candidate counting
+        if: always()
+        run: lake build PrimeGPF.Extension34CandidateCounting
       - name: Build extension 7 limit theorem
         if: always()
         run: lake build PrimeGPF.Extension7Limit
