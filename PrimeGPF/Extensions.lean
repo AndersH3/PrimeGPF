@@ -233,8 +233,10 @@ theorem extension6_deep_image_iff {a r : ℕ} (ha : Nat.Prime a)
       have hpw : r + 2 ≤ 2 ^ (r + 1) := by
         exact succ_le_two_pow (r + 1)
       have hmul : 2 ^ (r + 1) ≤ 2 ^ (r + 1) * (q + 1) := by
-        have := Nat.mul_le_mul_left (2 ^ (r + 1)) (show 1 ≤ q + 1 by omega)
-        simpa using this
+        calc
+          2 ^ (r + 1) = 2 ^ (r + 1) * 1 := by simp
+          _ ≤ 2 ^ (r + 1) * (q + 1) :=
+            Nat.mul_le_mul_left _ (by omega)
       omega
   · rintro ⟨rfl, rfl⟩ k
     exact ⟨3, Nat.prime_three, expIterNat_two_three k⟩
