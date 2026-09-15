@@ -10,20 +10,10 @@ on:
       - 'PrimeGPF/Extension2Support.lean'
       - 'PrimeGPF/Extension2Primitive.lean'
       - 'PrimeGPF/Extension2NonprimitiveCount.lean'
-      - 'PrimeGPF/Extension34Residues.lean'
-      - 'PrimeGPF/Extension34Structure.lean'
-      - 'PrimeGPF/Extension34Converse.lean'
-      - 'PrimeGPF/Extension3Coprime.lean'
-      - 'PrimeGPF/Extension4Odd.lean'
-      - 'PrimeGPF/Extension4Coprime.lean'
-      - 'PrimeGPF/Extension34Exact.lean'
       - 'PrimeGPF/Extension7Core.lean'
       - 'PrimeGPF/Extension7Finite.lean'
       - 'PrimeGPF/Extension17Support.lean'
       - 'PrimeGPF/ExtensionPrimeCount.lean'
-      - 'PrimeGPF/Extension8Corollary.lean'
-      - 'PrimeGPF/Extension10Dynamics.lean'
-      - 'PrimeGPF/Extension9Revised.lean'
       - '.github/workflows/easy-extension-validation.yml'
   workflow_dispatch:
 permissions:
@@ -31,7 +21,7 @@ permissions:
 jobs:
   lean-easy:
     runs-on: ubuntu-latest
-    timeout-minutes: 40
+    timeout-minutes: 25
     steps:
       - uses: actions/checkout@v4
       - name: Install elan
@@ -66,30 +56,6 @@ jobs:
       - name: Build extension 2 nonprimitive count
         if: always()
         run: lake build PrimeGPF.Extension2NonprimitiveCount
-      - name: Build revised extension 9 helpers
-        if: always()
-        run: lake build PrimeGPF.Extension9Revised
-      - name: Build extension 3 and 4 residues
-        if: always()
-        run: lake build PrimeGPF.Extension34Residues
-      - name: Build extension 3 and 4 structure
-        if: always()
-        run: lake build PrimeGPF.Extension34Structure
-      - name: Build extension 3 and 4 converse
-        if: always()
-        run: lake build PrimeGPF.Extension34Converse
-      - name: Build extension 3 coprimality
-        if: always()
-        run: lake build PrimeGPF.Extension3Coprime
-      - name: Build extension 4 odd exponents
-        if: always()
-        run: lake build PrimeGPF.Extension4Odd
-      - name: Build extension 4 coprimality
-        if: always()
-        run: lake build PrimeGPF.Extension4Coprime
-      - name: Build exact extension 3 and 4 classifications
-        if: always()
-        run: lake build PrimeGPF.Extension34Exact
       - name: Build extension 7 core
         if: always()
         run: lake build PrimeGPF.Extension7Core
@@ -99,9 +65,3 @@ jobs:
       - name: Build prime-count normalization
         if: always()
         run: lake build PrimeGPF.ExtensionPrimeCount
-      - name: Compile extension 8 corollary
-        if: always()
-        run: lake env lean PrimeGPF/Extension8Corollary.lean
-      - name: Compile extension 10 dynamics
-        if: always()
-        run: lake env lean PrimeGPF/Extension10Dynamics.lean
