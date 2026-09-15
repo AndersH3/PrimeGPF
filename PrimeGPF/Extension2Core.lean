@@ -19,11 +19,12 @@ theorem extension2_mul_output_ne_anchor
   have hk : a ∣ a * q + 1 := by
     have h := (output_spec .mul ha hq).2.1
     simpa [hout] using h
-  have haq : a ∣ a * q := dvd_mul_right a q
-  have hone : a ∣ 1 := by
-    have hadd : a ∣ a * q + 1 := hk
-    exact (Nat.dvd_add_iff_left haq).mp hadd
-  exact ha.not_dvd_one hone
+  have hkernel : (a * q + 1) % a = 0 := Nat.mod_eq_zero_of_dvd hk
+  have hprod : (a * q) % a = 0 := by simp
+  rw [Nat.add_mod, hprod, zero_add, Nat.mod_mod] at hkernel
+  have ha2 : 2 ≤ a := ha.two_le
+  have hone : 1 % a = 1 := Nat.mod_eq_of_lt (by omega)
+  omega
 
 /-- Consequently, when the fixed multiplicative output equals the prime
 anchor, every truncated fiber count is zero. -/
