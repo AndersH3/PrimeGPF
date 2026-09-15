@@ -30,6 +30,30 @@ lemma claims_primeCount_five : Claims.primeCount 5 = 3 := by
   rw [hset]
   norm_num
 
+/-- At anchor 2 and output 5, the exact exponent support is `{3,5}`. -/
+lemma extension3_allowedPrimes :
+    extension2AllowedPrimes 2 5 = ({3, 5} : Finset ℕ) := by
+  classical
+  ext p
+  simp only [extension2AllowedPrimes, Finset.mem_filter, Finset.mem_range,
+    Finset.mem_insert, Finset.mem_singleton]
+  constructor
+  · rintro ⟨hp6, hp, hp2⟩
+    interval_cases p <;> norm_num at hp hp2 ⊢
+  · rintro (rfl | rfl) <;> norm_num
+
+/-- At anchor 3 and output 5, the exact exponent support is `{2,5}`. -/
+lemma extension4_allowedPrimes :
+    extension2AllowedPrimes 3 5 = ({2, 5} : Finset ℕ) := by
+  classical
+  ext p
+  simp only [extension2AllowedPrimes, Finset.mem_filter, Finset.mem_range,
+    Finset.mem_insert, Finset.mem_singleton]
+  constructor
+  · rintro ⟨hp6, hp, hp3⟩
+    interval_cases p <;> norm_num at hp hp3 ⊢
+  · rintro (rfl | rfl) <;> norm_num
+
 lemma extension3_allowedPrimeCount :
     extension2AllowedPrimeCount 2 5 = 2 := by
   rw [extension2_allowedPrimeCount_eq_primeCount_sub_one
@@ -39,6 +63,25 @@ lemma extension4_allowedPrimeCount :
     extension2AllowedPrimeCount 3 5 = 2 := by
   rw [extension2_allowedPrimeCount_eq_primeCount_sub_one
     (a := 3) (r := 5) (by norm_num) (by norm_num), claims_primeCount_five]
+
+/-- The exact rectangular exponent box for Extension 3.  The later sharp
+triangle count replaces this product by its weighted-simplex leading term. -/
+theorem extension3RestrictedBoxBound_exact (x : ℕ) :
+    extension2RestrictedBoxBound 2 5 x =
+      (1 + ⌊Real.log (x : ℝ) / Real.log (3 : ℝ)⌋₊) *
+      (1 + ⌊Real.log (x : ℝ) / Real.log (5 : ℝ)⌋₊) := by
+  classical
+  simp [extension2RestrictedBoxBound, extension3_allowedPrimes,
+    mul_comm, mul_left_comm, mul_assoc]
+
+/-- The exact rectangular exponent box for Extension 4. -/
+theorem extension4RestrictedBoxBound_exact (x : ℕ) :
+    extension2RestrictedBoxBound 3 5 x =
+      (1 + ⌊Real.log (x : ℝ) / Real.log (2 : ℝ)⌋₊) *
+      (1 + ⌊Real.log (x : ℝ) / Real.log (5 : ℝ)⌋₊) := by
+  classical
+  simp [extension2RestrictedBoxBound, extension4_allowedPrimes,
+    mul_comm, mul_left_comm, mul_assoc]
 
 /-- Non-sharp degree-two bound for the output-5 multiplicative fiber at anchor
 2. -/
