@@ -16,6 +16,7 @@ on:
       - 'PrimeGPF/Extension2Dimension.lean'
       - 'PrimeGPF/Extension34Counting.lean'
       - 'PrimeGPF/Extension34Exact.lean'
+      - 'PrimeGPF/Extension34Congruence.lean'
       - 'PrimeGPF/Extension7Core.lean'
       - 'PrimeGPF/Extension7Finite.lean'
       - 'PrimeGPF/Extension7Density.lean'
@@ -75,9 +76,15 @@ jobs:
       - name: Build extension 2 support dimension
         if: always()
         run: lake build PrimeGPF.Extension2Dimension
+      - name: Build extensions 3 and 4 exact classifications
+        if: always()
+        run: lake build PrimeGPF.Extension34Exact
       - name: Build extensions 3 and 4 counting corollaries
         if: always()
         run: lake build PrimeGPF.Extension34Counting
+      - name: Build extensions 3 and 4 residue corollaries
+        if: always()
+        run: lake build PrimeGPF.Extension34Congruence
       - name: Build extension 7 core
         if: always()
         run: lake build PrimeGPF.Extension7Core
