@@ -5,6 +5,7 @@ on:
     branches: [extensions-5-6-8-9-10-20260915]
     paths:
       - 'PrimeGPF/WeightedCounting.lean'
+      - 'PrimeGPF/WeightedTriangle.lean'
       - 'PrimeGPF/Extension7Limit.lean'
       - '.github/workflows/analytic-helper-validation.yml'
   workflow_dispatch:
@@ -30,6 +31,9 @@ jobs:
         run: lake exe cache get
       - name: Build weighted counting helpers
         run: lake build PrimeGPF.WeightedCounting
+      - name: Build weighted triangle helpers
+        if: always()
+        run: lake build PrimeGPF.WeightedTriangle
       - name: Build extension 7 limit theorem
         if: always()
         run: lake build PrimeGPF.Extension7Limit
