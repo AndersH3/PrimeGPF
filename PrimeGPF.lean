@@ -18,13 +18,15 @@ import PrimeGPF.PrimeAP
 import PrimeGPF.Complete
 
 -- Extension-report leaf modules that have dedicated compiler validation.
--- Extension6Ratio and Extension7Rate are added once their focused CI is green.
+-- Extension7Rate and the new dimension-one leaves are added once focused CI is green.
+import PrimeGPF.LogAsymptotics
 import PrimeGPF.Extension1RestrictedCounting
 import PrimeGPF.Extension2Dimension
 import PrimeGPF.Extension2NonprimitiveCount
 import PrimeGPF.Extension34Counting
 import PrimeGPF.Extension34Congruence
 import PrimeGPF.Extension5RealLog
+import PrimeGPF.Extension6Ratio
 import PrimeGPF.Extension7Limit
 import PrimeGPF.Extension8Corollary
 import PrimeGPF.Extension9
