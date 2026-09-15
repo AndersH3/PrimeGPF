@@ -22,9 +22,11 @@ theorem extension2_mul_kernel_support_exclusion
   refine ⟨hsle, ?_⟩
   intro hsa
   subst s
-  have hz := Nat.mod_eq_zero_of_dvd hsd
-  have ha2 := ha.two_le
-  norm_num [Nat.add_mod, Nat.mul_mod] at hz
+  have hz : (a * q + 1) % a = 0 := Nat.mod_eq_zero_of_dvd hsd
+  have hmod : (a * q + 1) % a = 1 := by
+    rw [Nat.add_mod]
+    simp [ha.one_lt]
+  omega
 
 /-- Pointwise formulation of the support restriction appearing in extension 2. -/
 theorem extension2_mul_kernel_restricted_support
