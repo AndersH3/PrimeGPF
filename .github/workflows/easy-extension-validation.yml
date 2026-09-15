@@ -31,4 +31,5 @@ jobs:
       - name: Compile extension 8 corollary
         run: lake env lean PrimeGPF/Extension8Corollary.lean
       - name: Compile extension 10 dynamics
+        if: always()
         run: lake env lean PrimeGPF/Extension10Dynamics.lean
