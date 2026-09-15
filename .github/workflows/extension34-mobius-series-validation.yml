@@ -1,0 +1,31 @@
+name: Extension34 Möbius-series validation
+
+on:
+  push:
+    branches: [extensions-5-6-8-9-10-20260915]
+    paths:
+      - 'PrimeGPF/Extension34MobiusSeries.lean'
+      - '.github/workflows/extension34-mobius-series-validation.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: extension34-mobius-series-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  mobius-series:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install elan
+        run: |
+          curl -sSf https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh | sh -s -- -y --default-toolchain none
+          echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
+      - name: Obtain pinned mathlib cache
+        run: lake exe cache get
+      - name: Build odd Möbius L-series identity
+        run: lake build PrimeGPF.Extension34MobiusSeries
