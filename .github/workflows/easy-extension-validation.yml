@@ -8,6 +8,7 @@ on:
       - 'PrimeGPF/Extension2Core.lean'
       - 'PrimeGPF/Extension34Residues.lean'
       - 'PrimeGPF/Extension34Structure.lean'
+      - 'PrimeGPF/Extension34Converse.lean'
       - 'PrimeGPF/Extension7Core.lean'
       - 'PrimeGPF/Extension17Support.lean'
       - 'PrimeGPF/ExtensionPrimeCount.lean'
@@ -47,9 +48,12 @@ jobs:
       - name: Build extension 3 and 4 residues
         if: always()
         run: lake build PrimeGPF.Extension34Residues
-      - name: Compile extension 3 and 4 structure
+      - name: Build extension 3 and 4 structure
         if: always()
-        run: lake env lean PrimeGPF/Extension34Structure.lean
+        run: lake build PrimeGPF.Extension34Structure
+      - name: Compile extension 3 and 4 converse
+        if: always()
+        run: lake env lean PrimeGPF/Extension34Converse.lean
       - name: Build extension 7 core
         if: always()
         run: lake build PrimeGPF.Extension7Core
