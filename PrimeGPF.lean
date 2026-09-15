@@ -19,6 +19,7 @@ import PrimeGPF.Complete
 
 -- Extension-report leaf modules with dedicated compiler validation.
 import PrimeGPF.LogAsymptotics
+import PrimeGPF.WeightedTriangleLower
 import PrimeGPF.Extension1RestrictedCounting
 import PrimeGPF.Extension1DimensionOne
 import PrimeGPF.Extension2Dimension
