@@ -72,6 +72,14 @@ lemma extension4ParityCutoff_nonneg {X : ℕ} (hX : 3 ≤ X) :
   dsimp [extension4ParityCutoff]
   linarith
 
+/-!
+The next two proofs use the same compression pattern: divide every forced-odd
+coordinate by two, prove that the compressed pair lies in the shifted weighted
+triangle, and recover the original candidate with the corresponding expansion
+map.  Keeping this geometric step separate makes the later cardinality bounds
+nearly formal consequences of `Finset.image`.
+-/
+
 /-- Every Extension-3 candidate pair is the odd re-expansion of a point in the
 shifted parity triangle. -/
 theorem extension3_candidatePairs_subset_parityImage
@@ -83,7 +91,6 @@ theorem extension3_candidatePairs_subset_parityImage
   rcases e with ⟨α, β⟩
   obtain ⟨hα, hβ, hαodd, hcop, hweighted⟩ :=
     (mem_extension3CandidatePairs_iff X α β).1 he
-  have hdec := Nat.mod_add_div α 2
   have hαeq : 2 * (α / 2) + 1 = α := by omega
   have hαcast :
       (α : ℝ) = 2 * (((α / 2 : ℕ) : ℝ)) + 1 := by
@@ -121,8 +128,6 @@ theorem extension4_candidatePairs_subset_parityImage
   rcases e with ⟨α, β⟩
   obtain ⟨hα, hβ, hαodd, hβodd, hcop, hweighted⟩ :=
     (mem_extension4CandidatePairs_iff X α β).1 he
-  have hαdec := Nat.mod_add_div α 2
-  have hβdec := Nat.mod_add_div β 2
   have hαeq : 2 * (α / 2) + 1 = α := by omega
   have hβeq : 2 * (β / 2) + 1 = β := by omega
   have hαcast :
