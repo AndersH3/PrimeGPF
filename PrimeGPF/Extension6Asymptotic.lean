@@ -115,9 +115,15 @@ theorem extension_primeCount_mul_ratio (m : ℕ) (hm : 0 < m) :
     (Real.log_pos (by exact_mod_cast (show 1 < m * N by omega))).ne'
   have hN0 : (N : ℝ) ≠ 0 := by positivity
   have hm0 : (m : ℝ) ≠ 0 := by exact_mod_cast (Nat.ne_of_gt hm)
-  have hmN0 : ((m * N : ℕ) : ℝ) ≠ 0 := by positivity
+  have hpNR : (Claims.primeCount N : ℝ) ≠ 0 := by
+    exact_mod_cast (Nat.ne_of_gt hpN)
+  have hpNmR : (Claims.primeCount (m * N) : ℝ) ≠ 0 := by
+    exact_mod_cast (Nat.ne_of_gt hpNm)
+  have hlogMul : Real.log ((m : ℝ) * (N : ℝ)) ≠ 0 := by
+    simpa only [Nat.cast_mul] using hlogNm
   dsimp [A]
-  field_simp [ne_of_gt hpN, ne_of_gt hpNm, hlogN, hlogNm, hN0, hm0, hmN0]
-  ring_nf
+  simp only [Nat.cast_mul]
+  field_simp [hpNR, hpNmR, hlogN, hlogMul, hN0, hm0]
+  <;> ring
 
 end PrimeGPF
