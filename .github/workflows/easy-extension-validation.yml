@@ -12,6 +12,7 @@ on:
       - 'PrimeGPF/Extension2Support.lean'
       - 'PrimeGPF/Extension2Primitive.lean'
       - 'PrimeGPF/Extension2NonprimitiveCount.lean'
+      - 'PrimeGPF/Extension2RestrictedCounting.lean'
       - 'PrimeGPF/Extension7Core.lean'
       - 'PrimeGPF/Extension7Finite.lean'
       - 'PrimeGPF/Extension7Density.lean'
@@ -64,6 +65,9 @@ jobs:
       - name: Build extension 2 nonprimitive count
         if: always()
         run: lake build PrimeGPF.Extension2NonprimitiveCount
+      - name: Build extension 2 restricted counting
+        if: always()
+        run: lake build PrimeGPF.Extension2RestrictedCounting
       - name: Build extension 7 core
         if: always()
         run: lake build PrimeGPF.Extension7Core
