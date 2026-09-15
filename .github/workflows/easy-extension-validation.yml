@@ -15,6 +15,7 @@ on:
       - 'PrimeGPF/Extension4Coprime.lean'
       - 'PrimeGPF/Extension34Exact.lean'
       - 'PrimeGPF/Extension7Core.lean'
+      - 'PrimeGPF/Extension7Finite.lean'
       - 'PrimeGPF/Extension17Support.lean'
       - 'PrimeGPF/ExtensionPrimeCount.lean'
       - 'PrimeGPF/Extension8Corollary.lean'
@@ -77,6 +78,9 @@ jobs:
       - name: Build extension 7 core
         if: always()
         run: lake build PrimeGPF.Extension7Core
+      - name: Compile extension 7 finite bound
+        if: always()
+        run: lake env lean PrimeGPF/Extension7Finite.lean
       - name: Compile restricted support lemmas
         if: always()
         run: lake env lean PrimeGPF/Extension17Support.lean
