@@ -1,5 +1,4 @@
 import PrimeGPF.Extension2Support
-import Mathlib.Algebra.Ring.GeomSum
 
 /-!
 # Extension 2: nonprimitive perfect-power kernels
