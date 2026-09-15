@@ -52,7 +52,9 @@ theorem extension3_exact_classification {q : ℕ} (hq : Nat.Prime q) :
         exact odd_product_mod_two h3mod h5mod
       have hN1 : 1 ≤ N := by
         dsimp [N]
-        positivity
+        exact one_le_mul
+          (one_le_pow₀ (by norm_num : (1 : ℕ) ≤ 3))
+          (one_le_pow₀ (by norm_num : (1 : ℕ) ≤ 5))
       have hdiv : 2 ∣ N - 1 := by
         apply Nat.dvd_of_mod_eq_zero
         omega
@@ -89,7 +91,9 @@ theorem extension4_exact_classification {q : ℕ} (hq : Nat.Prime q) :
       norm_num [Nat.mul_mod, h2mod, h5mod]
     have hN1 : 1 ≤ N := by
       dsimp [N]
-      positivity
+      exact one_le_mul
+        (one_le_pow₀ (by norm_num : (1 : ℕ) ≤ 2))
+        (one_le_pow₀ (by norm_num : (1 : ℕ) ≤ 5))
     have hdiv : 3 ∣ N - 1 := by
       apply Nat.dvd_of_mod_eq_zero
       omega
