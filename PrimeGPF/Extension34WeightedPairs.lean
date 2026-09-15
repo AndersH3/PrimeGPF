@@ -1,13 +1,20 @@
 import PrimeGPF.Extension34Exact
+import PrimeGPF.Extension34ResidueHelpers
 import Mathlib.Analysis.SpecialFunctions.Log.Basic
 
 /-!
 # Extensions 3 and 4: weighted exponent triangles
 
 The exact output-5 classifications reduce the remaining counting problem to
-lattice points in two weighted triangles.  This file formalizes that
-arithmetic-to-geometric reduction independently of the later floor-sum and
-Möbius arguments.
+lattice points in two weighted triangles.  This module performs only the
+arithmetic-to-geometric reduction:
+
+`kernel factorisation → monotone logarithm → weighted linear inequality`.
+
+The quotient reconstruction needed to recover the kernel factorisation from
+the report's quotient formulas is shared with the exact/candidate proofs via
+`Extension34ResidueHelpers`.  Floor sums, area bounds, parity densities, and
+Möbius inversion are intentionally left to later modules.
 -/
 namespace PrimeGPF
 
@@ -54,19 +61,19 @@ theorem extension3_fiber_gives_weighted_pair
   have h5mod : 5 ^ β % 2 = 1 := by simp [Nat.pow_mod]
   have hNmod : N % 2 = 1 := by
     dsimp [N]
-    norm_num [Nat.mul_mod, h3mod, h5mod]
-  have hdec := Nat.mod_add_div N 2
-  have hsub : N - 1 = 2 * (N / 2) := by omega
+    exact odd_product_mod_two h3mod h5mod
+  have hN1 : 1 ≤ N := by
+    dsimp [N]
+    positivity
   have hdiv : 2 ∣ N - 1 := by
-    rw [hsub]
-    exact dvd_mul_right 2 (N / 2)
-  have hqmul : q * 2 = N - 1 := by
-    rw [hqform]
-    exact Nat.div_mul_cancel hdiv
-  have hqpos : 0 < q := hq.pos
-  have hfac : 2 * q + 1 = 3 ^ α * 5 ^ β := by
-    dsimp [N] at hqmul ⊢
+    apply Nat.dvd_of_mod_eq_zero
     omega
+  have hqformN : q = (N - 1) / 2 := by
+    simpa [N] using hqform
+  have hfacN : 2 * q + 1 = N :=
+    quotient_sub_one_reconstruct hN1 hdiv hqformN
+  have hfac : 2 * q + 1 = 3 ^ α * 5 ^ β := by
+    simpa [N] using hfacN
   exact ⟨α, β, hα, hβ, hodd, hcop,
     extension3_exponents_weighted_le hfac hqX⟩
 
@@ -110,24 +117,24 @@ theorem extension4_fiber_gives_weighted_pair
   obtain ⟨α, β, hα, hβ, hαodd, hβodd, hcop, hqform⟩ :=
     (extension4_exact_classification hq).mp hout
   let N := 2 ^ α * 5 ^ β
-  have h2 : 2 ^ α % 3 = 2 := extension_two_pow_mod_three_of_odd hαodd
-  have h5 : 5 ^ β % 3 = 2 := by
-    simpa [Nat.pow_mod] using extension_two_pow_mod_three_of_odd hβodd
+  have h2mod : 2 ^ α % 3 = 2 :=
+    extension_two_pow_mod_three_of_odd hαodd
+  have h5mod : 5 ^ β % 3 = 2 := five_pow_mod_three_odd β hβodd
   have hNmod : N % 3 = 1 := by
     dsimp [N]
-    norm_num [Nat.mul_mod, h2, h5]
-  have hdec := Nat.mod_add_div N 3
-  have hsub : N - 1 = 3 * (N / 3) := by omega
+    norm_num [Nat.mul_mod, h2mod, h5mod]
+  have hN1 : 1 ≤ N := by
+    dsimp [N]
+    positivity
   have hdiv : 3 ∣ N - 1 := by
-    rw [hsub]
-    exact dvd_mul_right 3 (N / 3)
-  have hqmul : q * 3 = N - 1 := by
-    rw [hqform]
-    exact Nat.div_mul_cancel hdiv
-  have hqpos : 0 < q := hq.pos
-  have hfac : 3 * q + 1 = 2 ^ α * 5 ^ β := by
-    dsimp [N] at hqmul ⊢
+    apply Nat.dvd_of_mod_eq_zero
     omega
+  have hqformN : q = (N - 1) / 3 := by
+    simpa [N] using hqform
+  have hfacN : 3 * q + 1 = N :=
+    quotient_sub_one_reconstruct hN1 hdiv hqformN
+  have hfac : 3 * q + 1 = 2 ^ α * 5 ^ β := by
+    simpa [N] using hfacN
   exact ⟨α, β, hα, hβ, hαodd, hβodd, hcop,
     extension4_exponents_weighted_le hfac hqX⟩
 
