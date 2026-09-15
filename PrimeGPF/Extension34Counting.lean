@@ -1,15 +1,25 @@
 import PrimeGPF.Extension2Dimension
 import PrimeGPF.Extension34Exact
+import PrimeGPF.Extension34FiberCounting
 
 /-!
-# Extensions 3 and 4: non-sharp counting corollaries
+# Extensions 3 and 4: counting corollaries
 
-The exact arithmetic classifications are already formalized separately.  This
-file specializes the general restricted-support multiplicative-fiber bound to
-output 5 at anchors 2 and 3.  In both cases the allowed support has exactly two
-primes, so the fiber has a quadratic polylogarithmic upper bound.  The sharper
-coefficients involving parity and coprimality remain part of the later
-Möbius/lattice-counting layer.
+This module keeps the original rectangular-box estimates because they are
+simple, exact finite bounds obtained directly from the general restricted-
+support theory.  The sharper weighted-triangle bounds are now imported from
+`Extension34FiberCounting`.
+
+The two layers serve different purposes:
+
+* **rectangular box:** elementary and completely explicit, but with a coarse
+  leading constant;
+* **weighted triangle:** uses the actual logarithmic inequality and therefore
+  has the sharp geometric leading coefficient `1 / (2*u*v)` before parity and
+  coprimality corrections.
+
+The final report constants involving `1/ζ(2)` still require the later
+parity-restricted Möbius count.
 -/
 namespace PrimeGPF
 open Claims
@@ -54,6 +64,7 @@ lemma extension4_allowedPrimes :
     interval_cases p <;> norm_num at hp hp3 ⊢
   · rintro (rfl | rfl) <;> norm_num
 
+/-- Both exact supports have cardinality two. -/
 lemma extension3_allowedPrimeCount :
     extension2AllowedPrimeCount 2 5 = 2 := by
   rw [extension2_allowedPrimeCount_eq_primeCount_sub_one
@@ -64,8 +75,9 @@ lemma extension4_allowedPrimeCount :
   rw [extension2_allowedPrimeCount_eq_primeCount_sub_one
     (a := 3) (r := 5) (by norm_num) (by norm_num), claims_primeCount_five]
 
-/-- The exact rectangular exponent box for Extension 3.  The later sharp
-triangle count replaces this product by its weighted-simplex leading term. -/
+/-- The exact rectangular exponent box for Extension 3.  The sharper triangle
+bound imported above replaces this rectangle only when a better leading
+constant is needed. -/
 theorem extension3RestrictedBoxBound_exact (x : ℕ) :
     extension2RestrictedBoxBound 2 5 x =
       (1 + ⌊Real.log (x : ℝ) / Real.log (3 : ℝ)⌋₊) *
@@ -117,8 +129,9 @@ theorem extension4_fiberCount_le_exact_log_box (X : ℕ) :
         (1 + ⌊Real.log ((3 * X + 1 : ℕ) : ℝ) / Real.log (5 : ℝ)⌋₊) :=
       extension4RestrictedBoxBound_exact (3 * X + 1)
 
-/-- Non-sharp degree-two bound for the output-5 multiplicative fiber at anchor
-2. -/
+/-- Coarse degree-two bound inherited from the general multiplicative-fiber
+theory.  Prefer `extension3_fiberCount_cast_le_area_boundary` when the sharper
+geometric coefficient is useful. -/
 theorem extension3_fiberCount_real_le_log_sq
     {X : ℕ} (hx : 2 ≤ 2 * X + 1) :
     (Claims.fiberCount .mul 2 5 X : ℝ) ≤
@@ -128,8 +141,9 @@ theorem extension3_fiberCount_real_le_log_sq
     (a := 2) (r := 5) (X := X) (by norm_num) hx
   simpa [extension3_allowedPrimeCount] using h
 
-/-- Non-sharp degree-two bound for the output-5 multiplicative fiber at anchor
-3. -/
+/-- Coarse degree-two bound inherited from the general multiplicative-fiber
+theory.  Prefer `extension4_fiberCount_cast_le_area_boundary` when the sharper
+geometric coefficient is useful. -/
 theorem extension4_fiberCount_real_le_log_sq
     {X : ℕ} (hx : 2 ≤ 3 * X + 1) :
     (Claims.fiberCount .mul 3 5 X : ℝ) ≤
