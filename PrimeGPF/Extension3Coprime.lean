@@ -30,8 +30,7 @@ theorem extension3_exponents_coprime
     exact Nat.gcd_dvd_right α β
   have hg_ne_two : g ≠ 2 := by
     intro he
-    subst g
-    have h2α : 2 ∣ α := hgα
+    have h2α : 2 ∣ α := by simpa [he] using hgα
     have hz := Nat.mod_eq_zero_of_dvd h2α
     omega
   have hg3 : 3 ≤ g := by omega
@@ -47,15 +46,11 @@ theorem extension3_exponents_coprime
     dsimp [B]
     simpa [Nat.mul_comm] using h.symm
   have hApos : 0 < A := by
-    by_contra hA
-    have hA0 : A = 0 := by omega
-    rw [hA0, Nat.zero_mul] at hAform
-    omega
+    dsimp [A]
+    exact Nat.div_pos (Nat.le_of_dvd hαpos hgα) hgpos
   have hBpos : 0 < B := by
-    by_contra hB
-    have hB0 : B = 0 := by omega
-    rw [hB0, Nat.zero_mul] at hBform
-    omega
+    dsimp [B]
+    exact Nat.div_pos (Nat.le_of_dvd hβpos hgβ) hgpos
 
   let t := 3 ^ A * 5 ^ B
   have h3A : 3 ≤ 3 ^ A := by
@@ -91,15 +86,22 @@ theorem extension3_exponents_coprime
 
   have hpowminus : t ^ g - 1 = 2 * q := by omega
   have hgeom : t - 1 ∣ t ^ g - 1 := by
-    simpa only [one_pow] using Nat.sub_dvd_pow_sub_pow t 1 g
+    let S := ∑ i ∈ Finset.range g, t ^ i
+    refine ⟨S, ?_⟩
+    have hsum := geom_sum_mul_of_one_le (show 1 ≤ t by omega) g
+    dsimp [S]
+    calc
+      t ^ g - 1 = (∑ i ∈ Finset.range g, t ^ i) * (t - 1) := hsum.symm
+      _ = (t - 1) * (∑ i ∈ Finset.range g, t ^ i) := by ring
   rw [← h2d, hpowminus] at hgeom
   have hdq : d ∣ q :=
     Nat.dvd_of_mul_dvd_mul_left (by omega : 0 < (2 : ℕ)) hgeom
   rcases (Nat.dvd_prime hq).mp hdq with hd1 | hdqeq
   · omega
-  · have htg : t ^ g = t := by
-      rw [hdqeq] at h2d
-      omega
+  · have h2q : 2 * q = t - 1 := by simpa [hdqeq] using h2d
+    have ht1 : 1 ≤ t := by omega
+    have hsubadd : t - 1 + 1 = t := Nat.sub_add_cancel ht1
+    have htg : t ^ g = t := by omega
     have htgt1 : 1 < t := by omega
     have htlt : t < t ^ g := by
       calc
