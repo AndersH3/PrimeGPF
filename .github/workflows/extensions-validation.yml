@@ -29,9 +29,14 @@ jobs:
         run: lake build
       - name: Build extension module
         run: lake build PrimeGPF.Extensions
+      - name: Compile extension 8 corollary
+        run: lake env lean PrimeGPF/Extension8Corollary.lean
+      - name: Compile extension 10 dynamics
+        run: lake env lean PrimeGPF/Extension10Dynamics.lean
       - name: Compile triple-collision extension
         run: lake env lean PrimeGPF/Extension9.lean
       - name: Verify baseline project
+        if: always()
         run: bash verify.sh
       - uses: actions/cache/save@v4
         if: always() && steps.cache.outputs.cache-hit != 'true'
