@@ -71,6 +71,7 @@ theorem extension1_high_fiber_count_le_restrictedSmoothCount
     apply Finset.mem_filter.mpr
     refine ⟨?_, hrestrict⟩
     apply Finset.mem_range.mpr
+    dsimp [code]
     omega
 
   have hcode_inj : Function.Injective code := by
@@ -120,7 +121,10 @@ theorem extension1_fiberCount_le_primeCount_add_restrictedSmoothCount
     exact extension1_high_fiber_count_le_restrictedSmoothCount ha hr
   have hF : Claims.fiberCount .add a r X = F.card := by
     simp [Claims.fiberCount, extension1FiberInputs, F]
-  rw [hF]
-  omega
+  calc
+    Claims.fiberCount .add a r X = F.card := hF
+    _ = L.card + H.card := hsplit.symm
+    _ ≤ Claims.primeCount r + restrictedSmoothCount a r (X + a + 1) :=
+      Nat.add_le_add hL hH
 
 end PrimeGPF
