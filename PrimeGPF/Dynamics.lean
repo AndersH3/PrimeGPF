@@ -65,6 +65,6 @@ theorem increasing_orbit (f : Prime → Prime)
   · intro B; exact ⟨B + 1, lt_of_lt_of_le (by omega) (hbound _)⟩
   · rintro ⟨d, hd, he⟩
     have hh := hs hd
-    simpa [orbit, he] using hh
+    simp [orbit, he] at hh
 
 end PrimeGPF
