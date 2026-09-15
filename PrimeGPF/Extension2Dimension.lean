@@ -19,8 +19,9 @@ theorem extension2_allowedPrimeCount_eq
   have hUcard : U.card = Claims.primeCount r := by
     simp [U, Claims.primeCount]
   by_cases har : a ≤ r
-  · have haU : a ∈ U := by
-      simp [U, ha, har]
+  · have har' : a < r + 1 := by omega
+    have haU : a ∈ U := by
+      simp [U, ha, har']
     have hset : extension2AllowedPrimes a r = U.erase a := by
       ext p
       simp only [extension2AllowedPrimes, U, Finset.mem_filter,
