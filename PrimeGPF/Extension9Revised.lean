@@ -291,8 +291,7 @@ theorem extension9_triple_second_two_revised {p : ℕ} (hp : Nat.Prime p) :
       have h5dec := Nat.mod_add_div (5 ^ k) 8
       have h5form : 5 ^ k = 1 + 8 * (5 ^ k / 8) := by omega
       have hdouble : 2 * 5 ^ k = 2 + 16 * (5 ^ k / 8) := by
-        rw [h5form]
-        ring
+        omega
       have hExpMod16 : (p ^ 2 + 1) % 16 = 2 := by
         rw [hExpPow, hdouble]
         simp [Nat.add_mod, Nat.mul_mod]
@@ -302,8 +301,8 @@ theorem extension9_triple_second_two_revised {p : ℕ} (hp : Nat.Prime p) :
         omega
 
       have hαlt3 : α < 3 := by
-        by_contra hα3
-        have hα3' : 3 ≤ α := by omega
+        apply lt_of_not_ge
+        intro hα3'
         have h8pow : 2 ^ 3 ∣ 2 ^ α := pow_dvd_pow 2 hα3'
         have h8Add : 8 ∣ p + 3 := by
           rw [hAddFac, hβ1, pow_one]
