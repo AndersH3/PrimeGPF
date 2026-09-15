@@ -18,10 +18,18 @@ No fiber classification or counting theorem belongs in this file.
 namespace PrimeGPF
 
 /-- If an exponent is odd, the power of five has residue two modulo three.
-This is the residue needed for the anchor-3 reconstruction formula. -/
+This is the residue needed for the anchor-3 reconstruction formula.
+
+This proof is deliberately self-contained.  The analogous power-of-two lemma
+lives in `Extension34Structure`, which imports this helper layer downstream;
+referring to it here would create the wrong dependency direction. -/
 lemma five_pow_mod_three_odd (n : ℕ) (hn : n % 2 = 1) :
     5 ^ n % 3 = 2 := by
-  simpa [Nat.pow_mod] using extension_two_pow_mod_three_of_odd hn
+  have hnform : n = 2 * (n / 2) + 1 := by
+    have hdec := Nat.mod_add_div n 2
+    omega
+  rw [hnform, pow_add, pow_mul]
+  norm_num [Nat.pow_mod, Nat.mul_mod]
 
 /-- The product of two numbers that are both `1 mod 2` is again `1 mod 2`. -/
 lemma odd_product_mod_two {a b : ℕ}
