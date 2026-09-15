@@ -29,7 +29,8 @@ theorem gpf_prime_pow_mul_five_pow
       rw [pow_succ]
       have hk : 1 ≤ 5 ^ k := one_le_pow₀ (by norm_num)
       nlinarith
-    have hp1 : 1 ≤ p ^ α := one_le_pow₀ (by omega)
+    have hpbase : 1 ≤ p := by omega
+    have hp1 : 1 ≤ p ^ α := one_le_pow₀ hpbase
     nlinarith
   apply gpf_eq_of_spec hn
   refine ⟨Nat.prime_five, ?_, ?_⟩
