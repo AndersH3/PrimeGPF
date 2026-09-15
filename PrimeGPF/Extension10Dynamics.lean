@@ -7,6 +7,11 @@ This file develops the dynamical part of extension 10.  It keeps the proof
 independent of any asymptotic input: the homogeneous translation has bounded
 orbits and hence eventually periodic orbits, whereas an anchored exponential
 translation with anchor different from 2 moves every prime strictly upward.
+
+The reusable dynamical lemmas are kept separate from the final separation
+statements.  In particular, iteration of a semiconjugacy and repetition along
+an eventually periodic tail are proved once and then used by the final
+finite-to-one contradiction.
 -/
 namespace PrimeGPF
 
@@ -118,6 +123,30 @@ theorem orbit_intertwine {α β : Type*}
       simp only [orbit]
       rw [hstep, ih]
 
+/-- If an orbit is periodic from time `N` onward with period `d`, then every
+point whose index is `N + k*d` is the same point at the start of the periodic
+tail.
+
+This elementary induction is useful independently of Extension 10 and keeps
+the final finite-to-one argument focused on the fiber contradiction rather
+than on index arithmetic. -/
+theorem orbit_periodic_tail_multiples {α : Type*}
+    (f : α → α) (x : α) {N d : ℕ}
+    (hperiod : ∀ n, N ≤ n → orbit f x (n + d) = orbit f x n) :
+    ∀ k : ℕ, orbit f x (N + k * d) = orbit f x N := by
+  intro k
+  induction k with
+  | zero => simp
+  | succ k ih =>
+      have hp := hperiod (N + k * d) (by omega)
+      calc
+        orbit f x (N + (k + 1) * d) =
+            orbit f x ((N + k * d) + d) := by
+              congr 1
+              simp [Nat.add_mul, Nat.add_assoc]
+        _ = orbit f x (N + k * d) := hp
+        _ = orbit f x N := ih
+
 /-- For an exponential anchor different from 2, every point moves strictly
 upward. -/
 theorem exp_left_strict_growth (a : Prime) (ha2 : a.val ≠ 2) (q : Prime) :
@@ -161,19 +190,8 @@ theorem extension10_no_finite_to_one_exp_to_homogeneous
   obtain ⟨N, d, hd, hperiod⟩ :=
     extension10_homogeneous_eventuallyPeriodic c (h x) hc2
   have hcycle : ∀ k : ℕ,
-      orbit H (h x) (N + k * d) = orbit H (h x) N := by
-    intro k
-    induction k with
-    | zero => simp
-    | succ k ih =>
-        have hp := hperiod (N + k * d) (by omega)
-        calc
-          orbit H (h x) (N + (k + 1) * d) =
-              orbit H (h x) ((N + k * d) + d) := by
-                congr 1
-                simp [Nat.add_mul, Nat.add_assoc]
-          _ = orbit H (h x) (N + k * d) := hp
-          _ = orbit H (h x) N := ih
+      orbit H (h x) (N + k * d) = orbit H (h x) N :=
+    orbit_periodic_tail_multiples H (h x) hperiod
   let y : Prime := orbit H (h x) N
   have hfiber : ∀ k : ℕ, h (orbit E x (N + k * d)) = y := by
     intro k
