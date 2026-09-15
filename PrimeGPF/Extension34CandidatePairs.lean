@@ -62,37 +62,8 @@ theorem mem_extension4CandidatePairs_iff (X α β : ℕ) :
   rw [mem_weightedTriangle_iff hlog2 hlog5 hcut]
   aesop
 
-/-- Every nonexceptional anchor-2 output-5 fiber input below `X` supplies a
-member of the finite candidate-pair set. -/
-theorem extension3_fiber_has_candidate_pair
-    {q X : ℕ} (hq : Nat.Prime q) (hout : mul 2 q = 5)
-    (hq2 : q ≠ 2) (hqX : q ≤ X) :
-    ∃ e ∈ extension3CandidatePairs X,
-      q = (3 ^ e.1 * 5 ^ e.2 - 1) / 2 := by
-  obtain ⟨α, β, hα, hβ, hodd, hcop, hweighted⟩ :=
-    extension3_fiber_gives_weighted_pair hq hout hq2 hqX
-  refine ⟨(α, β), ?_, ?_⟩
-  · exact (mem_extension3CandidatePairs_iff X α β).2
-      ⟨hα, hβ, hodd, hcop, hweighted⟩
-  · have hclass := (extension3_exact_classification hq).mp hout
-    rcases hclass with hqeq | hpair
-    · exact (hq2 hqeq).elim
-    · obtain ⟨α', β', hα', hβ', hodd', hcop', hqform⟩ := hpair
-      have hfac : 2 * q + 1 = 3 ^ α * 5 ^ β := by
-        obtain ⟨αs, βs, _, _, _, hfac⟩ :=
-          extension3_exponent_structure hq hout hq2
-        -- Unique factorization is not needed for the candidate existence
-        -- statement; use the exact-classification witnesses below instead.
-        exact hfac
-      -- The candidate produced above need not definitionally be the same pair
-      -- as the classification witness.  Replace it by that witness.
-      exact by
-        -- This branch is discharged by choosing the exact-classification pair
-        -- in the outer proof in the companion theorem below.
-        simpa using hqform
-
-/-- Direct exact-classification version of the previous theorem, with the
-classification witnesses used as the candidate pair. -/
+/-- Every nonexceptional anchor-2 output-5 fiber input below `X` supplies an
+exact-classification pair in the finite candidate set. -/
 theorem extension3_fiber_has_exact_candidate_pair
     {q X : ℕ} (hq : Nat.Prime q) (hout : mul 2 q = 5)
     (hq2 : q ≠ 2) (hqX : q ≤ X) :
@@ -124,8 +95,8 @@ theorem extension3_fiber_has_exact_candidate_pair
         ⟨hα, hβ, hodd, hcop, hweighted⟩,
       hqform⟩
 
-/-- Every anchor-3 output-5 fiber input below `X` supplies a member of its
-finite candidate-pair set. -/
+/-- Every anchor-3 output-5 fiber input below `X` supplies an
+exact-classification pair in the finite candidate set. -/
 theorem extension4_fiber_has_exact_candidate_pair
     {q X : ℕ} (hq : Nat.Prime q) (hout : mul 3 q = 5)
     (hqX : q ≤ X) :
