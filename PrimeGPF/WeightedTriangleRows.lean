@@ -34,7 +34,7 @@ theorem weightedTriangleRow_card_cast_le
     have hxf : x.1 = α := (Finset.mem_filter.mp hx).2
     have hyf : y.1 = α := (Finset.mem_filter.mp hy).2
     apply Prod.ext
-    · simpa [hxf, hyf]
+    · simp [hxf, hyf]
     · exact hxy
   have himage : F.image (fun e : ℕ × ℕ => e.2) ⊆ R := by
     intro β hβ
