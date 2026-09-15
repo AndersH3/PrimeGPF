@@ -1,0 +1,56 @@
+name: Active extension repair validation
+
+on:
+  push:
+    branches: [extensions-5-6-8-9-10-20260915]
+    paths:
+      - 'PrimeGPF/Extension2Primitive.lean'
+      - 'PrimeGPF/Extension2NonprimitiveCount.lean'
+      - 'PrimeGPF/Extension2RestrictedCounting.lean'
+      - 'PrimeGPF/Extension2Dimension.lean'
+      - 'PrimeGPF/Extension34Exact.lean'
+      - 'PrimeGPF/Extension34Counting.lean'
+      - '.github/workflows/active-repair-validation.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: active-extension-repair-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  repair:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install elan
+        run: |
+          curl -sSf https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh | sh -s -- -y --default-toolchain none
+          echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
+      - name: Obtain pinned mathlib cache
+        run: lake exe cache get
+      - name: Build extension dependencies
+        run: lake build PrimeGPF.Extensions
+      - name: Build extension 2 support
+        run: lake build PrimeGPF.Extension2Support
+      - name: Build extension 2 primitive families
+        if: always()
+        run: lake build PrimeGPF.Extension2Primitive
+      - name: Build extension 2 nonprimitive count
+        if: always()
+        run: lake build PrimeGPF.Extension2NonprimitiveCount
+      - name: Build extension 2 restricted counting
+        if: always()
+        run: lake build PrimeGPF.Extension2RestrictedCounting
+      - name: Build extension 2 support dimension
+        if: always()
+        run: lake build PrimeGPF.Extension2Dimension
+      - name: Build extensions 3 and 4 exact classifications
+        if: always()
+        run: lake build PrimeGPF.Extension34Exact
+      - name: Build extensions 3 and 4 counting corollaries
+        if: always()
+        run: lake build PrimeGPF.Extension34Counting
