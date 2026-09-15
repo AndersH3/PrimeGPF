@@ -39,7 +39,7 @@ theorem extension7_collision_prime_ratio_isBigO
         (1 / 2 : ℝ) ≤
           (Claims.primeCount X : ℝ) * Real.log (X : ℝ) / (X : ℝ) := by
     have h := extension_primeCount_log_limit.eventually
-      (gt_mem_nhds (show (1 / 2 : ℝ) < 1 by norm_num))
+      (Ioi_mem_nhds (show (1 / 2 : ℝ) < 1 by norm_num))
     exact h.mono fun X hX => hX.le
 
   have hlogTop :
@@ -114,7 +114,10 @@ theorem extension7_collision_prime_ratio_isBigO
     dsimp [B]
     positivity
   have hBmul : B ≤ B * (Real.log (X : ℝ)) ^ d := by
-    simpa only [one_mul] using mul_le_mul_of_nonneg_left hlogpow1 hB0
+    calc
+      B = B * 1 := by ring
+      _ ≤ B * (Real.log (X : ℝ)) ^ d :=
+        mul_le_mul_of_nonneg_left hlogpow1 hB0
 
   have hnum :
       (extension7CollisionCount a X : ℝ) ≤
@@ -146,7 +149,12 @@ theorem extension7_collision_prime_ratio_isBigO
     apply (div_le_div_iff₀ hpc hXpos).2
     have hmul := mul_le_mul_of_nonneg_left hpntMul
       (show 0 ≤ (extension7CollisionCount a X : ℝ) by positivity)
-    simpa [mul_assoc, mul_comm, mul_left_comm] using hmul
+    calc
+      (extension7CollisionCount a X : ℝ) * (X : ℝ)
+          ≤ (extension7CollisionCount a X : ℝ) *
+              (2 * (Claims.primeCount X : ℝ) * Real.log (X : ℝ)) := hmul
+      _ = (2 * (extension7CollisionCount a X : ℝ) * Real.log (X : ℝ)) *
+              (Claims.primeCount X : ℝ) := by ring
 
   have hnumLog :
       2 * (extension7CollisionCount a X : ℝ) * Real.log (X : ℝ) ≤
@@ -177,10 +185,8 @@ theorem extension7_collision_prime_ratio_isBigO
         (Claims.primeCount X : ℝ) := by positivity
   have hright0 :
       0 ≤ (Real.log (X : ℝ)) ^ (d + 1) / (X : ℝ) := by positivity
-  have hC0 : 0 ≤ C := by
-    dsimp [C]
-    positivity
-  simpa [R, d, Real.norm_eq_abs, abs_of_nonneg hleft0,
+  dsimp [R, d] at hpoint ⊢
+  simpa only [Real.norm_eq_abs, abs_of_nonneg hleft0,
     abs_of_nonneg hright0] using hpoint
 
 end PrimeGPF
