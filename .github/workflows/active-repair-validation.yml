@@ -26,7 +26,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: active-extension-repair-${{ github.ref }}
+  group: active-extension-repair-v2-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
