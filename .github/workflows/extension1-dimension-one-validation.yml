@@ -1,0 +1,31 @@
+name: Extension 1 dimension-one validation
+
+on:
+  push:
+    branches: [extensions-5-6-8-9-10-20260915]
+    paths:
+      - 'PrimeGPF/Extension1DimensionOne.lean'
+      - '.github/workflows/extension1-dimension-one-validation.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: extension1-dim1-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  dim1:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install elan
+        run: |
+          curl -sSf https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh | sh -s -- -y --default-toolchain none
+          echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
+      - name: Obtain pinned mathlib cache
+        run: lake exe cache get
+      - name: Build sharp dimension-one extension 1 bound
+        run: lake build PrimeGPF.Extension1DimensionOne
