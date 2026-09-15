@@ -106,7 +106,7 @@ theorem eventuallyPeriodic_of_prime_orbit_bounded
       (by
         intro n hn
         have hb := hbound n
-        exact Finset.mem_range.mpr (by omega))
+        exact Finset.mem_range.mpr (Nat.lt_succ_iff.mpr hb))
   have he : orbit f x i = orbit f x j := by
     apply Subtype.ext
     exact heval
