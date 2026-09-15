@@ -19,7 +19,8 @@ lemma claims_primeCount_pos_of_two_le {N : ℕ} (hN : 2 ≤ N) :
   unfold Claims.primeCount
   apply Finset.card_pos.mpr
   refine ⟨2, ?_⟩
-  simp [hN, Nat.prime_two]
+  apply Finset.mem_filter.mpr
+  exact ⟨Finset.mem_range.mpr (by omega), Nat.prime_two⟩
 
 /-- Multiplication by a fixed positive natural tends to infinity. -/
 lemma tendsto_nat_mul_atTop (m : ℕ) (hm : 0 < m) :
@@ -117,6 +118,6 @@ theorem extension_primeCount_mul_ratio (m : ℕ) (hm : 0 < m) :
   have hmN0 : ((m * N : ℕ) : ℝ) ≠ 0 := by positivity
   dsimp [A]
   field_simp [ne_of_gt hpN, ne_of_gt hpNm, hlogN, hlogNm, hN0, hm0, hmN0]
-  ring
+  ring_nf
 
 end PrimeGPF
