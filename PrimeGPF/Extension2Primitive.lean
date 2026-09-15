@@ -73,36 +73,35 @@ theorem extension2_nonprimitive_power_base
     (hpow : u ^ g = a * q + 1) :
     u = 2 ∨ u = a + 1 := by
   have hu2 : 2 ≤ u := by
-    by_contra hu
-    have hu_le : u ≤ 1 := by omega
-    interval_cases u
-    · have hg0 : g ≠ 0 := by omega
-      have hz : (0 : ℕ) ^ g = 0 := by simp [hg0]
-      rw [hz] at hpow
-      omega
-    · simp at hpow
-      omega
+    by_contra hnu
+    have hu1 : u ≤ 1 := by omega
+    have hupow : u ^ g ≤ 1 ^ g := Nat.pow_le_pow_left hu1 g
+    have hmulpos : 0 < a * q := Nat.mul_pos ha.pos hq.pos
+    rw [hpow] at hupow
+    simp at hupow
+    omega
   have hsqle : u ^ 2 ≤ u ^ g := by
-    exact Nat.pow_le_pow_right₀ (by omega : 0 < u) hg
+    exact Nat.pow_le_pow_right (by omega : 0 < u) hg
   have hqSq : a * q + 1 < q ^ 2 := by
     have ha1q : a + 1 ≤ q := by omega
-    have hstep : a * q + 1 < (a + 1) * q := by
-      have hq2 := hq.two_le
-      nlinarith
+    have hstep : a * q + 1 < a * q + q :=
+      Nat.add_lt_add_left hq.one_lt (a * q)
+    have hrewrite : a * q + q = (a + 1) * q := by ring
+    rw [hrewrite] at hstep
     have hstep2 : (a + 1) * q ≤ q * q :=
       Nat.mul_le_mul_right q ha1q
     simpa [pow_two] using hstep.trans_le hstep2
   have huq : u < q := by
-    by_contra hnot
-    have hqu : q ≤ u := by omega
-    have hsq : q ^ 2 ≤ u ^ 2 := by
-      exact Nat.pow_le_pow_left hqu 2
-    have hbad : q ^ 2 ≤ a * q + 1 := by
-      calc
-        q ^ 2 ≤ u ^ 2 := hsq
-        _ ≤ u ^ g := hsqle
-        _ = a * q + 1 := hpow
-    exact (not_lt_of_ge hbad) hqSq
+    by_cases h : u < q
+    · exact h
+    · have hqu : q ≤ u := Nat.le_of_not_gt h
+      have hsq : q ^ 2 ≤ u ^ 2 := Nat.pow_le_pow_left hqu 2
+      have hbad : q ^ 2 ≤ a * q + 1 := by
+        calc
+          q ^ 2 ≤ u ^ 2 := hsq
+          _ ≤ u ^ g := hsqle
+          _ = a * q + 1 := hpow
+      exact False.elim ((not_lt_of_ge hbad) hqSq)
   have hdvd : u - 1 ∣ a * q := by
     have h := sub_one_dvd_pow_sub_one hu2 (g := g)
     rw [hpow] at h
