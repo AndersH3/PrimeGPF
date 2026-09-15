@@ -36,11 +36,20 @@ theorem extension6Cutoff_mul_le (m X : ℕ) (hm : 0 < m) :
   by_cases hq : (X + 1) / m = 0
   · simp [hq]
   · have hqpos : 0 < (X + 1) / m := Nat.pos_of_ne_zero hq
-    have hsplit : m * ((X + 1) / m) =
-        m * (((X + 1) / m - 1) + 1) := by
-      congr 1
-      omega
-    rw [hsplit] at hqmul
+    have hqone : 1 ≤ (X + 1) / m := hqpos
+    have hqsplit : ((X + 1) / m - 1) + 1 = (X + 1) / m :=
+      Nat.sub_add_cancel hqone
+    have hsum :
+        m * ((X + 1) / m - 1) + m ≤ X + 1 := by
+      calc
+        m * ((X + 1) / m - 1) + m =
+            m * (((X + 1) / m - 1) + 1) := by ring
+        _ = m * ((X + 1) / m) := by rw [hqsplit]
+        _ ≤ X + 1 := hqmul
+    have hm1 : 1 ≤ m := hm
+    have hplusone :
+        m * ((X + 1) / m - 1) + 1 ≤ X + 1 := by
+      exact (Nat.add_le_add_left hm1 _).trans hsum
     omega
 
 end PrimeGPF
