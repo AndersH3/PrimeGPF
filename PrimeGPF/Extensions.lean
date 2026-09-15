@@ -231,7 +231,7 @@ theorem extension6_deep_image_iff {a r : ℕ} (ha : Nat.Prime a)
     · have hlower := extension5_exponential_escape ha hq hex (r + 1)
       rw [he] at hlower
       have hpw : r + 2 ≤ 2 ^ (r + 1) := by
-        simpa [Nat.add_assoc] using succ_le_two_pow (r + 1)
+        simpa only [Nat.add_assoc] using succ_le_two_pow (r + 1)
       have hmul : 2 ^ (r + 1) ≤ 2 ^ (r + 1) * (q + 1) := by
         have := Nat.mul_le_mul_left (2 ^ (r + 1)) (show 1 ≤ q + 1 by omega)
         simpa using this

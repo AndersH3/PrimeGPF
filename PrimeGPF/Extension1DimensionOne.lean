@@ -94,7 +94,7 @@ theorem extension1_fiberCount_real_le_singleton_log
           (⌊Real.log ((X + a + 1 : ℕ) : ℝ) /
             Real.log (p : ℝ)⌋₊ : ℝ) := by
       norm_num [Nat.cast_add]
-      <;> ring
+      ring
     _ ≤ (Claims.primeCount r : ℝ) + 1 +
           Real.log ((X + a + 1 : ℕ) : ℝ) / Real.log (p : ℝ) :=
       add_le_add_left hfloor _

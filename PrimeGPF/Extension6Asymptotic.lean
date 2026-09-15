@@ -124,6 +124,6 @@ theorem extension_primeCount_mul_ratio (m : ℕ) (hm : 0 < m) :
   dsimp [A]
   simp only [Nat.cast_mul]
   field_simp [hpNR, hpNmR, hlogN, hlogMul, hN0, hm0]
-  <;> ring
+  ring
 
 end PrimeGPF
