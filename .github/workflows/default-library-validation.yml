@@ -1,0 +1,31 @@
+name: Default PrimeGPF library validation
+
+on:
+  push:
+    branches: [extensions-5-6-8-9-10-20260915]
+    paths:
+      - 'PrimeGPF.lean'
+      - '.github/workflows/default-library-validation.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: default-primegpf-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  default-library:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install elan
+        run: |
+          curl -sSf https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh | sh -s -- -y --default-toolchain none
+          echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
+      - name: Obtain pinned mathlib cache
+        run: lake exe cache get
+      - name: Build default PrimeGPF target
+        run: lake build PrimeGPF
