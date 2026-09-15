@@ -29,10 +29,13 @@ theorem extension3_candidatePairs_card_le_parityTriangle (X : ℕ) :
   have hlog5 : 0 < Real.log (5 : ℝ) := Real.log_pos (by norm_num)
   have hinj : Set.InjOn f (S : Set (ℕ × ℕ)) := by
     intro x hx y hy hxy
-    have hxmem := (mem_extension3CandidatePairs_iff X x.1 x.2).1 hx
-    have hymem := (mem_extension3CandidatePairs_iff X y.1 y.2).1 hy
+    have hx' : x ∈ extension3CandidatePairs X := by simpa [S] using hx
+    have hy' : y ∈ extension3CandidatePairs X := by simpa [S] using hy
+    have hxmem := (mem_extension3CandidatePairs_iff X x.1 x.2).1 hx'
+    have hymem := (mem_extension3CandidatePairs_iff X y.1 y.2).1 hy'
     have hxdec := Nat.mod_add_div x.1 2
     have hydec := Nat.mod_add_div y.1 2
+    dsimp [f] at hxy
     have hxfst : x.1 / 2 = y.1 / 2 := congrArg Prod.fst hxy
     have hxsnd : x.2 = y.2 := congrArg Prod.snd hxy
     apply Prod.ext
@@ -41,7 +44,8 @@ theorem extension3_candidatePairs_card_le_parityTriangle (X : ℕ) :
   have himage : S.image f ⊆ T := by
     intro z hz
     rcases Finset.mem_image.mp hz with ⟨e, heS, rfl⟩
-    have he := (mem_extension3CandidatePairs_iff X e.1 e.2).1 heS
+    have heS' : e ∈ extension3CandidatePairs X := by simpa [S] using heS
+    have he := (mem_extension3CandidatePairs_iff X e.1 e.2).1 heS'
     rcases he with ⟨hα, hβ, hodd, hcop, hweighted⟩
     have hdec := Nat.mod_add_div e.1 2
     have hform : e.1 = 2 * (e.1 / 2) + 1 := by omega
@@ -58,9 +62,11 @@ theorem extension3_candidatePairs_card_le_parityTriangle (X : ℕ) :
           0 ≤ ((e.1 / 2 : ℕ) : ℝ) * (2 * Real.log 3) +
             (e.2 : ℝ) * Real.log 5 := by positivity
       linarith
-    exact (mem_weightedTriangle_iff (by positivity) hlog5 hcut _ _).2 htarget
+    have hmem := (mem_weightedTriangle_iff (by positivity) hlog5 hcut _ _).2 htarget
+    simpa [T, f] using hmem
   have hcardImage : (S.image f).card = S.card :=
     Finset.card_image_of_injOn hinj
+  change S.card ≤ T.card
   rw [← hcardImage]
   exact Finset.card_le_card himage
 
@@ -79,19 +85,23 @@ theorem extension4_candidatePairs_card_le_parityTriangle (X : ℕ) :
   have hlog5 : 0 < Real.log (5 : ℝ) := Real.log_pos (by norm_num)
   have hinj : Set.InjOn f (S : Set (ℕ × ℕ)) := by
     intro x hx y hy hxy
-    have hxmem := (mem_extension4CandidatePairs_iff X x.1 x.2).1 hx
-    have hymem := (mem_extension4CandidatePairs_iff X y.1 y.2).1 hy
+    have hx' : x ∈ extension4CandidatePairs X := by simpa [S] using hx
+    have hy' : y ∈ extension4CandidatePairs X := by simpa [S] using hy
+    have hxmem := (mem_extension4CandidatePairs_iff X x.1 x.2).1 hx'
+    have hymem := (mem_extension4CandidatePairs_iff X y.1 y.2).1 hy'
     have hxdec1 := Nat.mod_add_div x.1 2
     have hydec1 := Nat.mod_add_div y.1 2
     have hxdec2 := Nat.mod_add_div x.2 2
     have hydec2 := Nat.mod_add_div y.2 2
+    dsimp [f] at hxy
     have hfst : x.1 / 2 = y.1 / 2 := congrArg Prod.fst hxy
     have hsnd : x.2 / 2 = y.2 / 2 := congrArg Prod.snd hxy
     apply Prod.ext <;> omega
   have himage : S.image f ⊆ T := by
     intro z hz
     rcases Finset.mem_image.mp hz with ⟨e, heS, rfl⟩
-    have he := (mem_extension4CandidatePairs_iff X e.1 e.2).1 heS
+    have heS' : e ∈ extension4CandidatePairs X := by simpa [S] using heS
+    have he := (mem_extension4CandidatePairs_iff X e.1 e.2).1 heS'
     rcases he with ⟨hα, hβ, hαodd, hβodd, hcop, hweighted⟩
     have hdec1 := Nat.mod_add_div e.1 2
     have hdec2 := Nat.mod_add_div e.2 2
@@ -110,9 +120,11 @@ theorem extension4_candidatePairs_card_le_parityTriangle (X : ℕ) :
           0 ≤ ((e.1 / 2 : ℕ) : ℝ) * (2 * Real.log 2) +
             ((e.2 / 2 : ℕ) : ℝ) * (2 * Real.log 5) := by positivity
       linarith
-    exact (mem_weightedTriangle_iff (by positivity) (by positivity) hcut _ _).2 htarget
+    have hmem := (mem_weightedTriangle_iff (by positivity) (by positivity) hcut _ _).2 htarget
+    simpa [T, f] using hmem
   have hcardImage : (S.image f).card = S.card :=
     Finset.card_image_of_injOn hinj
+  change S.card ≤ T.card
   rw [← hcardImage]
   exact Finset.card_le_card himage
 
