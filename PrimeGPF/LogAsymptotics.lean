@@ -169,7 +169,8 @@ theorem limsup_div_log_le_inv_log_of_le
     cases X with
     | zero => simp
     | succ X =>
-        have hcast : (1 : ℝ) ≤ ((X + 1 : ℕ) : ℝ) := by positivity
+        have hnat : 1 ≤ X + 1 := by omega
+        have hcast : (1 : ℝ) ≤ ((X + 1 : ℕ) : ℝ) := by exact_mod_cast hnat
         exact div_nonneg (hf0 (X + 1)) (Real.log_nonneg hcast)
   have hcob : IsCoboundedUnder (· ≤ ·) atTop u :=
     isCoboundedUnder_le_of_le atTop (x := 0) hu0
