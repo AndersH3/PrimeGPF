@@ -17,6 +17,7 @@ on:
       - 'PrimeGPF/Extension34Counting.lean'
       - 'PrimeGPF/Extension34Exact.lean'
       - 'PrimeGPF/Extension34Congruence.lean'
+      - 'PrimeGPF/Extension5RealLog.lean'
       - 'PrimeGPF/Extension7Core.lean'
       - 'PrimeGPF/Extension7Finite.lean'
       - 'PrimeGPF/Extension7Density.lean'
@@ -45,7 +46,11 @@ jobs:
         run: lake exe cache get
       - name: Build extension dependencies
         run: lake build PrimeGPF.Extensions
+      - name: Build extension 5 literal log2 bound
+        if: ${{ always() && !cancelled() }}
+        run: lake build PrimeGPF.Extension5RealLog
       - name: Build extension 1 core
+        if: ${{ always() && !cancelled() }}
         run: lake build PrimeGPF.Extension1Core
       - name: Build restricted support lemmas
         if: ${{ always() && !cancelled() }}
