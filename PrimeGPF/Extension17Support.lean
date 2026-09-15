@@ -37,9 +37,13 @@ theorem prime_divisor_shift_exclusion
     omega
 
 /-- In a fixed additive fiber, once `q > r`, a prime divisor of the additive
-kernel cannot divide the shifted anchor `a+1`. -/
+kernel cannot divide the shifted anchor `a+1`.
+
+The primality of `r` is retained in the public signature because this lemma is
+used as part of a prime-fiber API, although the support-exclusion argument
+itself only needs the equality `add a q = r` and the inequality `r < q`. -/
 theorem extension1_large_input_support_exclusion
-    {a r q s : ℕ} (ha : Nat.Prime a) (hr : Nat.Prime r)
+    {a r q s : ℕ} (ha : Nat.Prime a) (_hr : Nat.Prime r)
     (hq : Nat.Prime q) (hout : add a q = r) (hrq : r < q)
     (hs : Nat.Prime s) (hsd : s ∣ a + q + 1) :
     s ≤ r ∧ ¬ s ∣ a + 1 := by
