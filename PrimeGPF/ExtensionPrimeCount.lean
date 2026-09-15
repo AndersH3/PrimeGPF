@@ -45,7 +45,7 @@ theorem extension_prime_weighted_limit :
   have hnat := hreal.comp
     (tendsto_natCast_atTop_atTop :
       Tendsto (fun N : ℕ => (N : ℝ)) atTop atTop)
-  simpa [extensionPrimeSet_eq_Iic] using hnat
+  simpa [Function.comp_apply, Nat.floor_natCast, extensionPrimeSet_eq_Iic] using hnat
 
 /-- PNT in the exact normalization used throughout the extension report. -/
 theorem extension_primeCount_log_limit :
