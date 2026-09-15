@@ -18,7 +18,7 @@ open scoped Topology
 theorem claims_primeCount_tendsto_atTop :
     Tendsto Claims.primeCount atTop atTop := by
   have h := Nat.tensto_primeCounting
-  simpa only [primeCount_eq_primeCounting] using h
+  simpa only [claims_primeCount_eq_primeCounting] using h
 
 /-- The reciprocal of the real-valued prime count tends to zero. -/
 theorem claims_primeCount_recip_tendsto_zero :
@@ -61,13 +61,15 @@ theorem extension6_image_ratio_eventually_le
             (1 : ℝ) / (Claims.primeCount X : ℝ))
         atTop (𝓝 ((1 : ℝ) / m)) := by
     simpa using hratio.add hinv
+  have hlt : (1 : ℝ) / m < (1 : ℝ) / m + ε :=
+    lt_add_of_pos_right _ hε
   have heventUpper :
       ∀ᶠ X : ℕ in atTop,
         (Claims.primeCount (C X) : ℝ) /
               (Claims.primeCount (m * C X) : ℝ) +
             (1 : ℝ) / (Claims.primeCount X : ℝ) <
           (1 : ℝ) / m + ε :=
-    hupperLimit.eventually (lt_mem_nhds (by linarith))
+    hupperLimit.eventually (lt_mem_nhds hlt)
   filter_upwards
     [heventUpper, hCtop.eventually (eventually_ge_atTop (2 : ℕ)),
       eventually_ge_atTop (2 : ℕ)] with X hUpper hC2 hX2
@@ -83,7 +85,7 @@ theorem extension6_image_ratio_eventually_le
   have hmulLe : m * C X ≤ X := by
     simpa [C] using extension6Cutoff_mul_le m X hm
   have hpcmonoNat : Claims.primeCount (m * C X) ≤ Claims.primeCount X := by
-    rw [primeCount_eq_primeCounting, primeCount_eq_primeCounting]
+    rw [claims_primeCount_eq_primeCounting, claims_primeCount_eq_primeCounting]
     exact Nat.monotone_primeCounting hmulLe
   have hpcmono :
       (Claims.primeCount (m * C X) : ℝ) ≤ (Claims.primeCount X : ℝ) := by
