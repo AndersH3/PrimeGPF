@@ -82,8 +82,7 @@ theorem extension7_collision_add_kernel_smooth
   have hrR : r ≤ gpf (a ^ 2 + a - 1) :=
     (gpf_spec (extension7_polynomial_gt_one ha)).2.2 r hr hrpoly
   constructor
-  · have hgt := kernel_gt_one .add ha hq
-    simpa [kernel] using (show 0 < kernel .add a q by omega)
+  · omega
   · intro s hs hsd
     have hsr : s ≤ r := by
       dsimp [r]
