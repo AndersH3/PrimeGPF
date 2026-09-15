@@ -1,10 +1,20 @@
-import PrimeGPF.Extension34Structure
+import PrimeGPF.Extension34PrimitiveHelpers
 
 /-!
 # Extension 3: coprimality of the exponent vector
 
 This supplies the remaining primitive-exponent condition in the exact
 anchor-2 output-5 classification.
+
+The proof separates into two parts:
+
+1. if `g = gcd α β > 1`, factor the kernel as `t^g` with
+   `t = 3^(α/g) 5^(β/g)`;
+2. invoke the generic proper-power contradiction from
+   `Extension34PrimitiveHelpers`.
+
+Only the construction and elementary bounds for `t` are specific to
+Extension 3.
 -/
 namespace PrimeGPF
 
@@ -75,6 +85,9 @@ theorem extension3_exponents_coprime
       _ = (3 ^ A * 5 ^ B) ^ g := by rw [mul_pow]
       _ = t ^ g := rfl
 
+  -- Since `t` is odd, `(t-1)/2` is an integer.  The lower bound `t ≥ 15`
+  -- makes this divisor nontrivial, exactly the hypotheses needed by the
+  -- generic prime-kernel proper-power contradiction.
   have htminus_even : 2 ∣ t - 1 := by
     apply Nat.dvd_of_mod_eq_zero
     omega
@@ -83,30 +96,10 @@ theorem extension3_exponents_coprime
     dsimp [d]
     exact Nat.mul_div_cancel' htminus_even
   have hdgt1 : 1 < d := by omega
+  have hdquot : 1 < (t - 1) / 2 := by
+    simpa [d] using hdgt1
 
-  have hpowminus : t ^ g - 1 = 2 * q := by omega
-  have hgeom : t - 1 ∣ t ^ g - 1 := by
-    let S := ∑ i ∈ Finset.range g, t ^ i
-    refine ⟨S, ?_⟩
-    have hsum := geom_sum_mul_of_one_le (show 1 ≤ t by omega) g
-    dsimp [S]
-    calc
-      t ^ g - 1 = (∑ i ∈ Finset.range g, t ^ i) * (t - 1) := hsum.symm
-      _ = (t - 1) * (∑ i ∈ Finset.range g, t ^ i) := by ring
-  rw [← h2d, hpowminus] at hgeom
-  have hdq : d ∣ q :=
-    Nat.dvd_of_mul_dvd_mul_left (by omega : 0 < (2 : ℕ)) hgeom
-  rcases (Nat.dvd_prime hq).mp hdq with hd1 | hdqeq
-  · omega
-  · have h2q : 2 * q = t - 1 := by simpa [hdqeq] using h2d
-    have ht1 : 1 ≤ t := by omega
-    have hsubadd : t - 1 + 1 = t := Nat.sub_add_cancel ht1
-    have htg : t ^ g = t := by omega
-    have htgt1 : 1 < t := by omega
-    have htlt : t < t ^ g := by
-      calc
-        t = t ^ 1 := by simp
-        _ < t ^ g := Nat.pow_lt_pow_right htgt1 (by omega)
-    exact htlt.ne htg.symm
+  exact prime_kernel_not_proper_power
+    hq (by norm_num) hg2 (by omega) htminus_even hdquot hkernelpow
 
 end PrimeGPF
