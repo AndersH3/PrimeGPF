@@ -12,6 +12,7 @@ on:
       - 'PrimeGPF/Extension34Exact.lean'
       - 'PrimeGPF/Extension34Counting.lean'
       - 'PrimeGPF/Extension34WeightedPairs.lean'
+      - 'PrimeGPF/Extension34CandidatePairs.lean'
       - '.github/workflows/active-repair-validation.yml'
   workflow_dispatch:
 
@@ -59,3 +60,6 @@ jobs:
       - name: Build extensions 3 and 4 weighted-pair reduction
         if: always()
         run: lake build PrimeGPF.Extension34WeightedPairs
+      - name: Build extensions 3 and 4 finite candidate pairs
+        if: always()
+        run: lake build PrimeGPF.Extension34CandidatePairs
