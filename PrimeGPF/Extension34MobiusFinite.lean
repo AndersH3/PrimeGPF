@@ -35,11 +35,16 @@ theorem sum_moebius_divisors_eq_indicator_one
     {n : ℕ} (hn : 0 < n) :
     (∑ d ∈ n.divisors, ArithmeticFunction.moebius d) =
       if n = 1 then 1 else 0 := by
-  have hconv := congrArg
-    (fun f : ArithmeticFunction ℤ => f n)
-    ArithmeticFunction.moebius_mul_coe_zeta
+  -- Evaluate the arithmetic-function identity at `n`.  Keeping this
+  -- intermediate equality named makes the dependence on Mathlib's
+  -- convolution theorem explicit.
+  have hconv_at_n :
+      (ArithmeticFunction.moebius * ArithmeticFunction.zeta) n =
+        (1 : ArithmeticFunction ℤ) n :=
+    congrArg (fun f : ArithmeticFunction ℤ => f n)
+      ArithmeticFunction.moebius_mul_coe_zeta
   simpa [ArithmeticFunction.coe_mul_zeta_apply,
-    ArithmeticFunction.one_apply] using hconv
+    ArithmeticFunction.one_apply] using hconv_at_n
 
 /-- The coprimality indicator of two positive exponent coordinates is the
 Möbius sum over the divisors of their gcd. -/
@@ -59,9 +64,11 @@ theorem gcd_divisor_is_odd_of_left_odd
     d % 2 = 1 := by
   have hdα : d ∣ α := dvd_trans hd (Nat.gcd_dvd_left α β)
   rcases Nat.mod_two_eq_zero_or_one d with hdeven | hdodd
-  · have h2d : 2 ∣ d := Nat.dvd_of_mod_eq_zero hdeven
+  · -- If `d` were even, its factor `2` would also divide `α`, contradicting
+    -- the assumption that `α` is odd.
+    have h2d : 2 ∣ d := Nat.dvd_of_mod_eq_zero hdeven
     have h2α : 2 ∣ α := dvd_trans h2d hdα
-    have hαzero := Nat.mod_eq_zero_of_dvd h2α
+    have hαeven : α % 2 = 0 := Nat.mod_eq_zero_of_dvd h2α
     omega
   · exact hdodd
 
