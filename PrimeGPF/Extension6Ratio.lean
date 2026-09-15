@@ -18,7 +18,9 @@ open scoped Topology
 theorem claims_primeCount_tendsto_atTop :
     Tendsto Claims.primeCount atTop atTop := by
   have h := Nat.tensto_primeCounting
-  simpa only [claims_primeCount_eq_primeCounting] using h
+  apply h.congr'
+  filter_upwards [] with N
+  exact (claims_primeCount_eq_primeCounting N).symm
 
 /-- The reciprocal of the real-valued prime count tends to zero. -/
 theorem claims_primeCount_recip_tendsto_zero :
@@ -69,7 +71,7 @@ theorem extension6_image_ratio_eventually_le
               (Claims.primeCount (m * C X) : ℝ) +
             (1 : ℝ) / (Claims.primeCount X : ℝ) <
           (1 : ℝ) / m + ε :=
-    hupperLimit.eventually (lt_mem_nhds hlt)
+    hupperLimit.eventually (Iio_mem_nhds hlt)
   filter_upwards
     [heventUpper, hCtop.eventually (eventually_ge_atTop (2 : ℕ)),
       eventually_ge_atTop (2 : ℕ)] with X hUpper hC2 hX2
