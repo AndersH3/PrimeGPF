@@ -64,9 +64,9 @@ theorem weightedTriangle_card_le_box (u v L : ℝ) :
       Finset.card_filter_le _ _
     _ = (⌊L / u⌋₊ + 1) * (⌊L / v⌋₊ + 1) := by simp
 
-/-- Coordinatewise monotonicity in the cutoff. -/
+/-- Monotonicity in the cutoff for positive weights. -/
 theorem weightedTriangle_mono_cutoff
-    {u v L₁ L₂ : ℝ} (hL : L₁ ≤ L₂) :
+    {u v L₁ L₂ : ℝ} (hu : 0 < u) (hv : 0 < v) (hL : L₁ ≤ L₂) :
     weightedTriangle u v L₁ ⊆ weightedTriangle u v L₂ := by
   classical
   intro e he
@@ -75,39 +75,19 @@ theorem weightedTriangle_mono_cutoff
     he'.2.trans hL
   have hαrange := (Finset.mem_product.mp he'.1).1
   have hβrange := (Finset.mem_product.mp he'.1).2
-  have hα : e.1 ≤ ⌊L₁ / u⌋₊ := by
-    exact Nat.le_of_lt_succ (Finset.mem_range.mp hαrange)
-  have hβ : e.2 ≤ ⌊L₁ / v⌋₊ := by
-    exact Nat.le_of_lt_succ (Finset.mem_range.mp hβrange)
-  by_cases hu : 0 < u
-  · have hdivu : L₁ / u ≤ L₂ / u := div_le_div_of_nonneg_right hL hu.le
-    have hflooru : ⌊L₁ / u⌋₊ ≤ ⌊L₂ / u⌋₊ := Nat.floor_mono hdivu
-    by_cases hv : 0 < v
-    · have hdivv : L₁ / v ≤ L₂ / v := div_le_div_of_nonneg_right hL hv.le
-      have hfloorv : ⌊L₁ / v⌋₊ ≤ ⌊L₂ / v⌋₊ := Nat.floor_mono hdivv
-      apply Finset.mem_filter.mpr
-      exact ⟨Finset.mem_product.mpr
-        ⟨Finset.mem_range.mpr (by omega), Finset.mem_range.mpr (by omega)⟩,
-        hweighted⟩
-    · have hv0 : v ≤ 0 := le_of_not_gt hv
-      -- For nonpositive `v`, the range cutoff is not monotone in general;
-      -- the application sites use positive logarithmic weights.  Retain the
-      -- old coordinate by deriving membership directly from the target range
-      -- whenever possible.
-      have : False := by
-        have hβterm : (e.2 : ℝ) * v ≤ 0 := mul_nonpos_of_nonneg_of_nonpos
-          (Nat.cast_nonneg e.2) hv0
-        -- No contradiction follows without positivity; this branch is not a
-        -- valid general monotonicity statement.
-        exact False.elim (by
-          fail_if_success trivial
-          contradiction)
-      contradiction
-  · have : False := by
-      have hu0 : u ≤ 0 := le_of_not_gt hu
-      exact False.elim (by
-        fail_if_success trivial
-        contradiction)
-    contradiction
+  have hα : e.1 ≤ ⌊L₁ / u⌋₊ :=
+    Nat.le_of_lt_succ (Finset.mem_range.mp hαrange)
+  have hβ : e.2 ≤ ⌊L₁ / v⌋₊ :=
+    Nat.le_of_lt_succ (Finset.mem_range.mp hβrange)
+  have hdivu : L₁ / u ≤ L₂ / u :=
+    div_le_div_of_nonneg_right hL hu.le
+  have hdivv : L₁ / v ≤ L₂ / v :=
+    div_le_div_of_nonneg_right hL hv.le
+  have hflooru : ⌊L₁ / u⌋₊ ≤ ⌊L₂ / u⌋₊ := Nat.floor_mono hdivu
+  have hfloorv : ⌊L₁ / v⌋₊ ≤ ⌊L₂ / v⌋₊ := Nat.floor_mono hdivv
+  apply Finset.mem_filter.mpr
+  exact ⟨Finset.mem_product.mpr
+    ⟨Finset.mem_range.mpr (by omega), Finset.mem_range.mpr (by omega)⟩,
+    hweighted⟩
 
 end PrimeGPF.Analytic
