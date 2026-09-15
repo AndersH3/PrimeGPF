@@ -4,9 +4,11 @@ on:
   push:
     branches: [extensions-5-6-8-9-10-20260915]
     paths:
-      - 'PrimeGPF/Extension34MobiusSetup.lean'
-      - 'PrimeGPF/Extension34MobiusFinite.lean'
-      - 'PrimeGPF/Extension34MobiusSeries.lean'
+      - 'PrimeGPF/Extension34*.lean'
+      - 'PrimeGPF/Extension3Coprime.lean'
+      - 'PrimeGPF/Extension4Coprime.lean'
+      - 'PrimeGPF/Extension4Odd.lean'
+      - 'PrimeGPF/WeightedTriangle*.lean'
       - '.github/workflows/extension34-mobius-series-validation.yml'
   workflow_dispatch:
 
