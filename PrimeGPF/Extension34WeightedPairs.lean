@@ -50,9 +50,11 @@ theorem extension3_fiber_gives_weighted_pair
   obtain ⟨α, β, hα, hβ, hodd, hcop, hqform⟩ :=
     (extension3_exact_classification hq).mp hout |>.resolve_left hq2
   let N := 3 ^ α * 5 ^ β
+  have h3mod : 3 ^ α % 2 = 1 := by simp [Nat.pow_mod]
+  have h5mod : 5 ^ β % 2 = 1 := by simp [Nat.pow_mod]
   have hNmod : N % 2 = 1 := by
     dsimp [N]
-    simp [Nat.mul_mod]
+    norm_num [Nat.mul_mod, h3mod, h5mod]
   have hdec := Nat.mod_add_div N 2
   have hsub : N - 1 = 2 * (N / 2) := by omega
   have hdiv : 2 ∣ N - 1 := by
