@@ -22,8 +22,10 @@ theorem extension1_input_eq_output_of_dvd_anchor
     simpa [hout] using h
   have hk' : r ∣ (a + 1) + q := by
     simpa [Nat.add_assoc, Nat.add_comm, Nat.add_left_comm] using hk
-  have hqdiv : r ∣ q :=
-    (Nat.dvd_add_iff_left har).mp hk'
+  have hbase : (a + 1) % r = 0 := Nat.mod_eq_zero_of_dvd har
+  have htot : ((a + 1) + q) % r = 0 := Nat.mod_eq_zero_of_dvd hk'
+  rw [Nat.add_mod, hbase, zero_add, Nat.mod_mod] at htot
+  have hqdiv : r ∣ q := Nat.dvd_of_mod_eq_zero htot
   rcases (Nat.dvd_prime hq).mp hqdiv with h1 | hrq
   · exact (hr.ne_one h1).elim
   · exact hrq.symm
