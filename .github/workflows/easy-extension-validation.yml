@@ -9,6 +9,7 @@ on:
       - 'PrimeGPF/Extension34Residues.lean'
       - 'PrimeGPF/Extension34Structure.lean'
       - 'PrimeGPF/Extension34Converse.lean'
+      - 'PrimeGPF/Extension3Coprime.lean'
       - 'PrimeGPF/Extension7Core.lean'
       - 'PrimeGPF/Extension17Support.lean'
       - 'PrimeGPF/ExtensionPrimeCount.lean'
@@ -54,6 +55,9 @@ jobs:
       - name: Compile extension 3 and 4 converse
         if: always()
         run: lake env lean PrimeGPF/Extension34Converse.lean
+      - name: Compile extension 3 coprimality
+        if: always()
+        run: lake env lean PrimeGPF/Extension3Coprime.lean
       - name: Build extension 7 core
         if: always()
         run: lake build PrimeGPF.Extension7Core
