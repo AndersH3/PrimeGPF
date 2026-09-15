@@ -55,7 +55,7 @@ theorem extension3_fiber_gives_weighted_pair
     have h3odd : 3 ^ α % 2 = 1 := by simp [Nat.pow_mod]
     have h5odd : 5 ^ β % 2 = 1 := by simp [Nat.pow_mod]
     dsimp [N]
-    omega
+    norm_num [Nat.mul_mod, h3odd, h5odd]
   have hqmul : q * 2 = N - 1 := by
     rw [hqform]
     exact Nat.div_mul_cancel hdiv
@@ -112,8 +112,7 @@ theorem extension4_fiber_gives_weighted_pair
     apply Nat.dvd_of_mod_eq_zero
     have h2 : 2 ^ α % 3 = 2 := extension_two_pow_mod_three_of_odd hαodd
     have h5 : 5 ^ β % 3 = 2 := by
-      simpa [show 5 % 3 = 2 by norm_num] using
-        extension_two_pow_mod_three_of_odd hβodd
+      simpa [Nat.pow_mod] using extension_two_pow_mod_three_of_odd hβodd
     dsimp [N]
     norm_num [Nat.mul_mod, h2, h5]
   have hqmul : q * 3 = N - 1 := by
