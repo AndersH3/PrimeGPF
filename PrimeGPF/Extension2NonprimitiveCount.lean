@@ -4,7 +4,7 @@ import PrimeGPF.Extension2Primitive
 # Extension 2: logarithmic bound for nonprimitive families
 
 The report only needs that the two exceptional perfect-power families contain
-`O_a(log X)` possible exponents.  These lemmas give the exact natural-log
+`O_a(log X)` possible exponents. These lemmas give the exact natural-log
 bounds from which that statement follows.
 -/
 namespace PrimeGPF
@@ -28,7 +28,9 @@ theorem extension2_anchor_succ_power_exponent_le_log
   have hle : (a + 1) ^ g ≤ a * X + 1 := by
     rw [← hpow]
     exact Nat.add_le_add_right (Nat.mul_le_mul_left a hqX) 1
-  exact Nat.le_log_of_pow_le (by omega) hle
+  have ha2 : 2 ≤ a := ha.two_le
+  have hbase : 1 < a + 1 := by omega
+  exact Nat.le_log_of_pow_le hbase hle
 
 /-- Unified logarithmic exponent bound for a nonprimitive kernel `u^g` with
 `q>a`, using the classification into the two exceptional families. -/
