@@ -27,7 +27,7 @@ theorem extension3_residue_mod_30
     by_contra h3
     have hsupp : ∀ s, Nat.Prime s → s ∣ 2 * q + 1 → s = 5 := by
       intro s hs hd
-      rcases prime_dvd_of_gpf_five hn hg hs hd with h2 | h3s | h5
+      rcases prime_dvd_of_gpf_five' hn hg hs hd with h2 | h3s | h5
       · subst s
         have hz := Nat.mod_eq_zero_of_dvd hd
         norm_num [Nat.add_mod, Nat.mul_mod, hodd] at hz
@@ -38,8 +38,9 @@ theorem extension3_residue_mod_30
       power_of_prime_support 5 (2 * q + 1) Nat.prime_five (by omega) hsupp
     have hNmod4 : (2 * q + 1) % 4 = 3 := by
       have hq4 : q % 4 = 1 ∨ q % 4 = 3 := by omega
-      rcases hq4 with h1 | h3 <;>
-        norm_num [Nat.add_mod, Nat.mul_mod, h1, h3]
+      rcases hq4 with h1 | h3
+      · norm_num [Nat.add_mod, Nat.mul_mod, h1]
+      · norm_num [Nat.add_mod, Nat.mul_mod, h3]
     rw [hk] at hNmod4
     have hpowmod : 5 ^ k % 4 = 1 := by simp [Nat.pow_mod]
     omega
