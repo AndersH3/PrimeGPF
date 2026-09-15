@@ -5,6 +5,7 @@ on:
     paths:
       - 'PrimeGPF/Extensions.lean'
       - 'PrimeGPF/Extension1Core.lean'
+      - 'PrimeGPF/Extension1Finite.lean'
       - 'PrimeGPF/Extension2Core.lean'
       - 'PrimeGPF/Extension2Support.lean'
       - 'PrimeGPF/Extension2Primitive.lean'
@@ -46,6 +47,9 @@ jobs:
         run: lake build PrimeGPF.Extensions
       - name: Build extension 1 core
         run: lake build PrimeGPF.Extension1Core
+      - name: Compile extension 1 finite bound
+        if: always()
+        run: lake env lean PrimeGPF/Extension1Finite.lean
       - name: Build extension 2 core
         if: always()
         run: lake build PrimeGPF.Extension2Core
