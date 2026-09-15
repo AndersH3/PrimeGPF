@@ -74,9 +74,11 @@ theorem extension3_fiber_has_exact_candidate_pair
   · exact (hq2 hqeq).elim
   · obtain ⟨α, β, hα, hβ, hodd, hcop, hqform⟩ := hpair
     let N := 3 ^ α * 5 ^ β
+    have h3mod : 3 ^ α % 2 = 1 := by simp [Nat.pow_mod]
+    have h5mod : 5 ^ β % 2 = 1 := by simp [Nat.pow_mod]
     have hNmod : N % 2 = 1 := by
       dsimp [N]
-      simp [Nat.mul_mod]
+      norm_num [Nat.mul_mod, h3mod, h5mod]
     have hdec := Nat.mod_add_div N 2
     have hsub : N - 1 = 2 * (N / 2) := by omega
     have hdiv : 2 ∣ N - 1 := by
