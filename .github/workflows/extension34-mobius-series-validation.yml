@@ -4,6 +4,8 @@ on:
   push:
     branches: [extensions-5-6-8-9-10-20260915]
     paths:
+      - 'PrimeGPF/Extension34MobiusSetup.lean'
+      - 'PrimeGPF/Extension34MobiusFinite.lean'
       - 'PrimeGPF/Extension34MobiusSeries.lean'
       - '.github/workflows/extension34-mobius-series-validation.yml'
   workflow_dispatch:
@@ -27,5 +29,7 @@ jobs:
           echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
       - name: Obtain pinned mathlib cache
         run: lake exe cache get
+      - name: Build finite Möbius detector
+        run: lake build PrimeGPF.Extension34MobiusFinite
       - name: Build odd Möbius L-series identity
         run: lake build PrimeGPF.Extension34MobiusSeries
