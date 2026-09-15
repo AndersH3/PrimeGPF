@@ -50,7 +50,14 @@ theorem log_power_nat_shift_div_self_tendsto_zero (c d : ℕ) :
     filter_upwards [eventually_gt_atTop (0 : ℕ)] with X hX
     have hX0 : (X : ℝ) ≠ 0 := by exact_mod_cast (ne_of_gt hX)
     rw [Nat.cast_add, add_div, div_self hX0]
-  have hprod := hshiftRatio.mul hratio
+  have hprod :
+      Tendsto
+        (fun X : ℕ =>
+          ((Real.log (((X + c : ℕ) : ℝ))) ^ d /
+              (((X + c : ℕ) : ℝ))) *
+            ((((X + c : ℕ) : ℝ)) / (X : ℝ)))
+        atTop (𝓝 0) := by
+    simpa using hshiftRatio.mul hratio
   refine hprod.congr' ?_
   filter_upwards [eventually_gt_atTop (0 : ℕ)] with X hX
   have hX0 : (X : ℝ) ≠ 0 := by exact_mod_cast (ne_of_gt hX)
