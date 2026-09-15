@@ -29,15 +29,17 @@ theorem extension8_no_triple_of_polynomial_prime {p : ℕ}
     rcases (Nat.dvd_prime hP).mp hdiv with h1 | hP'
     · exact (hr.ne_one h1).elim
     · exact hP'
-  have hregion := extension8_triple_region hp hq ham hae
-  have hqp : q ≤ p := hregion.trans (min_le_left _ _)
+  have hex : (p, q) ≠ (2, 3) := by
+    intro h
+    have hp2 : p = 2 := congrArg Prod.fst h
+    omega
+  have hqp : q ≤ p :=
+    (extension8_add_exp_region hp hq hae).resolve_left hex
   have hupper : r ≤ p + q + 1 := by
     dsimp [r]
     simpa [add, output, kernel] using gpf_le (p + q + 1)
   have hupper' : r ≤ 2 * p + 1 := by omega
-  have hquad : 2 * p + 2 ≤ p ^ 2 + p := by
-    nlinarith
   rw [hre] at hupper'
-  omega
+  nlinarith
 
 end PrimeGPF
