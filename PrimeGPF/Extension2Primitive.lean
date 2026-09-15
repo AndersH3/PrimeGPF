@@ -52,26 +52,19 @@ theorem divisor_prime_product_lt_right
       omega
 
 /-- For `u ≥ 2`, the elementary congruence `u ≡ 1 (mod u-1)` implies
-`u-1 ∣ u^g-1`.  This local lemma avoids depending on newer mathlib geometric-
-sum theorem names not present in the repository's pinned version. -/
+`u-1 ∣ u^g-1`.  This local lemma uses only the `Nat.ModEq` API available in
+the repository's pinned mathlib version. -/
 theorem sub_one_dvd_pow_sub_one {u g : ℕ} (hu : 2 ≤ u) :
     u - 1 ∣ u ^ g - 1 := by
-  apply Nat.dvd_of_mod_eq_zero
-  have hmpos : 0 < u - 1 := by omega
-  have humod : u % (u - 1) = 1 % (u - 1) := by
-    have hu_eq : u = (u - 1) + 1 := by omega
-    rw [hu_eq, Nat.add_mod]
-    simp
-  have hpowmod : u ^ g % (u - 1) = 1 % (u - 1) := by
-    calc
-      u ^ g % (u - 1) = (u % (u - 1)) ^ g % (u - 1) := by
-        rw [Nat.pow_mod]
-      _ = (1 % (u - 1)) ^ g % (u - 1) := by rw [humod]
-      _ = 1 ^ g % (u - 1) := by rw [← Nat.pow_mod]
-      _ = 1 % (u - 1) := by simp
-  rw [Nat.sub_mod, hpowmod]
-  have honele : 1 % (u - 1) ≤ u - 1 := Nat.mod_le _ _
-  omega
+  have hbase : 1 ≡ u [MOD u - 1] := by
+    apply (Nat.modEq_iff_dvd' (by omega : 1 ≤ u)).2
+    exact dvd_refl (u - 1)
+  have hpow : 1 ^ g ≡ u ^ g [MOD u - 1] :=
+    Nat.ModEq.pow g hbase
+  have hpow' : 1 ≡ u ^ g [MOD u - 1] := by
+    simpa using hpow
+  apply (Nat.modEq_iff_dvd' (by positivity : 1 ≤ u ^ g)).mp
+  exact hpow'
 
 /-- The nonprimitive perfect-power reduction from extension 2. -/
 theorem extension2_nonprimitive_power_base
