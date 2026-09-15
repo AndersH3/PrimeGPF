@@ -17,6 +17,7 @@ on:
       - 'PrimeGPF/WeightedTriangleRows.lean'
       - 'PrimeGPF/WeightedTriangleArea.lean'
       - 'PrimeGPF/Extension34AreaBound.lean'
+      - 'PrimeGPF/Extension34ParityReduction.lean'
       - '.github/workflows/active-repair-validation.yml'
   workflow_dispatch:
 
@@ -79,3 +80,6 @@ jobs:
       - name: Build extensions 3 and 4 sharp-area bounds
         if: always()
         run: lake build PrimeGPF.Extension34AreaBound
+      - name: Build extensions 3 and 4 parity-scaled reductions
+        if: always()
+        run: lake build PrimeGPF.Extension34ParityReduction
