@@ -106,6 +106,18 @@ theorem extension10_homogeneous_eventuallyPeriodic
   · exact eventuallyPeriodic_of_repeat (homogeneousOperate c) x hij he
   · exact eventuallyPeriodic_of_repeat (homogeneousOperate c) x hji he.symm
 
+/-- Intertwining one step intertwines every iterate. -/
+theorem orbit_intertwine {α β : Type*}
+    (f : α → α) (g : β → β) (h : α → β)
+    (hstep : ∀ z, h (f z) = g (h z)) (x : α) :
+    ∀ n, h (orbit f x n) = orbit g (h x) n := by
+  intro n
+  induction n with
+  | zero => rfl
+  | succ n ih =>
+      simp only [orbit]
+      rw [hstep, ih]
+
 /-- For an exponential anchor different from 2, every point moves strictly
 upward. -/
 theorem exp_left_strict_growth (a : Prime) (ha2 : a.val ≠ 2) (q : Prime) :
@@ -128,5 +140,67 @@ theorem extension10_no_map_homogeneous_to_exp
   have hval := congrArg Subtype.val hfix
   have hgrow := exp_left_strict_growth a ha2 (h c)
   omega
+
+/-- No finite-to-one map can semiconjugate an anchored exponential translation
+with odd prime anchor to an anchored homogeneous translation with odd prime
+anchor.  This is the first semiconjugacy bullet in extension 10 of the report. -/
+theorem extension10_no_finite_to_one_exp_to_homogeneous
+    (a c : Prime) (ha2 : a.val ≠ 2) (hc2 : c.val ≠ 2)
+    (h : Prime → Prime)
+    (hfinite : ∀ y : Prime, Set.Finite {x : Prime | h x = y}) :
+    ¬ (∀ q : Prime,
+      h (operate .exp a q) = homogeneousOperate c (h q)) := by
+  intro hintertwine
+  let E : Prime → Prime := operate .exp a
+  let H : Prime → Prime := homogeneousOperate c
+  let x : Prime := ⟨2, Nat.prime_two⟩
+  have hintertwine' : ∀ q : Prime, h (E q) = H (h q) := by
+    simpa [E, H] using hintertwine
+  have hiter : ∀ n, h (orbit E x n) = orbit H (h x) n :=
+    orbit_intertwine E H h hintertwine' x
+  obtain ⟨N, d, hd, hperiod⟩ :=
+    extension10_homogeneous_eventuallyPeriodic c (h x) hc2
+  have hcycle : ∀ k : ℕ,
+      orbit H (h x) (N + k * d) = orbit H (h x) N := by
+    intro k
+    induction k with
+    | zero => simp
+    | succ k ih =>
+        have hp := hperiod (N + k * d) (by omega)
+        calc
+          orbit H (h x) (N + (k + 1) * d) =
+              orbit H (h x) ((N + k * d) + d) := by
+                congr 1
+                simp [Nat.add_mul, Nat.add_assoc]
+          _ = orbit H (h x) (N + k * d) := hp
+          _ = orbit H (h x) N := ih
+  let y : Prime := orbit H (h x) N
+  have hfiber : ∀ k : ℕ, h (orbit E x (N + k * d)) = y := by
+    intro k
+    calc
+      h (orbit E x (N + k * d)) = orbit H (h x) (N + k * d) := hiter _
+      _ = orbit H (h x) N := hcycle k
+      _ = y := rfl
+  let S : Finset Prime := (hfinite y).toFinset
+  obtain ⟨i, _, j, _, hij, heq⟩ :=
+    Finset.exists_ne_map_eq_of_card_lt_of_maps_to
+      (s := Finset.range (S.card + 1))
+      (t := S)
+      (f := fun k => orbit E x (N + k * d))
+      (by simp)
+      (by
+        intro k hk
+        apply (hfinite y).mem_toFinset.mpr
+        exact hfiber k)
+  have hmono : StrictMono (fun n => (orbit E x n).val) := by
+    simpa [E] using (proof_8_5.1 a ha2).2.1 x
+  have heval := congrArg Subtype.val heq
+  rcases lt_or_gt_of_ne hij with hij' | hji'
+  · have hidx : N + i * d < N + j * d :=
+      Nat.add_lt_add_left (Nat.mul_lt_mul_of_pos_right hij' hd) N
+    exact (ne_of_lt (hmono hidx)) heval
+  · have hidx : N + j * d < N + i * d :=
+      Nat.add_lt_add_left (Nat.mul_lt_mul_of_pos_right hji' hd) N
+    exact (ne_of_lt (hmono hidx)) heval.symm
 
 end PrimeGPF
