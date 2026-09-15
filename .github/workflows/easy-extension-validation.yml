@@ -47,56 +47,56 @@ jobs:
       - name: Build extension 1 core
         run: lake build PrimeGPF.Extension1Core
       - name: Build restricted support lemmas
-        if: always()
+        if: ${{ always() && !cancelled() }}
         run: lake build PrimeGPF.Extension17Support
       - name: Build extension 1 finite bound
-        if: always()
+        if: ${{ always() && !cancelled() }}
         run: lake build PrimeGPF.Extension1Finite
       - name: Build extension 1 support dimension
-        if: always()
+        if: ${{ always() && !cancelled() }}
         run: lake build PrimeGPF.Extension1Exponent
       - name: Build extension 1 restricted counting
-        if: always()
+        if: ${{ always() && !cancelled() }}
         run: lake build PrimeGPF.Extension1RestrictedCounting
       - name: Build extension 2 core
-        if: always()
+        if: ${{ always() && !cancelled() }}
         run: lake build PrimeGPF.Extension2Core
       - name: Build extension 2 support
-        if: always()
+        if: ${{ always() && !cancelled() }}
         run: lake build PrimeGPF.Extension2Support
       - name: Build extension 2 primitive families
-        if: always()
+        if: ${{ always() && !cancelled() }}
         run: lake build PrimeGPF.Extension2Primitive
       - name: Build extension 2 nonprimitive count
-        if: always()
+        if: ${{ always() && !cancelled() }}
         run: lake build PrimeGPF.Extension2NonprimitiveCount
       - name: Build extension 2 restricted counting
-        if: always()
+        if: ${{ always() && !cancelled() }}
         run: lake build PrimeGPF.Extension2RestrictedCounting
       - name: Build extension 2 support dimension
-        if: always()
+        if: ${{ always() && !cancelled() }}
         run: lake build PrimeGPF.Extension2Dimension
       - name: Build extensions 3 and 4 exact classifications
-        if: always()
+        if: ${{ always() && !cancelled() }}
         run: lake build PrimeGPF.Extension34Exact
       - name: Build extensions 3 and 4 counting corollaries
-        if: always()
+        if: ${{ always() && !cancelled() }}
         run: lake build PrimeGPF.Extension34Counting
       - name: Build extensions 3 and 4 residue corollaries
-        if: always()
+        if: ${{ always() && !cancelled() }}
         run: lake build PrimeGPF.Extension34Congruence
       - name: Build extension 7 core
-        if: always()
+        if: ${{ always() && !cancelled() }}
         run: lake build PrimeGPF.Extension7Core
       - name: Build extension 7 finite bound
-        if: always()
+        if: ${{ always() && !cancelled() }}
         run: lake build PrimeGPF.Extension7Finite
       - name: Build extension 7 density reduction
-        if: always()
+        if: ${{ always() && !cancelled() }}
         run: lake build PrimeGPF.Extension7Density
       - name: Build extension 7 density limit
-        if: always()
+        if: ${{ always() && !cancelled() }}
         run: lake build PrimeGPF.Extension7Limit
       - name: Build prime-count normalization
-        if: always()
+        if: ${{ always() && !cancelled() }}
         run: lake build PrimeGPF.ExtensionPrimeCount
