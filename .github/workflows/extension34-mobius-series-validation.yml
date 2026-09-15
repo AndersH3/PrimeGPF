@@ -1,5 +1,9 @@
 name: Extension34 Möbius-series validation
 
+# Keep this workflow focused on the finite detector and the analytic odd-part
+# identity.  In particular it validates compatibility with the repository's
+# pinned Mathlib 4.19 arithmetic-function API before these modules are added to
+# the umbrella `PrimeGPF` target.
 on:
   push:
     branches: [extensions-5-6-8-9-10-20260915]
