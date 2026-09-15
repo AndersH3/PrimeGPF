@@ -46,44 +46,44 @@ jobs:
       - name: Build extension 2 support
         run: lake build PrimeGPF.Extension2Support
       - name: Build extension 2 primitive families
-        if: always()
+        if: ${{ !cancelled() }}
         run: lake build PrimeGPF.Extension2Primitive
       - name: Build extension 2 nonprimitive count
-        if: always()
+        if: ${{ !cancelled() }}
         run: lake build PrimeGPF.Extension2NonprimitiveCount
       - name: Build extension 2 restricted counting
-        if: always()
+        if: ${{ !cancelled() }}
         run: lake build PrimeGPF.Extension2RestrictedCounting
       - name: Build extension 2 support dimension
-        if: always()
+        if: ${{ !cancelled() }}
         run: lake build PrimeGPF.Extension2Dimension
       - name: Build extensions 3 and 4 exact classifications
-        if: always()
+        if: ${{ !cancelled() }}
         run: lake build PrimeGPF.Extension34Exact
       - name: Build extensions 3 and 4 counting corollaries
-        if: always()
+        if: ${{ !cancelled() }}
         run: lake build PrimeGPF.Extension34Counting
       - name: Build extensions 3 and 4 weighted-pair reduction
-        if: always()
+        if: ${{ !cancelled() }}
         run: lake build PrimeGPF.Extension34WeightedPairs
       - name: Build extensions 3 and 4 finite candidate pairs
-        if: always()
+        if: ${{ !cancelled() }}
         run: lake build PrimeGPF.Extension34CandidatePairs
       - name: Build extensions 3 and 4 candidate count reduction
-        if: always()
+        if: ${{ !cancelled() }}
         run: lake build PrimeGPF.Extension34CandidateCount
       - name: Build weighted triangle row decomposition
-        if: always()
+        if: ${{ !cancelled() }}
         run: lake build PrimeGPF.WeightedTriangleRows
       - name: Build weighted triangle area estimate
-        if: always()
+        if: ${{ !cancelled() }}
         run: lake build PrimeGPF.WeightedTriangleArea
       - name: Build extensions 3 and 4 sharp-area bounds
-        if: always()
+        if: ${{ !cancelled() }}
         run: lake build PrimeGPF.Extension34AreaBound
       - name: Build extensions 3 and 4 parity-scaled reductions
-        if: always()
+        if: ${{ !cancelled() }}
         run: lake build PrimeGPF.Extension34ParityReduction
       - name: Build extensions 3 and 4 parity-improved area bounds
-        if: always()
+        if: ${{ !cancelled() }}
         run: lake build PrimeGPF.Extension34ParityAreaBound
