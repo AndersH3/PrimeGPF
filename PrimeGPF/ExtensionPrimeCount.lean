@@ -33,18 +33,20 @@ theorem extension_prime_weighted_limit :
       (fun N : ℕ =>
         (∑ p ∈ extensionPrimeSet N, Real.log p) / (N : ℝ))
       atTop (𝓝 1) := by
-  have heq := chebyshev_asymptotic.comp_tendsto
-    (tendsto_natCast_atTop_atTop :
-      Tendsto (fun N : ℕ => (N : ℝ)) atTop atTop)
+  have heq :
+      ((fun x : ℝ =>
+          ∑ p ∈ (Finset.Iic ⌊x⌋₊).filter Nat.Prime, Real.log p) ∘
+          (fun N : ℕ => (N : ℝ)))
+        ~[atTop]
+      ((fun x : ℝ => x) ∘ (fun N : ℕ => (N : ℝ))) := by
+    exact Asymptotics.IsEquivalent.comp_tendsto chebyshev_asymptotic
+      (tendsto_natCast_atTop_atTop :
+        Tendsto (fun N : ℕ => (N : ℝ)) atTop atTop)
   have hne : ∀ᶠ N : ℕ in atTop, ((N : ℝ) : ℝ) ≠ 0 := by
     filter_upwards [eventually_ge_atTop (1 : ℕ)] with N hN
     exact_mod_cast (show N ≠ 0 by omega)
-  rw [isEquivalent_iff_tendsto_one hne] at heq
-  apply heq.congr'
-  filter_upwards with N
-  have hfloor : ⌊((N : ℝ))⌋₊ = N := by simp
-  rw [Function.comp_apply, Function.comp_apply, hfloor]
-  rw [extensionPrimeSet_eq_Iic]
+  have hratio := (isEquivalent_iff_tendsto_one hne).mp heq
+  simpa [Function.comp_def, extensionPrimeSet_eq_Iic] using hratio
 
 /-- PNT in the exact normalization used throughout the extension report. -/
 theorem extension_primeCount_log_limit :
