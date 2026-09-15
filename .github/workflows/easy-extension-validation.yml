@@ -6,6 +6,7 @@ on:
       - 'PrimeGPF/Extensions.lean'
       - 'PrimeGPF/Extension1Core.lean'
       - 'PrimeGPF/Extension2Core.lean'
+      - 'PrimeGPF/Extension2Support.lean'
       - 'PrimeGPF/Extension34Residues.lean'
       - 'PrimeGPF/Extension34Structure.lean'
       - 'PrimeGPF/Extension34Converse.lean'
@@ -46,6 +47,9 @@ jobs:
       - name: Build extension 2 core
         if: always()
         run: lake build PrimeGPF.Extension2Core
+      - name: Compile extension 2 support
+        if: always()
+        run: lake env lean PrimeGPF/Extension2Support.lean
       - name: Build revised extension 9 helpers
         if: always()
         run: lake build PrimeGPF.Extension9Revised
