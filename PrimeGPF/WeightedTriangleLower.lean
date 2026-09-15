@@ -20,6 +20,8 @@ one-sided absolute error of linear size without introducing measure theory.
 -/
 namespace PrimeGPF.Analytic
 
+/-! ## Lower bounds row by row -/
+
 /-- A row contains at least its real width.  More precisely, for a valid first
 coordinate `α`, its number of integer second coordinates is at least
 `(L - α*u)/v`.
@@ -125,6 +127,8 @@ theorem weightedTriangle_card_cast_ge_row_width_sum
       dsimp [S]
       exact_mod_cast hdecomp.symm
 
+/-! ## Closed form of the row-width sum -/
+
 /-- Closed form for the sum of the real row widths (without the `+1` boundary
 term appearing in the upper estimate). -/
 theorem weighted_row_width_sum_closed_form (u v L : ℝ) (A : ℕ) :
@@ -135,23 +139,20 @@ theorem weighted_row_width_sum_closed_form (u v L : ℝ) (A : ℕ) :
   have hones :
       (∑ _α ∈ Finset.range (A + 1), (1 : ℝ)) = (A : ℝ) + 1 := by
     simp
-  have hadd :
-      (∑ α ∈ Finset.range (A + 1),
-          ((L - (α : ℝ) * u) / v + 1)) =
-        (∑ α ∈ Finset.range (A + 1), (L - (α : ℝ) * u) / v) +
-          (∑ _α ∈ Finset.range (A + 1), (1 : ℝ)) := by
-    rw [Finset.sum_add_distrib]
   calc
     (∑ α ∈ Finset.range (A + 1), (L - (α : ℝ) * u) / v)
         = (∑ α ∈ Finset.range (A + 1),
             ((L - (α : ℝ) * u) / v + 1)) -
           (∑ _α ∈ Finset.range (A + 1), (1 : ℝ)) := by
+            rw [Finset.sum_add_distrib]
             linarith
     _ = ((A : ℝ) + 1) * (L / v + 1) -
           (u / v) * ((A : ℝ) * ((A : ℝ) + 1) / 2) -
           ((A : ℝ) + 1) := by rw [hfull, hones]
     _ = ((A : ℝ) + 1) * (L / v) -
           (u / v) * ((A : ℝ) * ((A : ℝ) + 1) / 2) := by ring
+
+/-! ## Continuous area comparison and two-sided error -/
 
 /-- The continuous weighted-triangle area is a lower bound for the number of
 nonnegative lattice points in the triangle.
