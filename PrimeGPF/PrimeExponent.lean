@@ -67,7 +67,6 @@ theorem oddCofactor_cast {p r : ℕ} (hp : 1 ≤ p)
     simp only [oddCofactor, Nat.cast_add, Nat.cast_mul, Nat.cast_pow, ih, hsub, h]
     rw [pow_add, pow_mul]
     norm_num
-    push_cast
     ring
 
 /-- A prime factor of the cofactor outside p+1 exists, except at (2,3).
