@@ -92,7 +92,9 @@ theorem extension1_fiberCount_real_le_singleton_log
             Real.log (p : ℝ)⌋₊ : ℕ) : ℝ) := hnatR
     _ = (Claims.primeCount r : ℝ) + 1 +
           (⌊Real.log ((X + a + 1 : ℕ) : ℝ) /
-            Real.log (p : ℝ)⌋₊ : ℝ) := by norm_num
+            Real.log (p : ℝ)⌋₊ : ℝ) := by
+      norm_num [Nat.cast_add]
+      <;> ring
     _ ≤ (Claims.primeCount r : ℝ) + 1 +
           Real.log ((X + a + 1 : ℕ) : ℝ) / Real.log (p : ℝ) :=
       add_le_add_left hfloor _
@@ -180,7 +182,8 @@ theorem extension1_singleton_ratio_limsup_le
     cases X with
     | zero => simp
     | succ X =>
-        have hcast : (1 : ℝ) ≤ ((X + 1 : ℕ) : ℝ) := by positivity
+        have hnat : 1 ≤ X + 1 := by omega
+        have hcast : (1 : ℝ) ≤ ((X + 1 : ℕ) : ℝ) := by exact_mod_cast hnat
         exact div_nonneg (Nat.cast_nonneg _) (Real.log_nonneg hcast)
   have hcob : IsCoboundedUnder (· ≤ ·) atTop u :=
     isCoboundedUnder_le_of_le atTop (x := 0) hu0
