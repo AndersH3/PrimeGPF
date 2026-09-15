@@ -91,9 +91,13 @@ theorem extension3_fiber_has_exact_candidate_pair
     have hNmod : N % 2 = 1 := by
       dsimp [N]
       exact odd_product_mod_two h3mod h5mod
-    have hN1 : 1 ≤ N := by
+    -- The quotient-reconstruction helper asks for `1 ≤ N`.  Establish
+    -- strict positivity of the prime-power product first; this is clearer
+    -- and more robust than asking `positivity` to solve a Nat `≤` goal.
+    have hNpos : 0 < N := by
       dsimp [N]
-      positivity
+      exact Nat.mul_pos (pow_pos (by norm_num) α) (pow_pos (by norm_num) β)
+    have hN1 : 1 ≤ N := by omega
     have hdiv : 2 ∣ N - 1 := by
       apply Nat.dvd_of_mod_eq_zero
       omega
@@ -127,9 +131,12 @@ theorem extension4_fiber_has_exact_candidate_pair
   have hNmod : N % 3 = 1 := by
     dsimp [N]
     norm_num [Nat.mul_mod, h2, h5]
-  have hN1 : 1 ≤ N := by
+  -- As above, make positivity of the reconstructed kernel explicit before
+  -- converting it to the non-strict lower bound needed by the quotient helper.
+  have hNpos : 0 < N := by
     dsimp [N]
-    positivity
+    exact Nat.mul_pos (pow_pos (by norm_num) α) (pow_pos (by norm_num) β)
+  have hN1 : 1 ≤ N := by omega
   have hdiv : 3 ∣ N - 1 := by
     apply Nat.dvd_of_mod_eq_zero
     omega
