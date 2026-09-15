@@ -58,15 +58,17 @@ theorem weightedTriangleRow_card_cast_le
   have hcardNat : F.card ≤ R.card := by
     rw [← hcardImage]
     exact Finset.card_le_card himage
+  have hcardNat' : F.card ≤ ⌊(L - (α : ℝ) * u) / v⌋₊ + 1 := by
+    simpa [R] using hcardNat
   have hfloorle :
       (⌊(L - (α : ℝ) * u) / v⌋₊ : ℝ) ≤
         (L - (α : ℝ) * u) / v :=
     Nat.floor_le (div_nonneg hres hv.le)
-  dsimp [F, R] at hcardNat ⊢
+  dsimp [F] at hcardNat' ⊢
   calc
     ((weightedTriangleRow u v L α).card : ℝ)
         ≤ ((⌊(L - (α : ℝ) * u) / v⌋₊ + 1 : ℕ) : ℝ) := by
-          exact_mod_cast hcardNat
+          exact_mod_cast hcardNat'
     _ = (⌊(L - (α : ℝ) * u) / v⌋₊ : ℝ) + 1 := by norm_num
     _ ≤ (L - (α : ℝ) * u) / v + 1 := by linarith
 
