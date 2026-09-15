@@ -21,6 +21,8 @@ For anchor `3` there is no exceptional family.
 -/
 namespace PrimeGPF
 
+/-! ## Candidate images and the actual finite fibers -/
+
 /-- Prime candidate reconstructed from an Extension 3 exponent pair. -/
 def extension3CandidateOutput (e : ℕ × ℕ) : ℕ :=
   (3 ^ e.1 * 5 ^ e.2 - 1) / 2
@@ -65,17 +67,17 @@ theorem extension4FiberInputs_card_eq_fiberCount (X : ℕ) :
     (extension4FiberInputs X).card = Claims.fiberCount .mul 3 5 X := by
   simp [extension4FiberInputs, Claims.fiberCount, mul]
 
+/-! ## From actual fiber inputs to candidate images -/
+
 /-- Every nonexceptional anchor-2 fiber input occurs in the image of the
 candidate exponent pairs.  The exceptional prime `2` is inserted explicitly. -/
 theorem extension3_fiberInputs_subset_insert_candidateOutputs (X : ℕ) :
     extension3FiberInputs X ⊆
       insert 2 (extension3CandidateOutputs X) := by
   intro q hq
-  have hmem := Finset.mem_filter.mp hq
-  have hprime : Nat.Prime q := hmem.2.1
-  have hout : mul 2 q = 5 := hmem.2.2
+  obtain ⟨hrange, hprime, hout⟩ := Finset.mem_filter.mp hq
   have hqX : q ≤ X := by
-    have hrange := Finset.mem_range.mp hmem.1
+    have hqLt : q < X + 1 := Finset.mem_range.mp hrange
     omega
   by_cases hq2 : q = 2
   · exact Finset.mem_insert.mpr (Or.inl hq2)
@@ -92,17 +94,17 @@ pairs. -/
 theorem extension4_fiberInputs_subset_candidateOutputs (X : ℕ) :
     extension4FiberInputs X ⊆ extension4CandidateOutputs X := by
   intro q hq
-  have hmem := Finset.mem_filter.mp hq
-  have hprime : Nat.Prime q := hmem.2.1
-  have hout : mul 3 q = 5 := hmem.2.2
+  obtain ⟨hrange, hprime, hout⟩ := Finset.mem_filter.mp hq
   have hqX : q ≤ X := by
-    have hrange := Finset.mem_range.mp hmem.1
+    have hqLt : q < X + 1 := Finset.mem_range.mp hrange
     omega
   obtain ⟨α, β, hpair, hform⟩ :=
     extension4_fiber_has_exact_candidate_pair hprime hout hqX
   apply Finset.mem_image.mpr
   refine ⟨(α, β), hpair, ?_⟩
   exact hform.symm
+
+/-! ## Cardinality consequences -/
 
 /-- Finite counting bound for Extension 3.  The only loss beyond candidate
 pairs is the exceptional input `q = 2`. -/
@@ -125,7 +127,13 @@ theorem extension3_fiberCount_le_one_add_candidatePairs (X : ℕ) :
         (extension3CandidatePairs X).card := by
     exact Finset.card_image_le
   rw [← extension3FiberInputs_card_eq_fiberCount X]
-  omega
+  calc
+    (extension3FiberInputs X).card
+        ≤ (insert 2 (extension3CandidateOutputs X)).card := hfiber
+    _ ≤ (extension3CandidateOutputs X).card + 1 := hinsert
+    _ ≤ (extension3CandidatePairs X).card + 1 :=
+      Nat.add_le_add_right himage 1
+    _ = 1 + (extension3CandidatePairs X).card := by omega
 
 /-- Finite counting bound for Extension 4.  Here there is no exceptional input,
 so the fiber cardinality is bounded directly by the candidate-pair count. -/
@@ -141,6 +149,8 @@ theorem extension4_fiberCount_le_candidatePairs (X : ℕ) :
     exact Finset.card_image_le
   rw [← extension4FiberInputs_card_eq_fiberCount X]
   exact hfiber.trans himage
+
+/-! ## Real-valued area bounds -/
 
 /-- Combining the finite Extension 3 bridge with the weighted-triangle area
 bound gives an explicit quadratic-logarithmic fiber estimate.  The extra
