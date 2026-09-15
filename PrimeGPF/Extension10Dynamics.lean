@@ -10,8 +10,9 @@ translation with anchor different from 2 moves every prime strictly upward.
 
 The reusable dynamical lemmas are kept separate from the final separation
 statements.  In particular, bounded prime-valued orbits, iteration of a
-semiconjugacy, and repetition along an eventually periodic tail are proved
-once and then used by the final finite-to-one contradiction.
+semiconjugacy, repetition along an eventually periodic tail, and the finite-
+fiber pigeonhole argument are proved once and then assembled in the final
+finite-to-one contradiction.
 -/
 namespace PrimeGPF
 
@@ -157,6 +158,32 @@ theorem orbit_periodic_tail_multiples {α : Type*}
         _ = orbit f x (N + k * d) := hp
         _ = orbit f x N := ih
 
+/-- A sequence lying entirely in one finite fiber of `h` must repeat.
+
+The statement is deliberately independent of dynamics: the final Extension 10
+argument applies it to a subsequence of the exponential orbit whose image has
+become periodic on the homogeneous side. -/
+theorem finite_fiber_sequence_repeats {α β : Type*}
+    (h : α → β) (y : β)
+    (hfinite : Set.Finite {x : α | h x = y})
+    (z : ℕ → α) (hz : ∀ k, h (z k) = y) :
+    ∃ i j : ℕ, i < j ∧ z i = z j := by
+  classical
+  let S : Finset α := hfinite.toFinset
+  obtain ⟨i, _, j, _, hne, heq⟩ :=
+    Finset.exists_ne_map_eq_of_card_lt_of_maps_to
+      (s := Finset.range (S.card + 1))
+      (t := S)
+      (f := z)
+      (by simp)
+      (by
+        intro k hk
+        apply hfinite.mem_toFinset.mpr
+        exact hz k)
+  rcases lt_or_gt_of_ne hne with hij | hji
+  · exact ⟨i, j, hij, heq⟩
+  · exact ⟨j, i, hji, heq.symm⟩
+
 /-- For an exponential anchor different from 2, every point moves strictly
 upward. -/
 theorem exp_left_strict_growth (a : Prime) (ha2 : a.val ≠ 2) (q : Prime) :
@@ -209,26 +236,14 @@ theorem extension10_no_finite_to_one_exp_to_homogeneous
       h (orbit E x (N + k * d)) = orbit H (h x) (N + k * d) := hiter _
       _ = orbit H (h x) N := hcycle k
       _ = y := rfl
-  let S : Finset Prime := (hfinite y).toFinset
-  obtain ⟨i, _, j, _, hij, heq⟩ :=
-    Finset.exists_ne_map_eq_of_card_lt_of_maps_to
-      (s := Finset.range (S.card + 1))
-      (t := S)
-      (f := fun k => orbit E x (N + k * d))
-      (by simp)
-      (by
-        intro k hk
-        apply (hfinite y).mem_toFinset.mpr
-        exact hfiber k)
+  obtain ⟨i, j, hij, heq⟩ :=
+    finite_fiber_sequence_repeats h y (hfinite y)
+      (fun k => orbit E x (N + k * d)) hfiber
   have hmono : StrictMono (fun n => (orbit E x n).val) := by
     simpa [E] using (proof_8_5.1 a ha2).2.1 x
+  have hidx : N + i * d < N + j * d :=
+    Nat.add_lt_add_left (Nat.mul_lt_mul_of_pos_right hij hd) N
   have heval := congrArg Subtype.val heq
-  rcases lt_or_gt_of_ne hij with hij' | hji'
-  · have hidx : N + i * d < N + j * d :=
-      Nat.add_lt_add_left (Nat.mul_lt_mul_of_pos_right hij' hd) N
-    exact (ne_of_lt (hmono hidx)) heval
-  · have hidx : N + j * d < N + i * d :=
-      Nat.add_lt_add_left (Nat.mul_lt_mul_of_pos_right hji' hd) N
-    exact (ne_of_lt (hmono hidx)) heval.symm
+  exact (ne_of_lt (hmono hidx)) heval
 
 end PrimeGPF
