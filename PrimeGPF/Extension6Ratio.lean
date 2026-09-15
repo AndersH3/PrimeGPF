@@ -4,10 +4,10 @@ import PrimeGPF.Extension6Cutoff
 # Extension 6: asymptotic image ratio
 
 This file closes the passage from the finite image bound (equation (9)) to the
-upper-density statement (equation (10)).  We state the result in the robust
-filter form: for every positive epsilon, the normalized image cardinality is
-eventually at most `2^{-k} + epsilon`.  This is exactly the corresponding
-upper-limsup bound.
+upper-density statement (equation (10)).  We first prove a robust filter form:
+for every positive epsilon, the normalized image cardinality is eventually at
+most `2^{-k} + epsilon`, and then package it as the literal limsup inequality
+stated in the report.
 -/
 namespace PrimeGPF
 
@@ -128,5 +128,39 @@ theorem extension6_image_ratio_eventually_le
             exact add_le_add_right hratioLe _
     _ < (1 : ℝ) / m + ε := hUpper
     _ = (1 : ℝ) / (2 ^ k : ℕ) + ε := by rfl
+
+/-- Equation (10) exactly as a limsup bound. -/
+theorem extension6_image_ratio_limsup_le
+    {a k : ℕ} (ha : Nat.Prime a) :
+    limsup
+      (fun X : ℕ =>
+        ((iteratedExpValuesUpTo a k X).card : ℝ) /
+          (Claims.primeCount X : ℝ))
+      atTop ≤ (1 : ℝ) / (2 ^ k : ℕ) := by
+  let u : ℕ → ℝ := fun X =>
+    ((iteratedExpValuesUpTo a k X).card : ℝ) /
+      (Claims.primeCount X : ℝ)
+  have hcob : IsCoboundedUnder (· ≤ ·) atTop u := by
+    exact isCoboundedUnder_le_of_le atTop (fun X => by
+      dsimp [u]
+      positivity)
+  have hbound : IsBoundedUnder (· ≤ ·) atTop u := by
+    apply isBoundedUnder_of_eventually_le
+    simpa [u] using
+      (extension6_image_ratio_eventually_le (a := a) (k := k) ha
+        (ε := (1 : ℝ)) (by norm_num))
+  rw [limsup_le_iff' hcob hbound]
+  intro y hy
+  have hε : 0 < y - (1 : ℝ) / (2 ^ k : ℕ) := sub_pos.mpr hy
+  have hev :=
+    extension6_image_ratio_eventually_le (a := a) (k := k) ha hε
+  filter_upwards [hev] with X hX
+  dsimp [u]
+  calc
+    ((iteratedExpValuesUpTo a k X).card : ℝ) /
+          (Claims.primeCount X : ℝ)
+        ≤ (1 : ℝ) / (2 ^ k : ℕ) +
+            (y - (1 : ℝ) / (2 ^ k : ℕ)) := hX
+    _ = y := by ring
 
 end PrimeGPF
