@@ -14,17 +14,33 @@ Möbius/lattice-counting layer.
 namespace PrimeGPF
 open Claims
 
+/-- The only primes at most five are `2`, `3`, and `5`. -/
+lemma claims_primeCount_five : Claims.primeCount 5 = 3 := by
+  classical
+  rw [Claims.primeCount]
+  have hset :
+      (Finset.range 6).filter Nat.Prime = ({2, 3, 5} : Finset ℕ) := by
+    ext p
+    simp only [Finset.mem_filter, Finset.mem_range, Finset.mem_insert,
+      Finset.mem_singleton]
+    constructor
+    · rintro ⟨hp6, hp⟩
+      interval_cases p <;> norm_num at hp ⊢
+    · rintro (rfl | rfl | rfl) <;> norm_num
+  rw [hset]
+  norm_num
+
 lemma extension3_allowedPrimeCount :
     extension2AllowedPrimeCount 2 5 = 2 := by
   rw [extension2_allowedPrimeCount_eq_primeCount_sub_one
-    (a := 2) (r := 5) (by norm_num) (by norm_num)]
-  norm_num [Claims.primeCount]
+    (a := 2) (r := 5) (by norm_num) (by norm_num), claims_primeCount_five]
+  norm_num
 
 lemma extension4_allowedPrimeCount :
     extension2AllowedPrimeCount 3 5 = 2 := by
   rw [extension2_allowedPrimeCount_eq_primeCount_sub_one
-    (a := 3) (r := 5) (by norm_num) (by norm_num)]
-  norm_num [Claims.primeCount]
+    (a := 3) (r := 5) (by norm_num) (by norm_num), claims_primeCount_five]
+  norm_num
 
 /-- Non-sharp degree-two bound for the output-5 multiplicative fiber at anchor
 2. -/
