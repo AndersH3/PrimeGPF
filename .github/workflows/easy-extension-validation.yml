@@ -10,6 +10,7 @@ on:
       - 'PrimeGPF/Extension34Structure.lean'
       - 'PrimeGPF/Extension7Core.lean'
       - 'PrimeGPF/Extension17Support.lean'
+      - 'PrimeGPF/ExtensionPrimeCount.lean'
       - 'PrimeGPF/Extension8Corollary.lean'
       - 'PrimeGPF/Extension10Dynamics.lean'
       - 'PrimeGPF/Extension9Revised.lean'
@@ -20,7 +21,7 @@ permissions:
 jobs:
   lean-easy:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 40
     steps:
       - uses: actions/checkout@v4
       - name: Install elan
@@ -55,6 +56,9 @@ jobs:
       - name: Compile restricted support lemmas
         if: always()
         run: lake env lean PrimeGPF/Extension17Support.lean
+      - name: Build prime-count normalization
+        if: always()
+        run: lake build PrimeGPF.ExtensionPrimeCount
       - name: Compile extension 8 corollary
         if: always()
         run: lake env lean PrimeGPF/Extension8Corollary.lean
