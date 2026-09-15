@@ -21,6 +21,9 @@ on:
   workflow_dispatch:
 permissions:
   contents: read
+concurrency:
+  group: easy-extension-${{ github.ref }}
+  cancel-in-progress: true
 jobs:
   lean-easy:
     runs-on: ubuntu-latest
