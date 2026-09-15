@@ -13,6 +13,7 @@ on:
       - 'PrimeGPF/Extension34WeightedPairs.lean'
       - 'PrimeGPF/Extension34CandidatePairs.lean'
       - 'PrimeGPF/Extension34CandidateCounting.lean'
+      - 'PrimeGPF/Extension34FiberCounting.lean'
       - 'PrimeGPF/Extension7Limit.lean'
       - '.github/workflows/analytic-helper-validation.yml'
   workflow_dispatch:
@@ -62,6 +63,9 @@ jobs:
       - name: Build Extension 3/4 candidate counting
         if: always()
         run: lake build PrimeGPF.Extension34CandidateCounting
+      - name: Build Extension 3/4 fiber counting bridge
+        if: always()
+        run: lake build PrimeGPF.Extension34FiberCounting
       - name: Build extension 7 limit theorem
         if: always()
         run: lake build PrimeGPF.Extension7Limit
