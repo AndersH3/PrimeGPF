@@ -1,5 +1,8 @@
 name: Weighted triangle lower-bound validation
 
+# This focused workflow guards the two-sided lattice/area estimate used by the
+# later signed Möbius summation.  Keep it separate from the broader analytic
+# workflow so regressions in the floor-sum algebra are easy to isolate.
 on:
   push:
     branches: [extensions-5-6-8-9-10-20260915]
