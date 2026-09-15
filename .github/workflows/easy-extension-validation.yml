@@ -48,21 +48,24 @@ jobs:
         run: lake build PrimeGPF.Extensions
       - name: Build extension 1 core
         run: lake build PrimeGPF.Extension1Core
-      - name: Compile extension 1 finite bound
+      - name: Build restricted support lemmas
         if: always()
-        run: lake env lean PrimeGPF/Extension1Finite.lean
+        run: lake build PrimeGPF.Extension17Support
+      - name: Build extension 1 finite bound
+        if: always()
+        run: lake build PrimeGPF.Extension1Finite
       - name: Build extension 2 core
         if: always()
         run: lake build PrimeGPF.Extension2Core
-      - name: Compile extension 2 support
+      - name: Build extension 2 support
         if: always()
-        run: lake env lean PrimeGPF/Extension2Support.lean
-      - name: Compile extension 2 primitive families
+        run: lake build PrimeGPF.Extension2Support
+      - name: Build extension 2 primitive families
         if: always()
-        run: lake env lean PrimeGPF/Extension2Primitive.lean
-      - name: Compile extension 2 nonprimitive count
+        run: lake build PrimeGPF.Extension2Primitive
+      - name: Build extension 2 nonprimitive count
         if: always()
-        run: lake env lean PrimeGPF/Extension2NonprimitiveCount.lean
+        run: lake build PrimeGPF.Extension2NonprimitiveCount
       - name: Build revised extension 9 helpers
         if: always()
         run: lake build PrimeGPF.Extension9Revised
@@ -84,18 +87,15 @@ jobs:
       - name: Build extension 4 coprimality
         if: always()
         run: lake build PrimeGPF.Extension4Coprime
-      - name: Compile exact extension 3 and 4 classifications
+      - name: Build exact extension 3 and 4 classifications
         if: always()
-        run: lake env lean PrimeGPF/Extension34Exact.lean
+        run: lake build PrimeGPF.Extension34Exact
       - name: Build extension 7 core
         if: always()
         run: lake build PrimeGPF.Extension7Core
-      - name: Compile extension 7 finite bound
+      - name: Build extension 7 finite bound
         if: always()
-        run: lake env lean PrimeGPF/Extension7Finite.lean
-      - name: Compile restricted support lemmas
-        if: always()
-        run: lake env lean PrimeGPF/Extension17Support.lean
+        run: lake build PrimeGPF.Extension7Finite
       - name: Build prime-count normalization
         if: always()
         run: lake build PrimeGPF.ExtensionPrimeCount
