@@ -83,6 +83,40 @@ theorem extension4RestrictedBoxBound_exact (x : ℕ) :
   simp [extension2RestrictedBoxBound, extension4_allowedPrimes,
     mul_comm, mul_left_comm, mul_assoc]
 
+/-- Explicit finite rectangular-box bound for the anchor-2, output-5 fiber. -/
+theorem extension3_fiberCount_le_exact_log_box (X : ℕ) :
+    Claims.fiberCount .mul 2 5 X ≤
+      (1 + ⌊Real.log ((2 * X + 1 : ℕ) : ℝ) / Real.log (3 : ℝ)⌋₊) *
+      (1 + ⌊Real.log ((2 * X + 1 : ℕ) : ℝ) / Real.log (5 : ℝ)⌋₊) := by
+  calc
+    Claims.fiberCount .mul 2 5 X
+        ≤ mulRestrictedSmoothCount 2 5 (2 * X + 1) :=
+      extension2_fiberCount_le_mulRestrictedSmoothCount
+        (r := 5) (X := X) (by norm_num)
+    _ ≤ extension2RestrictedBoxBound 2 5 (2 * X + 1) :=
+      mulRestrictedSmoothCount_le_extension2RestrictedBoxBound
+        2 5 (2 * X + 1)
+    _ = (1 + ⌊Real.log ((2 * X + 1 : ℕ) : ℝ) / Real.log (3 : ℝ)⌋₊) *
+        (1 + ⌊Real.log ((2 * X + 1 : ℕ) : ℝ) / Real.log (5 : ℝ)⌋₊) :=
+      extension3RestrictedBoxBound_exact (2 * X + 1)
+
+/-- Explicit finite rectangular-box bound for the anchor-3, output-5 fiber. -/
+theorem extension4_fiberCount_le_exact_log_box (X : ℕ) :
+    Claims.fiberCount .mul 3 5 X ≤
+      (1 + ⌊Real.log ((3 * X + 1 : ℕ) : ℝ) / Real.log (2 : ℝ)⌋₊) *
+      (1 + ⌊Real.log ((3 * X + 1 : ℕ) : ℝ) / Real.log (5 : ℝ)⌋₊) := by
+  calc
+    Claims.fiberCount .mul 3 5 X
+        ≤ mulRestrictedSmoothCount 3 5 (3 * X + 1) :=
+      extension2_fiberCount_le_mulRestrictedSmoothCount
+        (r := 5) (X := X) (by norm_num)
+    _ ≤ extension2RestrictedBoxBound 3 5 (3 * X + 1) :=
+      mulRestrictedSmoothCount_le_extension2RestrictedBoxBound
+        3 5 (3 * X + 1)
+    _ = (1 + ⌊Real.log ((3 * X + 1 : ℕ) : ℝ) / Real.log (2 : ℝ)⌋₊) *
+        (1 + ⌊Real.log ((3 * X + 1 : ℕ) : ℝ) / Real.log (5 : ℝ)⌋₊) :=
+      extension4RestrictedBoxBound_exact (3 * X + 1)
+
 /-- Non-sharp degree-two bound for the output-5 multiplicative fiber at anchor
 2. -/
 theorem extension3_fiberCount_real_le_log_sq
