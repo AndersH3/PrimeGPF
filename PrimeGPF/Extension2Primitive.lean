@@ -75,12 +75,13 @@ theorem extension2_nonprimitive_power_base
   have hu2 : 2 ≤ u := by
     by_contra hnu
     have hu1 : u ≤ 1 := by omega
-    have hg0 : g ≠ 0 := by omega
-    interval_cases u
-    · simp [hg0] at hpow
-    · have hmulpos : 0 < a * q := Nat.mul_pos ha.pos hq.pos
-      simp at hpow
+    have hkernel2 : 2 ≤ a * q + 1 := by
+      have hmulpos : 0 < a * q := Nat.mul_pos ha.pos hq.pos
       omega
+    have hupow_le : u ^ g ≤ 1 := by
+      simpa using Nat.pow_le_pow_left hu1 g
+    rw [← hpow] at hkernel2
+    omega
   have hsqle : u ^ 2 ≤ u ^ g := by
     exact Nat.pow_le_pow_right (by omega : 0 < u) hg
   have hqSq : a * q + 1 < q ^ 2 := by
