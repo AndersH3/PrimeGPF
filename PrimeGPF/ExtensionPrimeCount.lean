@@ -6,16 +6,23 @@ import PrimeGPF.Statements
 # Prime-count normalization for extension asymptotics
 
 This packages the already-formalized PNT into the exact `Claims.primeCount`
-convention used by the extension report.
+convention used by the extension report.  The small interface lemmas below
+make the conversion between the repository's range-filter representation,
+`Finset.Iic`, and Mathlib's standard `Nat.primeCounting` explicit so later
+asymptotic proofs do not repeat representation bookkeeping.
 -/
 namespace PrimeGPF
 open Filter Finset Real Asymptotics
 open scoped Topology
 
+/-- The finite set of primes at most `N`, using the same range convention as
+`Claims.primeCount`. -/
 noncomputable def extensionPrimeSet (N : ℕ) : Finset ℕ := by
   classical
   exact (Finset.range (N + 1)).filter Nat.Prime
 
+/-- The range-filter representation of primes up to `N` agrees with filtering
+the finite interval `Iic N`. -/
 lemma extensionPrimeSet_eq_Iic (N : ℕ) :
     extensionPrimeSet N = (Finset.Iic N).filter Nat.Prime := by
   classical
@@ -23,11 +30,13 @@ lemma extensionPrimeSet_eq_Iic (N : ℕ) :
   simp [extensionPrimeSet]
   omega
 
+/-- Cardinality of `extensionPrimeSet` is exactly the project's prime-count
+function. -/
 lemma extensionPrimeSet_card (N : ℕ) :
     (extensionPrimeSet N).card = Claims.primeCount N := by
   simp [extensionPrimeSet, Claims.primeCount]
 
-/-- The project's prime-count function is exactly mathlib's standard `π`. -/
+/-- The project's prime-count function is exactly Mathlib's standard `π`. -/
 theorem claims_primeCount_eq_primeCounting (N : ℕ) :
     Claims.primeCount N = Nat.primeCounting N := by
   simp [Claims.primeCount, Nat.primeCounting, Nat.primeCounting',
