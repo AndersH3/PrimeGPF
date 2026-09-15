@@ -1,7 +1,22 @@
 import PrimeGPF.Extension4Odd
+import PrimeGPF.Extension34PrimitiveHelpers
 
 /-!
 # Extension 4: coprimality of the exponent vector
+
+This module proves the primitive-exponent condition for the anchor-3/output-5
+classification.
+
+As in Extension 3, the proof is split cleanly:
+
+1. assume `g = gcd α β > 1` and write the kernel as `t^g`;
+2. use oddness of `α` and `β` to show the reduced exponents remain odd, hence
+   `t ≡ 1 (mod 3)`;
+3. invoke the generic proper-power contradiction from
+   `Extension34PrimitiveHelpers`.
+
+The final geometric-series/primality argument is therefore shared with
+Extension 3 rather than duplicated here.
 -/
 namespace PrimeGPF
 
@@ -49,6 +64,9 @@ theorem extension4_exponents_coprime
   have hBpos : 0 < B := by
     dsimp [B]
     exact Nat.div_pos (Nat.le_of_dvd hβpos hgβ) hgpos
+
+  -- Since `α = A*g` and `α` is odd, `A` must itself be odd.  The same
+  -- argument applies to `B` using oddness of `β`.
   have hAodd : A % 2 = 1 := by
     rcases Nat.mod_two_eq_zero_or_one A with hzero | hone
     · have h2A : 2 ∣ A := Nat.dvd_of_mod_eq_zero hzero
@@ -93,6 +111,8 @@ theorem extension4_exponents_coprime
       _ = (2 ^ A * 5 ^ B) ^ g := by rw [mul_pow]
       _ = t ^ g := rfl
 
+  -- `t ≡ 1 (mod 3)` makes `(t-1)/3` integral; `t ≥ 10` makes it
+  -- nontrivial.  The shared helper then contradicts primality of `q`.
   have htminus_three : 3 ∣ t - 1 := by
     apply Nat.dvd_of_mod_eq_zero
     omega
@@ -101,33 +121,13 @@ theorem extension4_exponents_coprime
     dsimp [d]
     exact Nat.mul_div_cancel' htminus_three
   have hdgt1 : 1 < d := by omega
+  have hdquot : 1 < (t - 1) / 3 := by
+    simpa [d] using hdgt1
 
-  have hpowminus : t ^ g - 1 = 3 * q := by omega
-  have hgeom : t - 1 ∣ t ^ g - 1 := by
-    let S := ∑ i ∈ Finset.range g, t ^ i
-    refine ⟨S, ?_⟩
-    have hsum := geom_sum_mul_of_one_le (show 1 ≤ t by omega) g
-    dsimp [S]
-    calc
-      t ^ g - 1 = (∑ i ∈ Finset.range g, t ^ i) * (t - 1) := hsum.symm
-      _ = (t - 1) * (∑ i ∈ Finset.range g, t ^ i) := by ring
-  rw [← h3d, hpowminus] at hgeom
-  have hdq : d ∣ q :=
-    Nat.dvd_of_mul_dvd_mul_left (by omega : 0 < (3 : ℕ)) hgeom
-  rcases (Nat.dvd_prime hq).mp hdq with hd1 | hdqeq
-  · omega
-  · have h3q : 3 * q = t - 1 := by simpa [hdqeq] using h3d
-    have ht1 : 1 ≤ t := by omega
-    have hsubadd : t - 1 + 1 = t := Nat.sub_add_cancel ht1
-    have htg : t ^ g = t := by omega
-    have htgt1 : 1 < t := by omega
-    have htlt : t < t ^ g := by
-      calc
-        t = t ^ 1 := by simp
-        _ < t ^ g := Nat.pow_lt_pow_right htgt1 (by omega)
-    exact htlt.ne htg.symm
+  exact prime_kernel_not_proper_power
+    hq (by norm_num) hg2 (by omega) htminus_three hdquot hkernelpow
 
-/-- Applied directly to the output-5 extension-4 fiber. -/
+/-- Applied directly to the output-5 Extension-4 fiber. -/
 theorem extension4_output_five_primitive_structure
     {q : ℕ} (hq : Nat.Prime q) (hout : mul 3 q = 5) :
     ∃ α β : ℕ,
