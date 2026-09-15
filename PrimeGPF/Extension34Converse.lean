@@ -24,17 +24,13 @@ theorem gpf_prime_pow_mul_five_pow
     {p α β : ℕ} (hp : Nat.Prime p) (hp5 : p < 5) (hβ : 0 < β) :
     gpf (p ^ α * 5 ^ β) = 5 := by
   have hn : 1 < p ^ α * 5 ^ β := by
-    have h5 : 5 ≤ 5 ^ β := by
-      obtain ⟨k, rfl⟩ := Nat.exists_eq_succ_of_ne_zero (by omega : β ≠ 0)
-      rw [pow_succ]
-      have hk : 1 ≤ 5 ^ k := one_le_pow₀ (by norm_num)
-      nlinarith
-    have hpbase : 1 ≤ p := by omega
-    have hp1 : 1 ≤ p ^ α := one_le_pow₀ hpbase
-    nlinarith
+    have h5pow : 1 < 5 ^ β :=
+      one_lt_pow₀ (by norm_num) (Nat.ne_of_gt hβ)
+    have hpPowPos : 0 < p ^ α := pow_pos hp.pos α
+    exact h5pow.trans_le (Nat.le_mul_of_pos_left _ hpPowPos)
   apply gpf_eq_of_spec hn
   refine ⟨Nat.prime_five, ?_, ?_⟩
-  · obtain ⟨k, rfl⟩ := Nat.exists_eq_succ_of_ne_zero (by omega : β ≠ 0)
+  · obtain ⟨k, rfl⟩ := Nat.exists_eq_succ_of_ne_zero (Nat.ne_of_gt hβ)
     rw [pow_succ]
     exact dvd_mul_of_dvd_right (dvd_mul_left 5 (5 ^ k)) (p ^ α)
   · intro s hs hd
