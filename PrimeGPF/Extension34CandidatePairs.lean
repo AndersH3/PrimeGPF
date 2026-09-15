@@ -73,21 +73,21 @@ theorem extension3_fiber_has_exact_candidate_pair
   rcases (extension3_exact_classification hq).mp hout with hqeq | hpair
   · exact (hq2 hqeq).elim
   · obtain ⟨α, β, hα, hβ, hodd, hcop, hqform⟩ := hpair
+    let N := 3 ^ α * 5 ^ β
+    have hNmod : N % 2 = 1 := by
+      dsimp [N]
+      simp [Nat.mul_mod]
+    have hdec := Nat.mod_add_div N 2
+    have hsub : N - 1 = 2 * (N / 2) := by omega
+    have hdiv : 2 ∣ N - 1 := by
+      rw [hsub]
+      exact dvd_mul_right 2 (N / 2)
+    have hqmul : q * 2 = N - 1 := by
+      rw [hqform]
+      exact Nat.div_mul_cancel hdiv
+    have hqpos : 0 < q := hq.pos
     have hfac : 2 * q + 1 = 3 ^ α * 5 ^ β := by
-      let N := 3 ^ α * 5 ^ β
-      have hdiv : 2 ∣ N - 1 := by
-        apply Nat.dvd_of_mod_eq_zero
-        have h3odd : 3 ^ α % 2 = 1 := by simp [Nat.pow_mod]
-        have h5odd : 5 ^ β % 2 = 1 := by simp [Nat.pow_mod]
-        dsimp [N]
-        norm_num [Nat.mul_mod, h3odd, h5odd]
-      have hqmul : q * 2 = N - 1 := by
-        rw [hqform]
-        exact Nat.div_mul_cancel hdiv
-      have hN1 : 1 ≤ N := by
-        dsimp [N]
-        positivity
-      dsimp [N] at hqmul hN1 ⊢
+      dsimp [N] at hqmul ⊢
       omega
     have hweighted := extension3_exponents_weighted_le hfac hqX
     exact ⟨α, β,
@@ -105,22 +105,24 @@ theorem extension4_fiber_has_exact_candidate_pair
       q = (2 ^ α * 5 ^ β - 1) / 3 := by
   obtain ⟨α, β, hα, hβ, hαodd, hβodd, hcop, hqform⟩ :=
     (extension4_exact_classification hq).mp hout
+  let N := 2 ^ α * 5 ^ β
+  have h2 : 2 ^ α % 3 = 2 := extension_two_pow_mod_three_of_odd hαodd
+  have h5 : 5 ^ β % 3 = 2 := by
+    simpa [Nat.pow_mod] using extension_two_pow_mod_three_of_odd hβodd
+  have hNmod : N % 3 = 1 := by
+    dsimp [N]
+    norm_num [Nat.mul_mod, h2, h5]
+  have hdec := Nat.mod_add_div N 3
+  have hsub : N - 1 = 3 * (N / 3) := by omega
+  have hdiv : 3 ∣ N - 1 := by
+    rw [hsub]
+    exact dvd_mul_right 3 (N / 3)
+  have hqmul : q * 3 = N - 1 := by
+    rw [hqform]
+    exact Nat.div_mul_cancel hdiv
+  have hqpos : 0 < q := hq.pos
   have hfac : 3 * q + 1 = 2 ^ α * 5 ^ β := by
-    let N := 2 ^ α * 5 ^ β
-    have hdiv : 3 ∣ N - 1 := by
-      apply Nat.dvd_of_mod_eq_zero
-      have h2 : 2 ^ α % 3 = 2 := extension_two_pow_mod_three_of_odd hαodd
-      have h5 : 5 ^ β % 3 = 2 := by
-        simpa [Nat.pow_mod] using extension_two_pow_mod_three_of_odd hβodd
-      dsimp [N]
-      norm_num [Nat.mul_mod, h2, h5]
-    have hqmul : q * 3 = N - 1 := by
-      rw [hqform]
-      exact Nat.div_mul_cancel hdiv
-    have hN1 : 1 ≤ N := by
-      dsimp [N]
-      positivity
-    dsimp [N] at hqmul hN1 ⊢
+    dsimp [N] at hqmul ⊢
     omega
   have hweighted := extension4_exponents_weighted_le hfac hqX
   exact ⟨α, β,
