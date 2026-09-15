@@ -27,6 +27,17 @@ lemma extensionPrimeSet_card (N : ℕ) :
     (extensionPrimeSet N).card = Claims.primeCount N := by
   simp [extensionPrimeSet, Claims.primeCount]
 
+/-- The project's prime-count function is exactly mathlib's standard `π`. -/
+theorem claims_primeCount_eq_primeCounting (N : ℕ) :
+    Claims.primeCount N = Nat.primeCounting N := by
+  simp [Claims.primeCount, Nat.primeCounting, Nat.primeCounting',
+    Nat.count_eq_card_filter_range]
+
+/-- Hence the project prime count tends to infinity. -/
+theorem tendsto_claims_primeCount :
+    Tendsto Claims.primeCount atTop atTop := by
+  simpa only [claims_primeCount_eq_primeCounting] using Nat.tendsto_primeCounting
+
 /-- The Chebyshev/PNT theorem restricted to natural cutoffs. -/
 theorem extension_prime_weighted_limit :
     Tendsto
@@ -45,7 +56,12 @@ theorem extension_prime_weighted_limit :
   have hnat := hreal.comp
     (tendsto_natCast_atTop_atTop :
       Tendsto (fun N : ℕ => (N : ℝ)) atTop atTop)
-  simpa [Function.comp_apply, Nat.floor_natCast, extensionPrimeSet_eq_Iic] using hnat
+  change Tendsto
+    (fun N : ℕ =>
+      (∑ p ∈ (Finset.Iic ⌊(N : ℝ)⌋₊).filter Nat.Prime, Real.log p) /
+        (N : ℝ))
+    atTop (𝓝 1) at hnat
+  simpa [Nat.floor_natCast, extensionPrimeSet_eq_Iic] using hnat
 
 /-- PNT in the exact normalization used throughout the extension report. -/
 theorem extension_primeCount_log_limit :
