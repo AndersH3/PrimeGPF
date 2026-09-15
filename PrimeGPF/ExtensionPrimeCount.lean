@@ -33,11 +33,6 @@ theorem claims_primeCount_eq_primeCounting (N : ℕ) :
   simp [Claims.primeCount, Nat.primeCounting, Nat.primeCounting',
     Nat.count_eq_card_filter_range]
 
-/-- Hence the project prime count tends to infinity. -/
-theorem tendsto_claims_primeCount :
-    Tendsto Claims.primeCount atTop atTop := by
-  simpa only [claims_primeCount_eq_primeCounting] using Nat.tendsto_primeCounting
-
 /-- The Chebyshev/PNT theorem restricted to natural cutoffs. -/
 theorem extension_prime_weighted_limit :
     Tendsto
