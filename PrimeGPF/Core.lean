@@ -2,7 +2,7 @@ import Mathlib
 
 /-!
 Definitions 2.1–2.4 and elementary GPF infrastructure.
-STATUS: proof scripts written, NOT compiled in the authoring environment.
+STATUS: compiler-checked as part of the PrimeGPF library build.
 The finite scan is deliberately simple, executable, and independent of a
 particular mathlib greatest-prime-factor API. It is not a fast factorizer.
 GPF(0)=GPF(1)=0 is a totalization only; substantive GPF lemmas require n>1.
@@ -130,7 +130,7 @@ theorem power_of_prime_support (r n : ℕ) (hr : Nat.Prime r)
   induction n using Nat.strong_induction_on with
   | h n ih =>
     by_cases he : n = 1
-    · exact ⟨0, by simpa [he]⟩
+    · exact ⟨0, by simp [he]⟩
     obtain ⟨s, hs, hd⟩ := Nat.exists_prime_and_dvd he
     have hsr := h s hs hd
     subst s
