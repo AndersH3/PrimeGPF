@@ -130,7 +130,7 @@ theorem extension6_image_ratio_eventually_le
             (Claims.primeCount (m * C X) : ℝ) +
           (1 : ℝ) / (Claims.primeCount X : ℝ) := by
             exact add_le_add_right hratioLe _
-    _ < (1 : ℝ) / m + ε := hUpper
+    _ ≤ (1 : ℝ) / m + ε := hUpper.le
     _ = (1 : ℝ) / (2 ^ k : ℕ) + ε := by rfl
 
 /-- Equation (10) exactly as a limsup bound. -/
