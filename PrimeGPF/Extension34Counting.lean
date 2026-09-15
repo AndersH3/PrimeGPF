@@ -34,13 +34,11 @@ lemma extension3_allowedPrimeCount :
     extension2AllowedPrimeCount 2 5 = 2 := by
   rw [extension2_allowedPrimeCount_eq_primeCount_sub_one
     (a := 2) (r := 5) (by norm_num) (by norm_num), claims_primeCount_five]
-  norm_num
 
 lemma extension4_allowedPrimeCount :
     extension2AllowedPrimeCount 3 5 = 2 := by
   rw [extension2_allowedPrimeCount_eq_primeCount_sub_one
     (a := 3) (r := 5) (by norm_num) (by norm_num), claims_primeCount_five]
-  norm_num
 
 /-- Non-sharp degree-two bound for the output-5 multiplicative fiber at anchor
 2. -/
