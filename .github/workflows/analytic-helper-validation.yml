@@ -8,7 +8,14 @@ on:
       - 'PrimeGPF/WeightedTriangle.lean'
       - 'PrimeGPF/WeightedTriangleRows.lean'
       - 'PrimeGPF/WeightedTriangleArea.lean'
+      - 'PrimeGPF/Extension34Residues.lean'
       - 'PrimeGPF/Extension34ResidueHelpers.lean'
+      - 'PrimeGPF/Extension34Structure.lean'
+      - 'PrimeGPF/Extension4Odd.lean'
+      - 'PrimeGPF/Extension34PrimitiveHelpers.lean'
+      - 'PrimeGPF/Extension3Coprime.lean'
+      - 'PrimeGPF/Extension4Coprime.lean'
+      - 'PrimeGPF/Extension34Converse.lean'
       - 'PrimeGPF/Extension34Exact.lean'
       - 'PrimeGPF/Extension34WeightedPairs.lean'
       - 'PrimeGPF/Extension34CandidatePairs.lean'
@@ -48,6 +55,24 @@ jobs:
       - name: Build weighted triangle area bound
         if: always()
         run: lake build PrimeGPF.WeightedTriangleArea
+      - name: Build Extension 3/4 support structure
+        if: always()
+        run: lake build PrimeGPF.Extension34Structure
+      - name: Build Extension 4 odd-exponent reduction
+        if: always()
+        run: lake build PrimeGPF.Extension4Odd
+      - name: Build Extension 3/4 primitive helper
+        if: always()
+        run: lake build PrimeGPF.Extension34PrimitiveHelpers
+      - name: Build Extension 3 coprimality
+        if: always()
+        run: lake build PrimeGPF.Extension3Coprime
+      - name: Build Extension 4 coprimality
+        if: always()
+        run: lake build PrimeGPF.Extension4Coprime
+      - name: Build Extension 3/4 converse
+        if: always()
+        run: lake build PrimeGPF.Extension34Converse
       - name: Build Extension 3/4 residue helpers
         if: always()
         run: lake build PrimeGPF.Extension34ResidueHelpers
