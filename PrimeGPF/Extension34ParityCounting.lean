@@ -22,12 +22,12 @@ namespace PrimeGPF
 open PrimeGPF.Analytic
 
 /-- Shifted cutoff after writing the odd Extension-3 exponent as `2m+1`. -/
-def extension3ParityCutoff (X : ℕ) : ℝ :=
+noncomputable def extension3ParityCutoff (X : ℕ) : ℝ :=
   Real.log ((2 * X + 1 : ℕ) : ℝ) - Real.log 3
 
 /-- Shifted cutoff after writing both odd Extension-4 exponents as
 `2m+1, 2n+1`. -/
-def extension4ParityCutoff (X : ℕ) : ℝ :=
+noncomputable def extension4ParityCutoff (X : ℕ) : ℝ :=
   Real.log ((3 * X + 1 : ℕ) : ℝ) - Real.log 2 - Real.log 5
 
 /-- Parity-reduced ambient triangle for Extension 3. -/
