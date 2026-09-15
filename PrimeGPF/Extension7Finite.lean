@@ -20,7 +20,7 @@ noncomputable def extension7CollisionCount (a X : ℕ) : ℕ :=
 
 /-- Every collision input at most `R_a` is among the primes at most `R_a`. -/
 theorem extension7_low_collision_count_le_primeCount
-    {a X : ℕ} (ha : Nat.Prime a) :
+    {a X : ℕ} (_ha : Nat.Prime a) :
     ((extension7CollisionInputs a X).filter
       (fun q => q ≤ gpf (a ^ 2 + a - 1))).card
       ≤ Claims.primeCount (gpf (a ^ 2 + a - 1)) := by
@@ -60,6 +60,7 @@ theorem extension7_high_collision_count_le_smoothCount
     apply Finset.mem_filter.mpr
     refine ⟨?_, hsmooth⟩
     apply Finset.mem_range.mpr
+    dsimp [code]
     omega
 
   have hcode_inj : Function.Injective code := by
@@ -102,14 +103,20 @@ theorem extension7_collisionCount_le_primeCount_add_smoothCount
   let H := C.filter (fun q => ¬ q ≤ R)
   have hsplit : L.card + H.card = C.card := by
     dsimp [L, H]
-    exact Finset.filter_card_add_filter_neg_card_eq_card _ _
+    exact Finset.filter_card_add_filter_neg_card_eq_card
+      (s := C) (fun q : ℕ => q ≤ R)
   have hL : L.card ≤ Claims.primeCount R := by
     dsimp [L, C, R]
     exact extension7_low_collision_count_le_primeCount ha
   have hH : H.card ≤ Claims.smoothCount R (X + a + 1) := by
     dsimp [H, C, R]
     exact extension7_high_collision_count_le_smoothCount ha
-  dsimp [extension7CollisionCount, C] at hsplit ⊢
-  omega
+  calc
+    extension7CollisionCount a X = C.card := by rfl
+    _ = L.card + H.card := hsplit.symm
+    _ ≤ Claims.primeCount R + Claims.smoothCount R (X + a + 1) :=
+      Nat.add_le_add hL hH
+    _ = Claims.primeCount (gpf (a ^ 2 + a - 1)) +
+        Claims.smoothCount (gpf (a ^ 2 + a - 1)) (X + a + 1) := by rfl
 
 end PrimeGPF
