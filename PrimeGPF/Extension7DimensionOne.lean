@@ -80,7 +80,9 @@ theorem extension7_collisionCount_real_le_singleton_log
             Real.log (p : ℝ)⌋₊ : ℕ) : ℝ) := hnatR
     _ = (Claims.primeCount (gpf (a ^ 2 + a - 1)) : ℝ) + 1 +
           (⌊Real.log ((X + a + 1 : ℕ) : ℝ) /
-            Real.log (p : ℝ)⌋₊ : ℝ) := by norm_num
+            Real.log (p : ℝ)⌋₊ : ℝ) := by
+      push_cast
+      ring
     _ ≤ (Claims.primeCount (gpf (a ^ 2 + a - 1)) : ℝ) + 1 +
           Real.log ((X + a + 1 : ℕ) : ℝ) / Real.log (p : ℝ) :=
       add_le_add_left hfloor _
