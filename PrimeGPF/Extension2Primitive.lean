@@ -79,10 +79,11 @@ theorem extension2_nonprimitive_power_base
     · have hg0 : g ≠ 0 := by omega
       have hz : (0 : ℕ) ^ g = 0 := by simp [hg0]
       rw [hz] at hpow
-      have hpos := Nat.mul_pos ha.pos hq.pos
+      have hmulpos : 0 < a * q := Nat.mul_pos ha.pos hq.pos
       omega
-    · simp at hpow
-      have hpos := Nat.mul_pos ha.pos hq.pos
+    · have hone : (1 : ℕ) ^ g = 1 := by simp
+      rw [hone] at hpow
+      have hmulpos : 0 < a * q := Nat.mul_pos ha.pos hq.pos
       omega
   have hsqle : u ^ 2 ≤ u ^ g :=
     Nat.pow_le_pow_right (by omega : 0 < u) hg
@@ -96,8 +97,8 @@ theorem extension2_nonprimitive_power_base
       Nat.mul_le_mul_right q ha1q
     simpa [pow_two] using hstep.trans_le hstep2
   have huq : u < q := by
-    by_contra hnot
-    have hqu : q ≤ u := Nat.le_of_not_gt hnot
+    apply lt_of_not_ge
+    intro hqu
     have hsq : q * q ≤ u * u := Nat.mul_le_mul hqu hqu
     have hpow2 : u * u ≤ a * q + 1 := by
       calc
