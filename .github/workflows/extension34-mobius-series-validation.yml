@@ -1,13 +1,13 @@
 name: Extension34 Möbius-series validation
 
 # Keep this workflow focused on the finite detector and the analytic odd-part
-# identity.  In particular it validates compatibility with the repository's
-# pinned Mathlib 4.19 arithmetic-function API before these modules are added to
-# the umbrella `PrimeGPF` target.
+# identity.  The final umbrella build also checks that the completed Extension
+# 3/4 analytic chain remains integrated with the repository-wide target.
 on:
   push:
     branches: [extensions-5-6-8-9-10-20260915]
     paths:
+      - 'PrimeGPF.lean'
       - 'PrimeGPF/Extension34*.lean'
       - 'PrimeGPF/Extension3Coprime.lean'
       - 'PrimeGPF/Extension4Coprime.lean'
@@ -39,3 +39,5 @@ jobs:
         run: lake build PrimeGPF.Extension34MobiusFinite
       - name: Build odd Möbius L-series identity
         run: lake build PrimeGPF.Extension34MobiusSeries
+      - name: Build umbrella integration target
+        run: lake build
