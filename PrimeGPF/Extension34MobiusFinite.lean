@@ -1,5 +1,5 @@
 import PrimeGPF.Extension34MobiusSetup
-import Mathlib.NumberTheory.ArithmeticFunction.Moebius
+import Mathlib.NumberTheory.ArithmeticFunction
 
 /-!
 # Extensions 3 and 4: finite Möbius detection of coprimality
@@ -7,6 +7,11 @@ import Mathlib.NumberTheory.ArithmeticFunction.Moebius
 The previous setup shows that every common divisor relevant to Extensions 3
 and 4 is odd and rescales the weighted triangle in the expected way.  This
 module adds the exact finite Möbius identity that detects primitivity.
+
+The project is pinned to Mathlib 4.19, where the Möbius API is still contained
+in the monolithic `Mathlib.NumberTheory.ArithmeticFunction` module.  Later
+Mathlib versions split it into `ArithmeticFunction.Moebius`; importing the
+pinned module here keeps this proof compatible with the repository toolchain.
 
 Mathlib already proves the Dirichlet-convolution identity
 
