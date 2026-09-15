@@ -7,6 +7,7 @@ on:
       - 'PrimeGPF/Extensions.lean'
       - 'PrimeGPF/Extension8Corollary.lean'
       - 'PrimeGPF/Extension10Dynamics.lean'
+      - 'PrimeGPF/Extension9.lean'
       - 'PrimeGPF/Extension9Revised.lean'
       - 'PrimeGPF/Core.lean'
       - 'PrimeGPF/Statements.lean'
@@ -50,8 +51,8 @@ jobs:
         run: lake env lean PrimeGPF/Extension8Corollary.lean
       - name: Compile extension 10 dynamics
         run: lake env lean PrimeGPF/Extension10Dynamics.lean
-      - name: Compile revised triple-collision extension
-        run: lake env lean PrimeGPF/Extension9Revised.lean
+      - name: Compile canonical triple-collision extension
+        run: lake env lean PrimeGPF/Extension9.lean
       - name: Verify baseline project
         if: ${{ !cancelled() }}
         run: bash verify.sh
