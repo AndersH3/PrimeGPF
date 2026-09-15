@@ -25,7 +25,7 @@ theorem extension2_mul_kernel_support_exclusion
   have hz : (a * q + 1) % a = 0 := Nat.mod_eq_zero_of_dvd hsd
   have hmod : (a * q + 1) % a = 1 := by
     rw [Nat.add_mod]
-    simp [ha.one_lt]
+    simp [Nat.mod_eq_of_lt ha.one_lt]
   omega
 
 /-- Pointwise formulation of the support restriction appearing in extension 2. -/
