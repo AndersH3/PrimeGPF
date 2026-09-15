@@ -2,6 +2,28 @@ name: Extension proof validation
 on:
   push:
     branches: [extensions-5-6-8-9-10-20260915]
+    paths:
+      - 'PrimeGPF.lean'
+      - 'PrimeGPF/Extensions.lean'
+      - 'PrimeGPF/Extension8Corollary.lean'
+      - 'PrimeGPF/Extension10Dynamics.lean'
+      - 'PrimeGPF/Extension9.lean'
+      - 'PrimeGPF/Core.lean'
+      - 'PrimeGPF/Statements.lean'
+      - 'PrimeGPF/Elementary.lean'
+      - 'PrimeGPF/Arithmetic.lean'
+      - 'PrimeGPF/Orders.lean'
+      - 'PrimeGPF/DirectExponential.lean'
+      - 'PrimeGPF/Conditional.lean'
+      - 'PrimeGPF/PrimeExponent.lean'
+      - 'PrimeGPF/Dynamics.lean'
+      - 'PrimeGPF/Density.lean'
+      - 'PrimeGPF/Complete.lean'
+      - 'verify.sh'
+      - 'lakefile.toml'
+      - 'lake-manifest.json'
+      - 'lean-toolchain'
+      - '.github/workflows/extensions-validation.yml'
   workflow_dispatch:
 permissions:
   contents: read
@@ -31,5 +53,5 @@ jobs:
       - name: Compile triple-collision extension
         run: lake env lean PrimeGPF/Extension9.lean
       - name: Verify baseline project
-        if: always()
+        if: ${{ !cancelled() }}
         run: bash verify.sh
