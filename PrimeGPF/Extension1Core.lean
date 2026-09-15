@@ -8,6 +8,11 @@ output prime `r` divides `a+1`, any prime input in the additive fiber is forced
 to be `r`; consequently the truncated fiber has cardinality at most one.
 
 The sharp lattice-counting asymptotic for the complementary case is separate.
+
+Proof structure:
+* first show that divisibility of the output forces `r ∣ q`;
+* use primality of `q` and `r` to conclude `q = r`;
+* convert the pointwise uniqueness statement into a finite-cardinality bound.
 -/
 namespace PrimeGPF
 open Claims
