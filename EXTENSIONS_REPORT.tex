@@ -76,21 +76,21 @@ with prime inputs and anchors. The mathematical proofs are given below. Formal L
 \toprule
 \textbf{Extension} & \textbf{Mathematical status} & \textbf{Lean status on \texttt{extensions-5-6-8-9-10-20260915}} \\
 \midrule
-1 & proved below & not yet formalized \\
-2 & proved below & not yet formalized \\
-3 & proved below & not yet formalized \\
-4 & proved below & not yet formalized \\
-5 & proved below & core escape and visit-count statements compiler-verified \\
-6 & proved below & finite image bound (9) and deep-image classification (11) compiler-verified; asymptotic ratio (10) not yet formalized \\
-7 & proved below & not yet formalized \\
-8 & proved below & inequalities (14)--(16) compiler-verified; separate prime-polynomial corollary added, compiler validation pending \\
-9 & proved below & Lean proof present; not yet compiler-verified (current branch CI fails in \texttt{Extension9.lean}) \\
-10 & proved below & algebraic separation compiler-verified; dynamical separation not yet formalized \\
+1 & proved below & finite reduction, exact support dimension, and general polylogarithmic bound compiler-verified; sharp coefficient (1) verified when $|T|=1$, including $a=r=5$; general $|T|>1$ sharp coefficient remains \\
+2 & proved below & empty $a=r$ case, support restriction, primitive/nonprimitive decomposition, exceptional-family bounds, exact support dimension, and general polylogarithmic bound compiler-verified; the $1/\zeta(d)$ coefficient (2) remains \\
+3 & proved below & exact classification (3), coprimality, residue restriction, exact support $\{3,5\}$, and quadratic polylogarithmic bound compiler-verified; sharp constant (4) remains \\
+4 & proved below & exact classification (5), coprimality, residue restriction, exact support $\{2,5\}$, and quadratic polylogarithmic bound compiler-verified; sharp constant (6) remains \\
+5 & proved below & exponential escape (7), finite visit count, and the literal real-$\log_2$ form of (8) compiler-verified \\
+6 & proved below & finite image bound (9), PNT scaling and limsup bound (10), and deep-image classification (11) compiler-verified \\
+7 & proved below & finite restricted-support bound, density zero, prime-relative rate (13), and sharp coefficient (12) when $d_a=1$ compiler-verified; general $d_a>1$ sharp coefficient remains \\
+8 & proved below & inequalities (14)--(16) and the prime-polynomial no-triple-collision corollary compiler-verified \\
+9 & proved below & complete $q=2$ classification (17) and common output $5$ compiler-verified \\
+10 & proved below & both algebraic and dynamical separation compiler-verified \\
 \bottomrule
 \end{tabularx}
 \end{center}
 
-The verified Lean material is in \path{PrimeGPF/Extensions.lean}; extension 9 is developed in \path{PrimeGPF/Extension9.lean}.
+The extension development is split into dedicated modules under \path{PrimeGPF/}; verified leaf modules are imported by the top-level \path{PrimeGPF.lean}. The general weighted-simplex asymptotic (*) and the Mobius-inversion refinements are the principal remaining analytic infrastructure.
 
 \section{Counting lemma}
 
@@ -110,6 +110,8 @@ e_\ell\ge0,\qquad \sum_{\ell\in T}e_\ell\log\ell\le\log Y.
 \]
 The simplex has volume $C_T(\log Y)^d$. Place a unit cube at each lattice point. Their union is sandwiched between the simplex with bound $\log Y$ and that with bound $\log Y+\sum_{\ell\in T}\log\ell$. The difference of these volumes is $O_T((1+\log Y)^{d-1})$, proving (*).
 \end{proof}
+
+The one-dimensional specialization of (*) needed when $|T|=1$ is formalized in Lean. The general multidimensional weighted-simplex estimate remains to be formalized.
 
 \section{A logarithm saving for every fixed additive fiber}
 
@@ -146,6 +148,7 @@ For example, for $a=r=5$, $T=\{5\}$, so
 \[
 F^+_{5,5}(x)\le \frac{\log x}{\log5}+O(1).
 \]
+The general finite reduction and logarithm-saving exponent are Lean-certified, and the sharp limsup coefficient in (1) is Lean-certified whenever $|T|=1$, in particular for $a=r=5$.
 
 \section{A \texorpdfstring{$1/\zeta(d)$}{1/zeta(d)} improvement for multiplicative fibers}
 
@@ -182,6 +185,8 @@ V_T(L)=\sum_{g\le L/\min_{\ell\in T}\log\ell}\mu(g)(S_T(e^{L/g})-1)
 The accumulated error is $O(L\log L)$ for $d=2$ and $O(L^{d-1})$ for $d\ge3$. Taking $L=\log(ax+1)$ proves (2). This is an upper-bound coefficient, not an assertion that the prime fiber attains the coefficient.
 \end{proof}
 
+Lean currently formalizes the support restriction, the primitive/nonprimitive dichotomy, the two exceptional perfect-power families, their logarithmic-size bound, the exact support dimension, and the resulting non-sharp polylogarithmic fiber bound. The Mobius-inversion step producing $1/\zeta(d)$ remains.
+
 \section{The output-5 multiplicative fiber at anchor 2}
 
 For prime $q$,
@@ -215,6 +220,8 @@ For (4), the unrestricted weighted exponent triangle has leading coefficient $1/
 \]
 Multiplying gives (4). The formula still requires the resulting $q$ to be prime.
 \end{proof}
+
+The exact classification, coprimality condition, congruence restriction, and exact exponent support $\{3,5\}$ are Lean-certified. The parity-restricted Mobius count giving (4) remains.
 
 \section{The output-5 multiplicative fiber at anchor 3}
 
@@ -251,6 +258,8 @@ again contradicting primality. The converse is immediate. Oddness and divisibili
 For (6), the two odd-exponent restrictions contribute $1/4$, and coprimality contributes $4/(3\zeta(2))$.
 \end{proof}
 
+The exact classification, coprimality and parity conditions, congruence restriction, and exact exponent support $\{2,5\}$ are Lean-certified. The parity-restricted Mobius count giving (6) remains.
+
 \section{Explicit exponential escape and sparse orbits}
 
 Fix a prime anchor $a$ and set $q_{n+1}=E_a(q_n)$. Except for the constant orbit $a=2,q_0=3$,
@@ -271,7 +280,7 @@ q_{n+1}+1\ge2(q_n+1)
 at every step. Induction yields (7), and solving (7) for $n$ gives (8).
 \end{proof}
 
-The Lean development proves (7), a discrete natural-log form of (8), and the corresponding finite cardinality bound.
+The Lean development proves (7), the corresponding finite cardinality bound, and (8) in the literal natural-floor/real-base-two-logarithm form displayed above.
 
 \section{Iterated exponential images shrink geometrically}
 
@@ -311,7 +320,7 @@ r+1\ge2^k(q_0+1)\ge3\cdot2^k,
 so its ancestry depth is finite. Only $E_2(3)=3$ has arbitrarily deep ancestry, proving (11).
 \end{proof}
 
-The Lean development currently proves (9) and the exact all-depth form of (11). The PNT passage to (10) is not yet formalized in this extension module.
+The Lean development proves (9), the PNT fixed-scale ratio and limsup estimate (10), and the exact all-depth classification (11).
 
 \section{Quantitative rarity of additive-multiplicative collisions}
 
@@ -343,6 +352,8 @@ D_a(X)\le\pi(R_a)+S_{T_a}(X+a+1).
 \]
 Apply (*) for (12) and the prime number theorem for (13). The set $T_a$ is nonempty because $B_a\equiv-1\pmod{a+1}$, so its greatest prime divisor cannot divide $a+1$.
 \end{proof}
+
+Lean proves the finite restricted-support reduction, a degree-$d_a$ polylogarithmic upper bound, density zero, and the prime-relative Big-O rate (13). The sharp coefficient in (12) is additionally formalized when $d_a=1$; the general $d_a>1$ coefficient remains tied to (*).
 
 \section{Additive-exponential collisions are confined to a finite region}
 
@@ -381,6 +392,8 @@ and (16) follows together with (14). The exceptional pair $(2,3)$ is not triple 
 
 If $p\ge3$ and $p^2+p-1$ is prime, no triple collision can occur at anchor $p$: the divisor restriction would force the common output to be $p^2+p-1$, whereas (14) bounds it by $p+q+1\le2p+1<p^2+p-1$.
 
+All three inequalities and this prime-polynomial corollary are Lean-certified.
+
 \section{Complete classification of triple collisions with \texorpdfstring{$q=2$}{q=2}}
 
 For prime $p$,
@@ -410,6 +423,8 @@ p\equiv1,7,9,15\pmod{16}.
 \]
 In all four cases the 2-adic valuation of $p+3$ is at most 2. Hence $\alpha\le2$, and oddness forces $\alpha=1$. Therefore $p+3=10$, so $p=7$.
 \end{proof}
+
+The equivalence (17) and the common-output-$5$ conclusion are Lean-certified.
 
 \section{Structural separation from the homogeneous additive GPF family}
 
@@ -458,8 +473,10 @@ For $q=2$, trivially $H_c(2)\le c+2$. Thus every input above $c+2$ strictly decr
 An escaping $E_a$-orbit contains infinitely many distinct states. A finite-to-one intertwining map cannot send all of them into one finite $H_c$-orbit. Conversely, $H_c(c)=c$; an intertwining map in the reverse direction would send this fixed point to an $E_a$-fixed point, but no such fixed point exists for odd $a$.
 \end{proof}
 
+The eventual-periodicity result and both intertwining obstructions are Lean-certified in \path{PrimeGPF/Extension10Dynamics.lean}.
+
 \section{Remaining directions}
 
-The results above do \emph{not} establish asymptotic equivalences for the actual prime fibers, nor their infinitude, nor a global classification of triple collisions with odd second input. Extensions 1--4 and 7 require a formal weighted-lattice counting layer; the $\zeta$-refinements additionally require Mobius inversion. Equation (10) requires formalizing the prime-counting scaling step from the PNT already available in the project.
+The results above do \emph{not} establish asymptotic equivalences for the actual prime fibers, nor their infinitude, nor a global classification of triple collisions with odd second input. The principal remaining formalization task for extensions 1--4 and 7 is the general weighted-simplex counting estimate (*); the $\zeta$-refinements in extensions 2--4 additionally require Mobius inversion, including parity-restricted primitive-vector counts for (4) and (6). The one-dimensional sharp cases of (1) and (12), the full PNT passage in (10), and the prime-relative rate (13) are already formalized.
 
 \end{document}
