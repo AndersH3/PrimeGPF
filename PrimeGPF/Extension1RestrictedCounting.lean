@@ -169,4 +169,48 @@ theorem extension1_fiberCount_real_le_polylog
   have hsmooth := restrictedSmoothCount_real_le_polylog a r (X + a + 1) hx
   exact hfinite.trans (add_le_add_left hsmooth _)
 
+/-- For the report's concrete example `a = r = 5`, the exact restricted
+support is the singleton `{5}`. -/
+lemma extension1AllowedPrimes_five_five :
+    extension1AllowedPrimes 5 5 = ({5} : Finset ℕ) := by
+  classical
+  ext p
+  simp only [extension1AllowedPrimes, Finset.mem_filter, Finset.mem_range,
+    Finset.mem_singleton]
+  constructor
+  · rintro ⟨hp6, hp, havoid⟩
+    interval_cases p <;> norm_num at hp havoid ⊢
+  · intro hp
+    subst p
+    norm_num
+
+/-- Consequently the rectangular exponent bound is already sharp in dimension
+one: it is exactly `1 + floor(log x / log 5)`. -/
+theorem extension1RestrictedBoxBound_five_five (x : ℕ) :
+    extension1RestrictedBoxBound 5 5 x =
+      1 + ⌊Real.log (x : ℝ) / Real.log (5 : ℝ)⌋₊ := by
+  classical
+  simp [extension1RestrictedBoxBound, extension1AllowedPrimes_five_five]
+
+/-- Finite explicit version of the report's example
+`F⁺_{5,5}(X) ≤ log X / log 5 + O(1)`.  The fixed `π(5)` term accounts for the
+small-input part of the general fiber decomposition. -/
+theorem extension1_five_five_fiberCount_le_log_box (X : ℕ) :
+    Claims.fiberCount .add 5 5 X ≤
+      Claims.primeCount 5 +
+        (1 + ⌊Real.log ((X + 5 + 1 : ℕ) : ℝ) / Real.log (5 : ℝ)⌋₊) := by
+  have hfinite :=
+    extension1_fiberCount_le_primeCount_add_restrictedSmoothCount
+      (a := 5) (r := 5) (X := X) (by norm_num) (by norm_num)
+  have hsmooth :=
+    restrictedSmoothCount_le_extension1RestrictedBoxBound 5 5 (X + 5 + 1)
+  calc
+    Claims.fiberCount .add 5 5 X
+        ≤ Claims.primeCount 5 + restrictedSmoothCount 5 5 (X + 5 + 1) := hfinite
+    _ ≤ Claims.primeCount 5 + extension1RestrictedBoxBound 5 5 (X + 5 + 1) :=
+      Nat.add_le_add_left hsmooth _
+    _ = Claims.primeCount 5 +
+        (1 + ⌊Real.log ((X + 5 + 1 : ℕ) : ℝ) / Real.log (5 : ℝ)⌋₊) := by
+      rw [extension1RestrictedBoxBound_five_five]
+
 end PrimeGPF
