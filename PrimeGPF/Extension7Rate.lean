@@ -185,8 +185,9 @@ theorem extension7_collision_prime_ratio_isBigO
         (Claims.primeCount X : ℝ) := by positivity
   have hright0 :
       0 ≤ (Real.log (X : ℝ)) ^ (d + 1) / (X : ℝ) := by positivity
-  dsimp [R, d] at hpoint ⊢
-  simpa only [Real.norm_eq_abs, abs_of_nonneg hleft0,
-    abs_of_nonneg hright0] using hpoint
+  dsimp [R, d] at hpoint hright0 ⊢
+  rw [Real.norm_eq_abs, abs_of_nonneg hleft0,
+    Real.norm_eq_abs, abs_of_nonneg hright0]
+  exact hpoint
 
 end PrimeGPF
