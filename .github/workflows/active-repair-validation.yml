@@ -14,6 +14,7 @@ on:
       - 'PrimeGPF/Extension34WeightedPairs.lean'
       - 'PrimeGPF/Extension34CandidatePairs.lean'
       - 'PrimeGPF/Extension34CandidateCount.lean'
+      - 'PrimeGPF/Extension34AreaBound.lean'
       - '.github/workflows/active-repair-validation.yml'
   workflow_dispatch:
 
@@ -67,3 +68,6 @@ jobs:
       - name: Build extensions 3 and 4 candidate count reduction
         if: always()
         run: lake build PrimeGPF.Extension34CandidateCount
+      - name: Build extensions 3 and 4 sharp-area bounds
+        if: always()
+        run: lake build PrimeGPF.Extension34AreaBound
