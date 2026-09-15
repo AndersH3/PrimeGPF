@@ -147,4 +147,26 @@ theorem restrictedSmoothCount_real_le_polylog
     exact_mod_cast restrictedSmoothCount_le_extension1RestrictedBoxBound a r x
   exact hcount.trans (extension1RestrictedBoxBound_real_le a r x hx)
 
+/-- End-to-end non-sharp form of extension 1: the additive fiber itself is
+bounded by a degree-`|T|` polylogarithm, apart from the fixed low-input term
+`π(r)`.  Together with `extension1_allowedPrimeCount_le_primeCount_sub_one`,
+this is the formal logarithm saving claimed in the report; only the sharp
+simplex coefficient remains to be formalized. -/
+theorem extension1_fiberCount_real_le_polylog
+    {a r X : ℕ} (ha : Nat.Prime a) (hr : Nat.Prime r)
+    (hx : 2 ≤ X + a + 1) :
+    (Claims.fiberCount .add a r X : ℝ) ≤
+      (Claims.primeCount r : ℝ) +
+      (2 / Real.log 2) ^ extension1AllowedPrimeCount a r *
+        (Real.log ((X + a + 1 : ℕ) : ℝ)) ^ extension1AllowedPrimeCount a r := by
+  have hfinite :
+      (Claims.fiberCount .add a r X : ℝ) ≤
+        (Claims.primeCount r : ℝ) +
+          (restrictedSmoothCount a r (X + a + 1) : ℝ) := by
+    exact_mod_cast
+      extension1_fiberCount_le_primeCount_add_restrictedSmoothCount
+        (X := X) ha hr
+  have hsmooth := restrictedSmoothCount_real_le_polylog a r (X + a + 1) hx
+  exact hfinite.trans (add_le_add_left hsmooth _)
+
 end PrimeGPF
