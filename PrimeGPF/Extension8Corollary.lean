@@ -5,6 +5,12 @@ import PrimeGPF.Extensions
 
 If `p^2 + p - 1` is prime (for prime `p ≥ 3`), there is no triple
 collision at anchor `p`.
+
+The proof has three stages.  A common additive/multiplicative output divides
+the polynomial `p^2+p-1`; primality of the polynomial therefore identifies
+the output with that polynomial.  The additive/exponential collision region
+then gives `q ≤ p`, while the additive kernel bounds the same output by
+`2p+1`.  These two descriptions are incompatible for `p ≥ 3`.
 -/
 namespace PrimeGPF
 
@@ -19,6 +25,9 @@ theorem extension8_no_triple_of_polynomial_prime {p : ℕ}
     ¬ ∃ q, Nat.Prime q ∧ add p q = mul p q ∧ add p q = exp p q := by
   rintro ⟨q, hq, ham, hae⟩
   let r := add p q
+
+  -- The common additive/multiplicative output divides the collision
+  -- polynomial, so polynomial primality forces equality.
   have hr : Nat.Prime r := (output_spec .add hp hq).1
   have hda : r ∣ p + q + 1 := (output_spec .add hp hq).2.1
   have hdm : r ∣ p * q + 1 := by
@@ -29,22 +38,24 @@ theorem extension8_no_triple_of_polynomial_prime {p : ℕ}
     rcases (Nat.dvd_prime hP).mp hdiv with h1 | hP'
     · exact (hr.ne_one h1).elim
     · exact hP'
+
+  -- The additive/exponential collision lies in the `q ≤ p` region except
+  -- for `(2,3)`, which is excluded by the hypothesis `p ≥ 3`.
   have hex : (p, q) ≠ (2, 3) := by
     intro h
     have hp2 : p = 2 := congrArg Prod.fst h
     omega
   have hqp : q ≤ p :=
     (extension8_add_exp_region hp hq hae).resolve_left hex
+
+  -- The additive output is at most its kernel `p+q+1`, hence at most
+  -- `2p+1`.  Substituting the polynomial value of `r` yields the final
+  -- quadratic contradiction.
   have hupper : r ≤ p + q + 1 := by
     dsimp [r]
     simpa [add, output, kernel] using gpf_le (p + q + 1)
   have hupper' : r ≤ 2 * p + 1 := by omega
   rw [hre] at hupper'
-  have hpos : 1 ≤ p ^ 2 + p := by
-    have hp0 : 0 < p := hp.pos
-    nlinarith
-  have hsub : (p ^ 2 + p - 1) + 1 = p ^ 2 + p :=
-    Nat.sub_add_cancel hpos
   have hquadle : p ^ 2 + p ≤ 2 * p + 2 := by
     omega
   nlinarith
