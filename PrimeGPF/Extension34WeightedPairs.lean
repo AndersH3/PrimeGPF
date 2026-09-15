@@ -1,4 +1,4 @@
-import PrimeGPF.Extension34Structure
+import PrimeGPF.Extension34Exact
 import Mathlib.Analysis.SpecialFunctions.Log.Basic
 
 /-!
