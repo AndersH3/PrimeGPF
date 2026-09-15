@@ -14,4 +14,15 @@ theorem extension9_triple_second_two {p : ℕ} (hp : Nat.Prime p) :
     (add p 2 = mul p 2 ∧ add p 2 = exp p 2) ↔ p = 2 ∨ p = 7 :=
   extension9_triple_second_two_revised hp
 
+/-- At either triple collision classified above, all three operations have the
+common output `5`, as stated explicitly in Extension 9 of the report. -/
+theorem extension9_triple_second_two_common_output_five {p : ℕ}
+    (hp : Nat.Prime p)
+    (hcoll : add p 2 = mul p 2 ∧ add p 2 = exp p 2) :
+    add p 2 = 5 ∧ mul p 2 = 5 ∧ exp p 2 = 5 := by
+  have hpCases : p = 2 ∨ p = 7 :=
+    (extension9_triple_second_two hp).mp hcoll
+  rcases hpCases with rfl | rfl <;>
+    norm_num [add, mul, exp, output, kernel, gpf, scan]
+
 end PrimeGPF
