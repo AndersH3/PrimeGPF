@@ -11,6 +11,7 @@ exponent box rather than the sharp simplex-volume asymptotic.
 namespace PrimeGPF
 open Claims
 
+/-- Rectangular exponent-box cardinality for the exact allowed prime support. -/
 noncomputable def extension1RestrictedBoxBound (a r x : ℕ) : ℕ := by
   classical
   exact ∏ p ∈ extension1AllowedPrimes a r,
@@ -61,26 +62,21 @@ theorem restrictedSmoothCount_le_extension1RestrictedBoxBound
     by_cases hp : Nat.Prime p
     · by_cases hpS : p ∈ S
       · exact congrFun (congrFun hmn p) hpS
-      · have hpmd : ¬ p ∣ m.1 := by
-          intro hpd
-          have hle := hmA.2.1.2 p hp hpd
-          have havoid := hmA.2.2 p hp hpd
-          have : p ∈ S := by
+      · -- If a prime outside `S` divided any restricted-smooth integer in
+        -- `A`, its support and avoidance conditions would put it back in `S`.
+        -- Package that contradiction once and use it for both encoded values.
+        have houtside_not_dvd : ∀ z : {n // n ∈ A}, ¬ p ∣ z.1 := by
+          intro z hpd
+          have hzA := Finset.mem_filter.mp z.property
+          have hle := hzA.2.1.2 p hp hpd
+          have havoid := hzA.2.2 p hp hpd
+          have hpMem : p ∈ S := by
             simp only [S, extension1AllowedPrimes, Finset.mem_filter,
               Finset.mem_range]
             exact ⟨by omega, hp, havoid⟩
-          exact hpS this
-        have hpnd : ¬ p ∣ n.1 := by
-          intro hpd
-          have hle := hnA.2.1.2 p hp hpd
-          have havoid := hnA.2.2 p hp hpd
-          have : p ∈ S := by
-            simp only [S, extension1AllowedPrimes, Finset.mem_filter,
-              Finset.mem_range]
-            exact ⟨by omega, hp, havoid⟩
-          exact hpS this
-        rw [Nat.factorization_eq_zero_of_not_dvd hpmd,
-            Nat.factorization_eq_zero_of_not_dvd hpnd]
+          exact hpS hpMem
+        rw [Nat.factorization_eq_zero_of_not_dvd (houtside_not_dvd m),
+            Nat.factorization_eq_zero_of_not_dvd (houtside_not_dvd n)]
     · rw [Nat.factorization_eq_zero_of_non_prime _ hp,
           Nat.factorization_eq_zero_of_non_prime _ hp]
 
