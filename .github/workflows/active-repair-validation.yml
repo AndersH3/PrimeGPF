@@ -8,8 +8,10 @@ on:
       - 'PrimeGPF/Extension2NonprimitiveCount.lean'
       - 'PrimeGPF/Extension2RestrictedCounting.lean'
       - 'PrimeGPF/Extension2Dimension.lean'
+      - 'PrimeGPF/Extension34Structure.lean'
       - 'PrimeGPF/Extension34Exact.lean'
       - 'PrimeGPF/Extension34Counting.lean'
+      - 'PrimeGPF/Extension34WeightedPairs.lean'
       - '.github/workflows/active-repair-validation.yml'
   workflow_dispatch:
 
@@ -54,3 +56,6 @@ jobs:
       - name: Build extensions 3 and 4 counting corollaries
         if: always()
         run: lake build PrimeGPF.Extension34Counting
+      - name: Build extensions 3 and 4 weighted-pair reduction
+        if: always()
+        run: lake build PrimeGPF.Extension34WeightedPairs
