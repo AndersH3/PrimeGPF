@@ -9,6 +9,7 @@ on:
       - 'PrimeGPF/Extension34Residues.lean'
       - 'PrimeGPF/Extension34Structure.lean'
       - 'PrimeGPF/Extension7Core.lean'
+      - 'PrimeGPF/Extension17Support.lean'
       - 'PrimeGPF/Extension8Corollary.lean'
       - 'PrimeGPF/Extension10Dynamics.lean'
       - 'PrimeGPF/Extension9Revised.lean'
@@ -48,9 +49,12 @@ jobs:
       - name: Compile extension 3 and 4 structure
         if: always()
         run: lake env lean PrimeGPF/Extension34Structure.lean
-      - name: Compile extension 7 core
+      - name: Build extension 7 core
         if: always()
-        run: lake env lean PrimeGPF/Extension7Core.lean
+        run: lake build PrimeGPF.Extension7Core
+      - name: Compile restricted support lemmas
+        if: always()
+        run: lake env lean PrimeGPF/Extension17Support.lean
       - name: Compile extension 8 corollary
         if: always()
         run: lake env lean PrimeGPF/Extension8Corollary.lean
