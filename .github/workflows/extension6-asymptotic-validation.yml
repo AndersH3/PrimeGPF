@@ -3,8 +3,10 @@ on:
   push:
     branches: [extensions-5-6-8-9-10-20260915]
     paths:
-      - 'PrimeGPF/Extension6Asymptotic.lean'
       - 'PrimeGPF/ExtensionPrimeCount.lean'
+      - 'PrimeGPF/Extension6PNT.lean'
+      - 'PrimeGPF/Extension6Asymptotic.lean'
+      - 'PrimeGPF/Extension6Cutoff.lean'
       - '.github/workflows/extension6-asymptotic-validation.yml'
   workflow_dispatch:
 permissions:
@@ -24,5 +26,14 @@ jobs:
           echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
       - name: Obtain pinned mathlib cache
         run: lake exe cache get
-      - name: Build extension 6 asymptotic bridge
-        run: lake build PrimeGPF.Extension6Asymptotic
+      - name: Compile prime-count normalization
+        run: lake env lean PrimeGPF/ExtensionPrimeCount.lean
+      - name: Compile extension 6 PNT normalization
+        if: always()
+        run: lake env lean PrimeGPF/Extension6PNT.lean
+      - name: Compile fixed-scale PNT ratio
+        if: always()
+        run: lake env lean PrimeGPF/Extension6Asymptotic.lean
+      - name: Compile extension 6 cutoff arithmetic
+        if: always()
+        run: lake env lean PrimeGPF/Extension6Cutoff.lean
