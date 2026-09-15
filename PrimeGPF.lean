@@ -26,6 +26,7 @@ import PrimeGPF.Extension2Dimension
 import PrimeGPF.Extension2NonprimitiveCount
 import PrimeGPF.Extension34Counting
 import PrimeGPF.Extension34Congruence
+import PrimeGPF.Extension34MobiusSeries
 import PrimeGPF.Extension5RealLog
 import PrimeGPF.Extension6Ratio
 import PrimeGPF.Extension7Limit
