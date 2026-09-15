@@ -19,7 +19,7 @@ theorem extension2_allowedPrimeCount_eq
   have hUcard : U.card = Claims.primeCount r := by
     simp [U, Claims.primeCount]
   by_cases har : a ≤ r
-  · have har' : a < r + 1 := by omega
+  · have har' : a < r + 1 := Nat.lt_succ_of_le har
     have haU : a ∈ U := by
       simp [U, ha, har']
     have hset : extension2AllowedPrimes a r = U.erase a := by
