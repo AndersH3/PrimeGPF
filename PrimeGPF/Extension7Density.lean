@@ -73,7 +73,8 @@ theorem extension7_collision_density_zero {a : ℕ} (ha : Nat.Prime a) :
   apply squeeze_zero'
   · exact Eventually.of_forall (fun X => by positivity)
   · filter_upwards [eventually_shift_le_succ_sq a] with X hshift
-    have hfinite := extension7_collisionCount_le_primeCount_add_smoothCount ha
+    have hfinite :=
+      extension7_collisionCount_le_primeCount_add_smoothCount (X := X) ha
     have hsmono :
         Claims.smoothCount R (X + a + 1) ≤
           Claims.smoothCount R ((X + 1) * (X + 1)) := by
