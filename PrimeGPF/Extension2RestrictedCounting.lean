@@ -56,8 +56,7 @@ theorem extension2_fiberCount_le_mulRestrictedSmoothCount
       omega
     have hsmooth : Smooth r (a * q.1 + 1) := by
       constructor
-      · have hgt := kernel_gt_one .mul ha hq
-        simpa [kernel] using (show 0 < kernel .mul a q.1 by omega)
+      · omega
       · intro s hs hsd
         exact (extension2_mul_kernel_support_exclusion ha hq hout hs hsd).1
     have hrestricted : MulRestrictedSmooth a r (a * q.1 + 1) := by
