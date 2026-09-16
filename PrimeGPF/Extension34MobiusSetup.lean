@@ -27,7 +27,7 @@ namespace PrimeGPF
 /-- Every positive divisor of an odd natural number is odd.  The positivity
 assumption excludes the degenerate divisor `0`. -/
 lemma mod_two_eq_one_of_dvd_mod_two_eq_one
-    {d n : ℕ} (hd : 0 < d) (hdn : d ∣ n) (hn : n % 2 = 1) :
+    {d n : ℕ} (_hd : 0 < d) (hdn : d ∣ n) (hn : n % 2 = 1) :
     d % 2 = 1 := by
   rcases Nat.mod_two_eq_zero_or_one d with hdeven | hdodd
   · have h2d : 2 ∣ d := Nat.dvd_of_mod_eq_zero hdeven
@@ -51,12 +51,17 @@ lemma weighted_sum_factor_common_divisor
     (α : ℝ) * u + (β : ℝ) * v =
       (d : ℝ) *
         ((((α / d : ℕ) : ℝ) * u) + (((β / d : ℕ) : ℝ) * v)) := by
-  have hαform : α = d * (α / d) := by
-    exact (Nat.mul_div_cancel' hdα).symm
-  have hβform : β = d * (β / d) := by
-    exact (Nat.mul_div_cancel' hdβ).symm
+  have hαformNat : α = d * (α / d) :=
+    (Nat.mul_div_cancel' hdα).symm
+  have hβformNat : β = d * (β / d) :=
+    (Nat.mul_div_cancel' hdβ).symm
+  have hαform :
+      (α : ℝ) = (d : ℝ) * ((α / d : ℕ) : ℝ) := by
+    exact_mod_cast hαformNat
+  have hβform :
+      (β : ℝ) = (d : ℝ) * ((β / d : ℕ) : ℝ) := by
+    exact_mod_cast hβformNat
   rw [hαform, hβform]
-  push_cast
   ring
 
 /-- A weighted exponent pair whose coordinates share a positive divisor `d`
@@ -69,12 +74,18 @@ lemma weighted_sum_div_common_divisor_le
   have hfactor := weighted_sum_factor_common_divisor hdα hdβ u v
   have hdR : 0 < (d : ℝ) := by exact_mod_cast hd
   rw [hfactor] at hweighted
-  exact (le_div_iff₀ hdR).2 hweighted
+  apply (le_div_iff₀ hdR).2
+  calc
+    ((((α / d : ℕ) : ℝ) * u) + (((β / d : ℕ) : ℝ) * v)) * (d : ℝ) =
+        (d : ℝ) *
+          ((((α / d : ℕ) : ℝ) * u) + (((β / d : ℕ) : ℝ) * v)) := by
+      ring
+    _ ≤ L := hweighted
 
 /-- In the Extension-3 classification, every positive common divisor of the
 exponents is odd. -/
 lemma extension3_common_divisor_is_odd
-    {d α β : ℕ} (hd : 0 < d) (hdα : d ∣ α) (hdβ : d ∣ β)
+    {d α β : ℕ} (hd : 0 < d) (hdα : d ∣ α) (_hdβ : d ∣ β)
     (hαodd : α % 2 = 1) :
     d % 2 = 1 := by
   exact mod_two_eq_one_of_dvd_mod_two_eq_one hd hdα hαodd
